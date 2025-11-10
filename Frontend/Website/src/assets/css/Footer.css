@@ -1,0 +1,29 @@
+/* Footer default text color */
+.footer,
+.footer p,
+.footer h5,
+.footer a.btn-link,
+.footer .btn-social i,
+.footer .footer-menu a {
+    color: white;
+}
+
+/* Footer links hover color */
+.footer a.btn-link:hover,
+.footer .btn-social:hover i,
+.footer .footer-menu a:hover,
+.footer a.border-bottom:hover {
+    color: #fcb535 !important;
+    transition: color 0.3s;
+}
+
+/* Social buttons border hover */
+.footer .btn-social:hover {
+    border-color: #fcb535;
+    transition: all 0.3s;
+}
+
+/* Optional: cursor pointer for links */
+.footer a {
+    cursor: pointer;
+}

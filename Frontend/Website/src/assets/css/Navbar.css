@@ -1,0 +1,36 @@
+/* Make all nav links blue */
+.navbar .nav-link {
+    color: #10304e !important;
+    font-weight: 500;
+    position: relative;
+    padding-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Add bottom border on hover or active */
+.navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #fcb535;
+    transition: width 0.3s ease;
+}
+
+/* On hover or when active, show line */
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
+    width: 100%;
+}
+
+/* Keep dropdown items readable */
+.dropdown-menu .dropdown-item {
+    color: #10304e !important;
+    font-weight: 500;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #e9f2ff;
+}
