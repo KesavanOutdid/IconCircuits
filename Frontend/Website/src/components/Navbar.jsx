@@ -59,6 +59,18 @@ const Navbar = () => {
                                 </div>
                             </div>
 
+                            {/* Dropdown */}
+                            <div className="nav-item dropdown">
+                                <NavLink to="/pcb-layout" className={`nav-link dropdown-toggle ${isServiceActive ? "active" : ""}`} data-bs-toggle="dropdown">New Services</NavLink>
+                                <div className="dropdown-menu bg-light mt-2">
+                                    <NavLink to="/pcb-layout" className="dropdown-item">PCB Layout</NavLink>
+                                    <NavLink to="/pcb-fabrication" className="dropdown-item">PCB Fabrication</NavLink>
+                                    <NavLink to="/pcb-assembly" className="dropdown-item">PCB Assembly</NavLink>
+                                    <NavLink to="/pcb-stencil" className="dropdown-item">PCB Stencil</NavLink>
+                                    <NavLink to="/component-sourcing" className="dropdown-item">Component Sourcing</NavLink>
+                                </div>
+                            </div>
+
                             <NavLink to="/contact" className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`}>Contact</NavLink>
                         </div>
 

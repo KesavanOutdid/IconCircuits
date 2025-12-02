@@ -45,7 +45,7 @@ const Footer = () => {
                 <div className="container">
                     <div className="row g-5 align-items-center">
                         <div className="col-md-5 ps-lg-0 pt-5 pt-md-0 text-start">
-                            <img className="img-fluid" src="img/newsletter.png" alt="" />
+                            <img className="img-fluid" src="/img/newsletter.png" alt="" />
                         </div>
                         <div className="col-md-7 py-5 newsletter-text">
                             <div className="btn btn-sm border rounded-pill text-white px-3 mb-3">Newsletter</div>

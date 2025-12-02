@@ -38,38 +38,7 @@ const Hero = () => {
             image: hero4,
         },
     ];
-
-    // const testimonials = [
-    //     {
-    //         img: "img/testimonial-1.jpg",
-    //         name: "Client Name",
-    //         profession: "Profession",
-    //         text: "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet",
-    //     },
-    //     {
-    //         img: "img/testimonial-2.jpg",
-    //         name: "Client Name",
-    //         profession: "Profession",
-    //         text: "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet",
-    //     },
-    //     {
-    //         img: "img/testimonial-3.jpg",
-    //         name: "Client Name",
-    //         profession: "Profession",
-    //         text: "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet",
-    //     },
-    // ];
-
-    // const settings = {
-    //     dots: true,
-    //     infinite: true,
-    //     speed: 500,
-    //     slidesToShow: 1,
-    //     slidesToScroll: 1,
-    //     autoplay: true,
-    //     autoplaySpeed: 5000,
-    // };
-
+    
     return (
         <div>
             <Navbar />
@@ -247,7 +216,7 @@ const Hero = () => {
                     <div className="row g-5 align-items-center">
                         <div className="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                             <div className="about-img">
-                                <img className="img-fluid" alt="img" src="img/Low-power-circuit-design-involves-a-variety-of-techniques-in-minimizing-power-loss_pwj1ma.avif" />
+                                <img className="img-fluid" alt="img" src="/img/Low-power-circuit-design-involves-a-variety-of-techniques-in-minimizing-power-loss_pwj1ma.avif" />
                             </div>
                         </div>
                         <div className="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
@@ -507,7 +476,7 @@ const Hero = () => {
                                             }}
                                         >
                                             <img
-                                                src={`img/${img}`}
+                                                src={`/img/${img}`}
                                                 alt={`PCB ${index + 1}`}
                                                 style={{
                                                     width: "400px",
@@ -545,7 +514,7 @@ const Hero = () => {
                     <div className="row g-3">
                         <div className="col-lg-3 wow fadeIn" data-wow-delay="0.3s">
                             <div className="case-item position-relative overflow-hidden rounded mb-2">
-                                <img className="img-fluid" src="img/ic-project1.jpg" alt="img" style={{
+                                <img className="img-fluid" src="/img/ic-project1.jpg" alt="img" style={{
                                     height: "250px",
                                     width: "100%",
                                     objectFit: "cover",
@@ -561,7 +530,7 @@ const Hero = () => {
                         </div>
                         <div className="col-lg-3 wow fadeIn" data-wow-delay="0.5s">
                             <div className="case-item position-relative overflow-hidden rounded mb-2">
-                                <img className="img-fluid" src="img/ic-project2.jpg" alt="img" style={{
+                                <img className="img-fluid" src="/img/ic-project2.jpg" alt="img" style={{
                                     height: "250px",
                                     width: "100%",
                                     objectFit: "cover",
@@ -577,7 +546,7 @@ const Hero = () => {
                         </div>
                         <div className="col-lg-3 wow fadeIn" data-wow-delay="0.7s">
                             <div className="case-item position-relative overflow-hidden rounded mb-2">
-                                <img className="img-fluid" src="img/ic-project3.jpeg" alt="" style={{
+                                <img className="img-fluid" src="/img/ic-project3.jpeg" alt="" style={{
                                     height: "250px",
                                     width: "100%",
                                     objectFit: "cover",
@@ -593,7 +562,7 @@ const Hero = () => {
                         </div>
                         <div className="col-lg-3 wow fadeIn" data-wow-delay="0.7s">
                             <div className="case-item position-relative overflow-hidden rounded mb-2">
-                                <img className="img-fluid" src="img/ic-project4.jpg" alt="" style={{
+                                <img className="img-fluid" src="/img/ic-project4.jpg" alt="" style={{
                                     height: "250px",
                                     width: "100%",
                                     objectFit: "cover",
@@ -755,51 +724,6 @@ const Hero = () => {
                 </div>
             </div>
             {/* FAQs Start */}
-
-            {/* Testimonial Start */}
-            {/* <div className="container-xxl py-5">
-                <div className="container py-5">
-                    <div className="row g-5">
-                        <div className="col-lg-5">
-                            <div className="btn btn-sm border rounded-pill text-primary px-3 mb-3">
-                                Testimonial
-                            </div>
-                            <h1 className="mb-4">What Say Our Clients!</h1>
-                            <p className="mb-4">
-                                Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit.
-                                Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit.
-                            </p>
-                            <Link className="btn btn-primary rounded-pill px-4" to="/">
-                                Read More
-                            </Link>
-                        </div>
-
-                        <div className="col-lg-7">
-                            <Slider {...settings}>
-                                {testimonials.map((item, index) => (
-                                    <div key={index} className="testimonial-item ps-5 border-start border-primary">
-                                        <i className="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                                        <p className="fs-4">{item.text}</p>
-                                        <div className="d-flex align-items-center">
-                                            <img
-                                                className="img-fluid flex-shrink-0 rounded-circle"
-                                                src={item.img}
-                                                alt={item.name}
-                                                style={{ width: "60px", height: "60px" }}
-                                            />
-                                            <div className="ps-3">
-                                                <h5 className="mb-1">{item.name}</h5>
-                                                <span>{item.profession}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </Slider>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-            {/* Testimonial End */}
 
             <Footer />
         </div>

@@ -92,7 +92,7 @@ const PcbDesign = () => {
                     <div className="row g-5 align-items-center">
                         <div className="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                             <div className="about-img">
-                                <img className="img-fluid" src="img/about-img.jpg" alt='img' />
+                                <img className="img-fluid" src="/img/about-img.jpg" alt='img' />
                             </div>
                         </div>
                         <div className="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
@@ -160,7 +160,7 @@ const PcbDesign = () => {
                                 <div className="col-md-4 wow fadeIn" data-wow-delay="0.1s">
                                     <div className="service-item d-flex flex-column justify-content-center text-center rounded h-100">
                                         <div className="service-icon-img mb-3">
-                                            <img src="img/pcb-layout.jpg" alt="PCB Layout" />
+                                            <img src="/img/pcb-layout.jpg" alt="PCB Layout" />
                                         </div>
                                         <h5 className="mb-3">PCB Layout</h5>
                                         <p className="text-start">
@@ -177,7 +177,7 @@ const PcbDesign = () => {
                                 <div className="col-md-4 wow fadeIn" data-wow-delay="0.2s">
                                     <div className="service-item d-flex flex-column justify-content-center text-center rounded h-100">
                                         <div className="service-icon-img mb-3">
-                                            <img src="img/pcb-design.jpg" alt="PCB Design" />
+                                            <img src="/img/pcb-design.jpg" alt="PCB Design" />
                                         </div>
                                         <h5 className="mb-3">PCB Design</h5>
                                         <p className="text-start">
@@ -194,7 +194,7 @@ const PcbDesign = () => {
                                 <div className="col-md-4 wow fadeIn" data-wow-delay="0.3s">
                                     <div className="service-item d-flex flex-column justify-content-center text-center rounded h-100">
                                         <div className="service-icon-img mb-3">
-                                            <img src="img/mechanical-design.jpg" alt="Mechanical Design" />
+                                            <img src="/img/mechanical-design.jpg" alt="Mechanical Design" />
                                         </div>
                                         <h5 className="mb-3">Mechanical & Enclosure Design</h5>
                                         <p className="text-start">
@@ -288,7 +288,7 @@ const PcbDesign = () => {
                                 {/* LEFT: Image */}
                                 <div className="col-md-7 text-center">
                                     <div className="process-image-wrapper">
-                                        <img src="img/flow-layout.png" alt="PCB Layout Process" className="img-fluid process-image" />
+                                        <img src="/img/flow-layout.png" alt="PCB Layout Process" className="img-fluid process-image" />
                                     </div>
                                 </div>
 
@@ -310,7 +310,7 @@ const PcbDesign = () => {
                             <div className="row g-4 align-items-center">
                                 <div className="col-md-7 text-center">
                                     <div className="process-image-wrapper">
-                                        <img src="img/flow-design.png" alt="PCB Design Process" className="img-fluid process-image" />
+                                        <img src="/img/flow-design.png" alt="PCB Design Process" className="img-fluid process-image" />
                                     </div>
                                 </div>
 
@@ -331,7 +331,7 @@ const PcbDesign = () => {
                             <div className="row g-4 align-items-center">
                                 <div className="col-md-7 text-center">
                                     <div className="process-image-wrapper">
-                                        <img src="img/flow-mechanical.png" alt="Mechanical/Enclosure Design Process" className="img-fluid process-image" />
+                                        <img src="/img/flow-mechanical.png" alt="Mechanical/Enclosure Design Process" className="img-fluid process-image" />
                                     </div>
                                 </div>
 

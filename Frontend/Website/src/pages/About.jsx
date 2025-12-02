@@ -55,7 +55,7 @@ const About = () => {
                     <div className="row g-5 align-items-center">
                         <div className="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                             <div className="about-img">
-                                <img className="img-fluid" src="img/about-img.jpg" alt='img' />
+                                <img className="img-fluid" src="/img/about-img.jpg" alt='img' />
                             </div>
                         </div>
                         <div className="col-lg-6 wow fadeIn" data-wow-delay="0.5s">

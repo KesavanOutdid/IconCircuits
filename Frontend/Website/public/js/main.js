@@ -18,10 +18,12 @@
 
     // Sticky Navbar
     $(window).scroll(function () {
-        if ($(this).scrollTop() > 300) {
-            $('.sticky-top').addClass('bg-primary shadow-sm').css('top', '0px');
-        } else {
-            $('.sticky-top').removeClass('bg-primary shadow-sm').css('top', '-150px');
+        if ($('.sticky-top').length > 0) {
+            if ($(this).scrollTop() > 300) {
+                $('.sticky-top').addClass('bg-primary shadow-sm').css('top', '0px');
+            } else {
+                $('.sticky-top').removeClass('bg-primary shadow-sm').css('top', '-150px');
+            }
         }
     });
 
@@ -34,32 +36,36 @@
     
     
     // Back to top button
-    $(window).scroll(function () {
-        if ($(this).scrollTop() > 100) {
-            $('.back-to-top').fadeIn('slow');
-        } else {
-            $('.back-to-top').fadeOut('slow');
-        }
-    });
-    $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
-        return false;
-    });
+    if ($('.back-to-top').length > 0) {
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 100) {
+                $('.back-to-top').fadeIn('slow');
+            } else {
+                $('.back-to-top').fadeOut('slow');
+            }
+        });
+        $('.back-to-top').click(function () {
+            $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+            return false;
+        });
+    }
 
 
     // Testimonials carousel
-    $(".testimonial-carousel").owlCarousel({
-        items: 1,
-        autoplay: true,
-        smartSpeed: 1000,
-        dots: true,
-        loop: true,
-        nav: true,
-        navText : [
-            '<i class="bi bi-chevron-left"></i>',
-            '<i class="bi bi-chevron-right"></i>'
-        ]
-    });
+    if ($(".testimonial-carousel").length > 0) {
+        $(".testimonial-carousel").owlCarousel({
+            items: 1,
+            autoplay: true,
+            smartSpeed: 1000,
+            dots: true,
+            loop: true,
+            nav: true,
+            navText : [
+                '<i class="bi bi-chevron-left"></i>',
+                '<i class="bi bi-chevron-right"></i>'
+            ]
+        });
+    }
     
 })(jQuery);
 
