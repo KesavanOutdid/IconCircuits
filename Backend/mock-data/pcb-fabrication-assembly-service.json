@@ -1,0 +1,899 @@
+{
+  "name": "PCB Fabrication & Assembly (Rigid)",
+  "code": "PCB_FAB_ASSEMBLY_RIGID",
+  "description": "Complete PCB fabrication and assembly service for rigid PCBs with automated panel processing",
+  "category": "Manufacturing",
+  "config_options": [
+    {
+      "type": "pcb_assembly",
+      "name": "PCB Assembly",
+      "value": "yes",
+      "displayName": "With Assembly",
+      "unit": null,
+      "priceModifier": 1.5,
+      "status": true
+    },
+    {
+      "type": "pcb_assembly",
+      "name": "PCB Assembly",
+      "value": "no",
+      "displayName": "Without Assembly",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "dispatch_unit",
+      "name": "Dispatch Unit",
+      "value": "single_board",
+      "displayName": "Single Board",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "dispatch_unit",
+      "name": "Dispatch Unit",
+      "value": "panel",
+      "displayName": "Panel (Recommended for Assembly)",
+      "unit": null,
+      "priceModifier": 0.95,
+      "status": true
+    },
+    {
+      "type": "panel_by",
+      "name": "Panel By",
+      "value": "customer",
+      "displayName": "Customer Panelization",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "panel_by",
+      "name": "Panel By",
+      "value": "pcb_power",
+      "displayName": "PCB Power Panelization",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "order_quantity_unit",
+      "name": "Order Quantity Unit",
+      "value": "pcb",
+      "displayName": "PCB",
+      "unit": "pcs",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "order_quantity_unit",
+      "name": "Order Quantity Unit",
+      "value": "panel",
+      "displayName": "Panel",
+      "unit": "panels",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "board_separation",
+      "name": "Board Separation",
+      "value": "break_routing",
+      "displayName": "Break Routing",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "board_separation",
+      "name": "Board Separation",
+      "value": "v_cut",
+      "displayName": "V-Cut",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "distance_between_pcbs",
+      "name": "Distance between PCBs",
+      "value": "0",
+      "displayName": "0 mm",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "distance_between_pcbs",
+      "name": "Distance between PCBs",
+      "value": "5",
+      "displayName": "0.197\"/5mm",
+      "unit": "mm",
+      "priceModifier": 1.02,
+      "status": true
+    },
+    {
+      "type": "distance_between_pcbs",
+      "name": "Distance between PCBs",
+      "value": "10",
+      "displayName": "0.394\"/10mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "panel_border",
+      "name": "Panel Border",
+      "value": "5",
+      "displayName": "0.197\"/5mm",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "panel_border",
+      "name": "Panel Border",
+      "value": "7",
+      "displayName": "0.275\"/7mm",
+      "unit": "mm",
+      "priceModifier": 1.02,
+      "status": true
+    },
+    {
+      "type": "panel_border",
+      "name": "Panel Border",
+      "value": "10",
+      "displayName": "0.394\"/10mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "FR-4",
+      "value": "fr4",
+      "displayName": "FR-4 Standard",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "FR-4 TG150",
+      "value": "fr4_tg150",
+      "displayName": "FR-4 TG150",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "FR-4 TG170",
+      "value": "fr4_tg170",
+      "displayName": "FR-4 TG170 High Temperature",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "Rogers",
+      "value": "rogers",
+      "displayName": "Rogers High Frequency",
+      "unit": null,
+      "priceModifier": 2.5,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "1 Layer",
+      "value": "1",
+      "displayName": "1 Layer (Single Sided)",
+      "unit": "layers",
+      "priceModifier": 0.6,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "2 Layer",
+      "value": "2",
+      "displayName": "2 Layer (Double Sided)",
+      "unit": "layers",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "4 Layer",
+      "value": "4",
+      "displayName": "4 Layer",
+      "unit": "layers",
+      "priceModifier": 1.8,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "6 Layer",
+      "value": "6",
+      "displayName": "6 Layer",
+      "unit": "layers",
+      "priceModifier": 2.5,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "8 Layer",
+      "value": "8",
+      "displayName": "8 Layer",
+      "unit": "layers",
+      "priceModifier": 3.5,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "10 Layer",
+      "value": "10",
+      "displayName": "10 Layer",
+      "unit": "layers",
+      "priceModifier": 4.5,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "0.4mm",
+      "value": "0.4",
+      "displayName": "0.4mm",
+      "unit": "mm",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "0.6mm",
+      "value": "0.6",
+      "displayName": "0.6mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "0.8mm",
+      "value": "0.8",
+      "displayName": "0.8mm",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "1.0mm",
+      "value": "1.0",
+      "displayName": "1.0mm",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "1.2mm",
+      "value": "1.2",
+      "displayName": "1.2mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "1.6mm",
+      "value": "1.6",
+      "displayName": "1.6mm (Standard)",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "board_thickness",
+      "name": "2.0mm",
+      "value": "2.0",
+      "displayName": "2.0mm",
+      "unit": "mm",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "HASL Lead Free",
+      "value": "hasl_lead_free",
+      "displayName": "HASL Lead Free",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "HASL Leaded",
+      "value": "hasl_leaded",
+      "displayName": "HASL Leaded",
+      "unit": null,
+      "priceModifier": 0.95,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "ENIG",
+      "value": "enig",
+      "displayName": "ENIG (Gold)",
+      "unit": null,
+      "priceModifier": 1.4,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "OSP",
+      "value": "osp",
+      "displayName": "OSP (Organic Solderability Preservative)",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "Immersion Silver",
+      "value": "immersion_silver",
+      "displayName": "Immersion Silver",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "Immersion Tin",
+      "value": "immersion_tin",
+      "displayName": "Immersion Tin",
+      "unit": null,
+      "priceModifier": 1.25,
+      "status": true
+    },
+    {
+      "type": "temperature_gradient",
+      "name": "Standard Tg",
+      "value": "std_tg",
+      "displayName": "Std. Tg (130-140°C)",
+      "unit": "°C",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "temperature_gradient",
+      "name": "Middle Tg",
+      "value": "middle_tg",
+      "displayName": "Middle Tg (150°C)",
+      "unit": "°C",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "temperature_gradient",
+      "name": "High Tg",
+      "value": "high_tg",
+      "displayName": "High Tg (≥170°C)",
+      "unit": "°C",
+      "priceModifier": 1.25,
+      "status": true
+    },
+    {
+      "type": "finish_cu_thickness",
+      "name": "1oz",
+      "value": "35",
+      "displayName": "35.00µ/1oz",
+      "unit": "µ",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "finish_cu_thickness",
+      "name": "2oz",
+      "value": "70",
+      "displayName": "70.00µ/2oz",
+      "unit": "µ",
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "finish_cu_thickness",
+      "name": "3oz",
+      "value": "90",
+      "displayName": "90.00µ/3oz",
+      "unit": "µ",
+      "priceModifier": 1.35,
+      "status": true
+    },
+    {
+      "type": "finish_cu_thickness",
+      "name": "4oz",
+      "value": "130",
+      "displayName": "130.00µ/4oz",
+      "unit": "µ",
+      "priceModifier": 1.6,
+      "status": true
+    },
+    {
+      "type": "inner_cu_thickness",
+      "name": "No Inner Layer",
+      "value": "0",
+      "displayName": "0 (No Inner Layer)",
+      "unit": "µ",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "inner_cu_thickness",
+      "name": "0.5oz",
+      "value": "17.5",
+      "displayName": "17.5µ/0.5oz",
+      "unit": "µ",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "inner_cu_thickness",
+      "name": "1oz",
+      "value": "35",
+      "displayName": "35.00µ/1oz",
+      "unit": "µ",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "solder_mask_top",
+      "name": "Green",
+      "value": "green",
+      "displayName": "Green",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "solder_mask_top",
+      "name": "Red",
+      "value": "red",
+      "displayName": "Red",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "solder_mask_top",
+      "name": "Blue",
+      "value": "blue",
+      "displayName": "Blue",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "solder_mask_top",
+      "name": "Black",
+      "value": "black",
+      "displayName": "Black",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "solder_mask_top",
+      "name": "White",
+      "value": "white",
+      "displayName": "White",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "solder_mask_top",
+      "name": "Yellow",
+      "value": "yellow",
+      "displayName": "Yellow",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "solder_mask_bottom",
+      "name": "Green",
+      "value": "green",
+      "displayName": "Green",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "solder_mask_bottom",
+      "name": "Red",
+      "value": "red",
+      "displayName": "Red",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "solder_mask_bottom",
+      "name": "Blue",
+      "value": "blue",
+      "displayName": "Blue",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "solder_mask_bottom",
+      "name": "Black",
+      "value": "black",
+      "displayName": "Black",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "solder_mask_bottom",
+      "name": "White",
+      "value": "white",
+      "displayName": "White",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "solder_mask_bottom",
+      "name": "Yellow",
+      "value": "yellow",
+      "displayName": "Yellow",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "legend_top",
+      "name": "No Legend",
+      "value": "no_legend",
+      "displayName": "No Legend",
+      "unit": null,
+      "priceModifier": 0.95,
+      "status": true
+    },
+    {
+      "type": "legend_top",
+      "name": "White",
+      "value": "white",
+      "displayName": "White",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "legend_top",
+      "name": "Black",
+      "value": "black",
+      "displayName": "Black",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "legend_bottom",
+      "name": "No Legend",
+      "value": "no_legend",
+      "displayName": "No Legend",
+      "unit": null,
+      "priceModifier": 0.95,
+      "status": true
+    },
+    {
+      "type": "legend_bottom",
+      "name": "White",
+      "value": "white",
+      "displayName": "White",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "legend_bottom",
+      "name": "Black",
+      "value": "black",
+      "displayName": "Black",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "peel_off",
+      "name": "No Peel Off",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "peel_off",
+      "name": "Bottom Side",
+      "value": "bottom",
+      "displayName": "Bottom Side",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "peel_off",
+      "name": "Top Side",
+      "value": "top",
+      "displayName": "Top Side",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "peel_off",
+      "name": "Both Side",
+      "value": "both",
+      "displayName": "Both Side",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "counter_sunk",
+      "name": "No Counter Sunk",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "counter_sunk",
+      "name": "PTH Countersunk",
+      "value": "pth",
+      "displayName": "PTH Countersunk",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "counter_sunk",
+      "name": "NPTH Countersunk",
+      "value": "npth",
+      "displayName": "NPTH Countersunk",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "impedance_control",
+      "name": "No Impedance Control",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "impedance_control",
+      "name": "Impedance Control",
+      "value": "yes",
+      "displayName": "Yes (50Ω, 75Ω, 90Ω, 100Ω)",
+      "unit": null,
+      "priceModifier": 1.25,
+      "status": true
+    },
+    {
+      "type": "via_fill",
+      "name": "No Via Fill",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "via_fill",
+      "name": "Via Fill",
+      "value": "yes",
+      "displayName": "Yes (Resin Filled)",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "component_sourcing",
+      "name": "Turnkey",
+      "value": "turnkey",
+      "displayName": "Turnkey (PCB Power supply parts)",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "component_sourcing",
+      "name": "Combo",
+      "value": "combo",
+      "displayName": "Combo (You supply some parts, we do the rest)",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "component_sourcing",
+      "name": "Consigned",
+      "value": "consigned",
+      "displayName": "Consigned (You supply parts)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "conformal_coating",
+      "name": "No Conformal Coating",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "conformal_coating",
+      "name": "Conformal Coating",
+      "value": "yes",
+      "displayName": "Yes (Protective Coating)",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "depaneling",
+      "name": "No Depaneling",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "depaneling",
+      "name": "Depaneling",
+      "value": "yes",
+      "displayName": "Yes (Separate individual boards)",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "ruleName": "Base PCB Fabrication - 2 Layer",
+      "conditions": {
+        "layer": "2",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 500,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 5000) + (quantity * 50)",
+      "status": true
+    },
+    {
+      "ruleName": "Base PCB Fabrication - 4 Layer",
+      "conditions": {
+        "layer": "4",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 900,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 9000) + (quantity * 90)",
+      "status": true
+    },
+    {
+      "ruleName": "PCB Assembly - SMD Components",
+      "conditions": {
+        "assembly": "yes",
+        "smd_components": ">0"
+      },
+      "basePrice": 300,
+      "calculationType": "formula",
+      "formula": "basePrice + (smd_components * 0.5 * quantity)",
+      "status": true
+    },
+    {
+      "ruleName": "PCB Assembly - Through Hole Components",
+      "conditions": {
+        "assembly": "yes",
+        "through_hole_components": ">0"
+      },
+      "basePrice": 200,
+      "calculationType": "formula",
+      "formula": "basePrice + (through_hole_components * 1.5 * quantity)",
+      "status": true
+    },
+    {
+      "ruleName": "PCB Assembly - BGA/QFN Components",
+      "conditions": {
+        "assembly": "yes",
+        "bga_qfn_components": ">0"
+      },
+      "basePrice": 400,
+      "calculationType": "formula",
+      "formula": "basePrice + (bga_qfn_components * 3 * quantity)",
+      "status": true
+    },
+    {
+      "ruleName": "Component Sourcing - Turnkey",
+      "conditions": {
+        "component_sourcing": "turnkey"
+      },
+      "basePrice": 500,
+      "calculationType": "percentage",
+      "formula": "component_cost * 1.15",
+      "status": true
+    },
+    {
+      "ruleName": "Setup Charges - One Time",
+      "conditions": {
+        "first_order": true
+      },
+      "basePrice": 500,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Panelization Service",
+      "conditions": {
+        "panel_by": "pcb_power"
+      },
+      "basePrice": 200,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    }
+  ],
+  "lead_times": [
+    {
+      "name": "Express - 3 Working Days",
+      "days": 3,
+      "priceMultiplier": 1.8,
+      "displayText": "3 WD (Express)",
+      "status": true
+    },
+    {
+      "name": "Fast - 5 Working Days",
+      "days": 5,
+      "priceMultiplier": 1.4,
+      "displayText": "5 WD (Fast)",
+      "status": true
+    },
+    {
+      "name": "Standard - 7 Working Days",
+      "days": 7,
+      "priceMultiplier": 1.0,
+      "displayText": "7 WD (Standard)",
+      "status": true
+    },
+    {
+      "name": "Economy - 10 Working Days",
+      "days": 10,
+      "priceMultiplier": 0.85,
+      "displayText": "10 WD (Economy)",
+      "status": true
+    },
+    {
+      "name": "Budget - 15 Working Days",
+      "days": 15,
+      "priceMultiplier": 0.7,
+      "displayText": "15 WD (Budget)",
+      "status": true
+    }
+  ]
+}

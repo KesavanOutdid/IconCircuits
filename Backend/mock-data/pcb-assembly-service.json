@@ -1,0 +1,277 @@
+{
+  "name": "PCB Assembly (SMT)",
+  "code": "PCB_ASM_SMT",
+  "description": "Surface Mount Technology PCB assembly service for automated component placement",
+  "category": "Assembly",
+  "config_options": [
+    {
+      "type": "assembly_side",
+      "name": "Single Side",
+      "value": "single_side",
+      "displayName": "Single Side Assembly",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "assembly_side",
+      "name": "Double Side",
+      "value": "double_side",
+      "displayName": "Double Side Assembly",
+      "unit": null,
+      "priceModifier": 1.8,
+      "status": true
+    },
+    {
+      "type": "component_count",
+      "name": "1-50 Components",
+      "value": "1-50",
+      "displayName": "1-50 Components",
+      "unit": "pcs",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "component_count",
+      "name": "51-100 Components",
+      "value": "51-100",
+      "displayName": "51-100 Components",
+      "unit": "pcs",
+      "priceModifier": 1.4,
+      "status": true
+    },
+    {
+      "type": "component_count",
+      "name": "101-200 Components",
+      "value": "101-200",
+      "displayName": "101-200 Components",
+      "unit": "pcs",
+      "priceModifier": 1.8,
+      "status": true
+    },
+    {
+      "type": "component_count",
+      "name": "200+ Components",
+      "value": "200+",
+      "displayName": "200+ Components",
+      "unit": "pcs",
+      "priceModifier": 2.2,
+      "status": true
+    },
+    {
+      "type": "component_sourcing",
+      "name": "Customer Provided",
+      "value": "customer_provided",
+      "displayName": "Customer Provided Components",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "component_sourcing",
+      "name": "Turnkey",
+      "value": "turnkey",
+      "displayName": "Turnkey (We Source)",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "component_sourcing",
+      "name": "Consigned",
+      "value": "consigned",
+      "displayName": "Consigned (Partial Sourcing)",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "smt_type",
+      "name": "Standard SMT",
+      "value": "standard",
+      "displayName": "Standard SMT (0402+)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "smt_type",
+      "name": "Fine Pitch",
+      "value": "fine_pitch",
+      "displayName": "Fine Pitch (0201, QFN)",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "smt_type",
+      "name": "BGA",
+      "value": "bga",
+      "displayName": "BGA Assembly",
+      "unit": null,
+      "priceModifier": 1.5,
+      "status": true
+    },
+    {
+      "type": "testing",
+      "name": "Visual Inspection",
+      "value": "visual",
+      "displayName": "Visual Inspection Only",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "testing",
+      "name": "AOI",
+      "value": "aoi",
+      "displayName": "AOI (Automated Optical)",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "testing",
+      "name": "X-Ray",
+      "value": "xray",
+      "displayName": "X-Ray Inspection",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "testing",
+      "name": "Functional Test",
+      "value": "functional",
+      "displayName": "Functional Testing",
+      "unit": null,
+      "priceModifier": 1.5,
+      "status": true
+    },
+    {
+      "type": "conformal_coating",
+      "name": "None",
+      "value": "none",
+      "displayName": "No Coating",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "conformal_coating",
+      "name": "Acrylic",
+      "value": "acrylic",
+      "displayName": "Acrylic Coating",
+      "unit": null,
+      "priceModifier": 1.12,
+      "status": true
+    },
+    {
+      "type": "conformal_coating",
+      "name": "Silicone",
+      "value": "silicone",
+      "displayName": "Silicone Coating",
+      "unit": null,
+      "priceModifier": 1.18,
+      "status": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "ruleName": "Base Assembly - Single Side Standard",
+      "conditions": {
+        "assembly_side": "single_side",
+        "smt_type": "standard",
+        "component_count": "1-50",
+        "quantity": "<=10"
+      },
+      "basePrice": 1200,
+      "calculationType": "formula",
+      "formula": "basePrice + (quantity * 120)",
+      "status": true
+    },
+    {
+      "ruleName": "Base Assembly - Double Side Standard",
+      "conditions": {
+        "assembly_side": "double_side",
+        "smt_type": "standard",
+        "component_count": "1-50",
+        "quantity": "<=10"
+      },
+      "basePrice": 2000,
+      "calculationType": "formula",
+      "formula": "basePrice + (quantity * 200)",
+      "status": true
+    },
+    {
+      "ruleName": "Fine Pitch Assembly Surcharge",
+      "conditions": {
+        "smt_type": "fine_pitch"
+      },
+      "basePrice": 500,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "BGA Assembly Surcharge",
+      "conditions": {
+        "smt_type": "bga"
+      },
+      "basePrice": 800,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Component Sourcing Fee - Turnkey",
+      "conditions": {
+        "component_sourcing": "turnkey"
+      },
+      "basePrice": 600,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Volume Discount - High Quantity",
+      "conditions": {
+        "quantity": ">100"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage_discount",
+      "formula": "15",
+      "status": true
+    }
+  ],
+  "lead_times": [
+    {
+      "name": "Rush - 5 Working Days",
+      "days": 5,
+      "priceMultiplier": 1.8,
+      "displayText": "5 WD (Rush)",
+      "status": true
+    },
+    {
+      "name": "Express - 7 Working Days",
+      "days": 7,
+      "priceMultiplier": 1.4,
+      "displayText": "7 WD (Express)",
+      "status": true
+    },
+    {
+      "name": "Standard - 10 Working Days",
+      "days": 10,
+      "priceMultiplier": 1.0,
+      "displayText": "10 WD (Standard)",
+      "status": true
+    },
+    {
+      "name": "Economy - 15 Working Days",
+      "days": 15,
+      "priceMultiplier": 0.85,
+      "displayText": "15 WD (Economy)",
+      "status": true
+    }
+  ]
+}

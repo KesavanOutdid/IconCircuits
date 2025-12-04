@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const url = 'mongodb+srv://outdid:outdid@cluster0.t16a63a.mongodb.net/';
+const url = 'mongodb+srv://zdart2026:ibzPcNPmJ71uFhnw@cluster0.dryjxuy.mongodb.net/';
 const dbName = 'iconcircuits'; //For Testing
 
 let client;

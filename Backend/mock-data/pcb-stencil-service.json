@@ -1,0 +1,204 @@
+{
+  "name": "PCB Stencil",
+  "code": "PCB_STENCIL",
+  "description": "Precision PCB stencils for SMT assembly, framed and frameless options available",
+  "category": "Manufacturing",
+  "config_options": [
+    {
+      "type": "stencil_side",
+      "name": "Top Side",
+      "value": "top",
+      "displayName": "Top",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "stencil_side",
+      "name": "Bottom Side",
+      "value": "bottom",
+      "displayName": "Bottom",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "stencil_side",
+      "name": "Top & Bottom",
+      "value": "top_bottom",
+      "displayName": "Top & Bottom",
+      "unit": null,
+      "priceModifier": 2.0,
+      "status": true
+    },
+    {
+      "type": "stencil_printer",
+      "name": "Other Printer",
+      "value": "other",
+      "displayName": "Other",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "stencil_printer",
+      "name": "PCB Power Printer",
+      "value": "pcb_power",
+      "displayName": "PCB Power",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "stencil_type",
+      "name": "Framed",
+      "value": "framed",
+      "displayName": "Framed (Standard)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "stencil_type",
+      "name": "Frameless",
+      "value": "frameless",
+      "displayName": "Frameless",
+      "unit": null,
+      "priceModifier": 0.8,
+      "status": true
+    },
+    {
+      "type": "thickness",
+      "name": "4 mil",
+      "value": "4",
+      "displayName": "4 mil (0.1mm)",
+      "unit": "mil",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "thickness",
+      "name": "5 mil",
+      "value": "5",
+      "displayName": "5 mil (0.127mm)",
+      "unit": "mil",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "thickness",
+      "name": "6 mil",
+      "value": "6",
+      "displayName": "6 mil (0.15mm)",
+      "unit": "mil",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "thickness",
+      "name": "8 mil",
+      "value": "8",
+      "displayName": "8 mil (0.2mm)",
+      "unit": "mil",
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "data_approval",
+      "name": "No Approval",
+      "value": "no",
+      "displayName": "No",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "data_approval",
+      "name": "With Approval",
+      "value": "yes",
+      "displayName": "Yes (Review before production)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "ruleName": "Base Stencil - Framed Single Side",
+      "conditions": {
+        "stencil_type": "framed",
+        "stencil_side": "top",
+        "thickness": "4"
+      },
+      "basePrice": 1977,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Base Stencil - Framed Double Side",
+      "conditions": {
+        "stencil_type": "framed",
+        "stencil_side": "top_bottom",
+        "thickness": "4"
+      },
+      "basePrice": 3954,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Frameless Discount",
+      "conditions": {
+        "stencil_type": "frameless"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage",
+      "formula": "basePrice * 0.8",
+      "status": true
+    },
+    {
+      "ruleName": "Thickness Surcharge - 6 mil",
+      "conditions": {
+        "thickness": "6"
+      },
+      "basePrice": 200,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Thickness Surcharge - 8 mil",
+      "conditions": {
+        "thickness": "8"
+      },
+      "basePrice": 300,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    }
+  ],
+  "lead_times": [
+    {
+      "name": "Express - 3 Working Days",
+      "days": 3,
+      "priceMultiplier": 1.5,
+      "displayText": "3 WD (Express)",
+      "status": true
+    },
+    {
+      "name": "Standard - 5 Working Days",
+      "days": 5,
+      "priceMultiplier": 1.0,
+      "displayText": "5 WD (Standard)",
+      "status": true
+    },
+    {
+      "name": "Economy - 7 Working Days",
+      "days": 7,
+      "priceMultiplier": 0.85,
+      "displayText": "7 WD (Economy)",
+      "status": true
+    }
+  ]
+}

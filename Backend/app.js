@@ -1,14 +1,16 @@
 // Load environment variables from .env file
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({ quiet: true });
 
 // Core Modules and Dependencies
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
+const { v4: uuidv4 } = require('uuid');
 const logger = require('./middlewares/requestLogger');
 const { connectToDatabase } = require('./config/db');
+const { setupSwagger } = require('./config/swagger');
 
 // Import Routes
 const adminRoutes = require('./routes/admin/adminRoutes');
@@ -20,21 +22,32 @@ const ensureInitialData = async (db) => {
     const rolesCollection = db.collection('roles');
     const usersCollection = db.collection('users');
 
+    console.log('Initializing default data...');
+
     const roles = [
-        { role_id: 1, name: 'Superadmin' },
-        { role_id: 2, name: 'Enduser' },
+        { name: 'Superadmin' },
+        { name: 'Enduser' },
     ];
 
+    const roleIds = {};
+
     for (const role of roles) {
-        const existingRole = await rolesCollection.findOne({ role_id: role.role_id });
+        const existingRole = await rolesCollection.findOne({ name: { $regex: `^${role.name}$`, $options: 'i' } });
         if (!existingRole) {
+            const roleId = uuidv4();
             const timestamp = new Date();
             await rolesCollection.insertOne({
-                role_id: role.role_id,
+                role_id: roleId,
                 name: role.name,
+                status: true,
                 createdAt: timestamp,
                 updatedAt: timestamp,
             });
+            roleIds[role.name] = roleId;
+            console.log(`✓ Role created: ${role.name} (ID: ${roleId})`);
+        } else {
+            roleIds[role.name] = existingRole.role_id;
+            console.log(`✓ Role already exists: ${role.name} (ID: ${existingRole.role_id})`);
         }
     }
 
@@ -43,44 +56,56 @@ const ensureInitialData = async (db) => {
     const adminExists = await usersCollection.findOne({ email: normalizedEmail });
 
     if (!adminExists) {
-        const latestUser = await usersCollection.find().sort({ userId: -1 }).limit(1).toArray();
-        const nextUserId = latestUser.length ? (Number(latestUser[0].userId) || 0) + 1 : 1;
+        const userId = uuidv4();
         const timestamp = new Date();
         await usersCollection.insertOne({
-            userId: nextUserId,
+            userId: userId,
             name: 'Default Admin',
             email: normalizedEmail,
             password: '1234',
-            roleId: 1,
+            roleId: roleIds['Superadmin'],
             phone: null,
+            status: true,
             createdAt: timestamp,
             updatedAt: timestamp,
         });
+        console.log(`✓ Admin user created: ${normalizedEmail} (userId: ${userId})`);
+        console.log(`  Password: 1234 (Change this after first login!)`);
+    } else {
+        console.log(`✓ Admin user already exists: ${normalizedEmail} (userId: ${adminExists.userId})`);
     }
+
+    console.log('Initial data setup complete!\n');
 };
 
 // Initialize Express App
 const app = express();
 
-// Middleware: Secure HTTP Headers
-app.use(helmet());
+// Middleware: CORS - Allow all origins (must be before other middleware)
+app.use(cors());
 
-// Middleware: CORS - Allow all origins (can be restricted later)
-app.use(cors({
-    origin: '*',
-    methods: 'GET,POST,PUT,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true,
-}));
+// Middleware: Secure HTTP Headers (skip for Swagger docs)
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api-docs')) {
+        return next();
+    }
+    helmet({
+        contentSecurityPolicy: false,
+    })(req, res, next);
+});
 
-// Middleware: Parse incoming JSON
+// Middleware: Parse incoming JSON and URL-encoded data
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Logger Middleware for Incoming Requests
 app.use((req, res, next) => {
     console.log(`${req.method} request for '${req.url}'`);
     next();
 });
+
+// Swagger API Documentation
+setupSwagger(app);
 
 // Routes
 app.use('/api/admin', adminRoutes);
@@ -90,6 +115,7 @@ app.use('/api/website', websiteRoutes);
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({
+        success: false,
         message: 'An error occurred, please try again later.',
     });
 });
@@ -111,9 +137,21 @@ const startApplication = async () => {
             process.exit(0);
         }
 
-        httpServer.listen(HTTP_PORT, () => {
+        httpServer.listen(HTTP_PORT, '0.0.0.0', () => {
             const logMessage = `HTTP Server listening on port ${HTTP_PORT}`;
             console.log(logMessage);
+            console.log(`Swagger UI: http://localhost:${HTTP_PORT}/api-docs`);
+            
+            const os = require('os');
+            const interfaces = os.networkInterfaces();
+            for (const name of Object.keys(interfaces)) {
+                for (const iface of interfaces[name]) {
+                    if (iface.family === 'IPv4' && !iface.internal) {
+                        console.log(`Network Access: http://${iface.address}:${HTTP_PORT}/api-docs`);
+                    }
+                }
+            }
+            
             logger.info(logMessage);
         });
     } catch (err) {
