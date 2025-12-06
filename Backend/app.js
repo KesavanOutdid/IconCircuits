@@ -84,9 +84,9 @@ const app = express();
 // Middleware: CORS - Allow all origins (must be before other middleware)
 app.use(cors());
 
-// Middleware: Secure HTTP Headers (skip for Swagger docs)
+// Middleware: Secure HTTP Headers (skip for Swagger docs and file serving)
 app.use((req, res, next) => {
-    if (req.path.startsWith('/api-docs')) {
+    if (req.path.startsWith('/api-docs') || req.path.includes('/cart/file')) {
         return next();
     }
     helmet({
@@ -97,6 +97,9 @@ app.use((req, res, next) => {
 // Middleware: Parse incoming JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware: Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Logger Middleware for Incoming Requests
 app.use((req, res, next) => {

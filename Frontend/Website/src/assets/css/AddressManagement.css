@@ -1,0 +1,390 @@
+.address-management-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #fcb535;
+}
+
+.section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #10304e;
+    margin: 0;
+}
+
+.btn-add-address {
+    padding: 10px 20px;
+    background: #10304e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-address:hover {
+    background: #0d2439;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 48, 78, 0.3);
+}
+
+.address-form-card {
+    background: #f8f9fa;
+    border: 1px solid #fcb535;
+    border-left: 4px solid #fcb535;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    animation: slideInDown 0.4s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.address-form-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #10304e;
+    margin: 0 0 25px 0;
+}
+
+.form-group-row {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #fcb535;
+}
+
+.checkbox-label:hover {
+    color: #10304e;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-group label .required {
+    color: #d9534f;
+    font-weight: 700;
+}
+
+.form-control {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #10304e;
+    box-shadow: 0 0 0 3px rgba(16, 48, 78, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    /* margin-bottom: 20px; */
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-cancel,
+.btn-save {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancel {
+    background: #e9ecef;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #dee2e6;
+}
+
+.btn-save {
+    background: #10304e;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #0d2439;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 48, 78, 0.3);
+}
+
+.btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #b0b5ba;
+}
+
+.addresses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.address-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.address-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: #fcb535;
+    transform: translateY(-4px);
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    /* margin-bottom: 20px; */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.address-header h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #10304e;
+    margin: 0;
+}
+
+.address-types {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-delivery {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-invoice {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.address-details {
+    margin-bottom: 20px;
+}
+
+.address-details p {
+    margin: 8px 0;
+    color: #666;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.address-details i {
+    color: #fcb535;
+    min-width: 16px;
+}
+
+.address-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit,
+.btn-delete {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.btn-edit {
+    background: #10304e;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #0d2439;
+    transform: translateY(-2px);
+}
+
+.btn-delete {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.btn-delete:hover {
+    background: #f5c6cb;
+    transform: translateY(-2px);
+}
+
+.no-addresses {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.no-addresses i {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.no-addresses p {
+    font-size: 16px;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        margin-bottom: 20px;
+    }
+
+    .form-group-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .btn-add-address {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        justify-content: stretch;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .address-card {
+        grid-column: 1 / -1;
+    }
+
+    .address-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .address-types {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        flex: 1;
+    }
+}

@@ -271,4 +271,128 @@ router.delete('/removecart/:cartId', authMiddleware, removeFromCart);
  */
 router.delete('/clearcart', authMiddleware, clearCart);
 
+router.get('/health-check', (req, res) => {
+    res.json({ success: true, message: 'Cart endpoint is healthy' });
+});
+
+/**
+ * @swagger
+ * /api/website/cart/file:
+ *   get:
+ *     summary: Get uploaded file
+ *     tags: [Website - Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: filename
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Filename to retrieve
+ *     responses:
+ *       200:
+ *         description: File served successfully
+ *       404:
+ *         description: File not found
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/file', (req, res, next) => {
+    const jwt = require('jsonwebtoken');
+    const token = req.headers.authorization?.split(' ')[1] || req.query.token;
+    
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.userId || decoded.id;
+        req.userObjectId = decoded.id;
+        req.roleId = decoded.roleId;
+        req.userEmail = decoded.email;
+        next();
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+}, (req, res) => {
+    try {
+        const { filename } = req.query;
+        
+        if (!filename) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'filename query parameter is required' 
+            });
+        }
+
+        const fs = require('fs');
+        const path = require('path');
+        
+        console.log('File request - filename:', filename);
+        
+        const uploadsDir = path.join(__dirname, '../../uploads/service-requests');
+        const filePath = path.join(uploadsDir, filename);
+
+        console.log('File request - uploadsDir:', uploadsDir);
+        console.log('File request - filePath:', filePath);
+
+        if (!filePath.startsWith(uploadsDir)) {
+            console.log('File request - Invalid path (path traversal attempt)');
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid file path' 
+            });
+        }
+
+        if (!fs.existsSync(filePath)) {
+            console.log('File request - File not found:', filePath);
+            return res.status(404).json({ 
+                success: false, 
+                message: 'File not found: ' + filePath
+            });
+        }
+
+        const stats = fs.statSync(filePath);
+        const ext = path.extname(filePath).toLowerCase();
+        let contentType = 'application/octet-stream';
+
+        if (['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext)) {
+            contentType = `image/${ext.slice(1)}`;
+        } else if (ext === '.pdf') {
+            contentType = 'application/pdf';
+        }
+
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Disposition', 'inline; filename=' + filename);
+        res.setHeader('Content-Length', stats.size);
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('X-Frame-Options', 'ALLOWALL');
+        
+        const stream = fs.createReadStream(filePath);
+        
+        stream.on('error', (err) => {
+            console.error('Stream error:', err);
+            if (!res.headersSent) {
+                res.status(500).json({ success: false, message: 'Error reading file' });
+            }
+        });
+
+        stream.pipe(res);
+        console.log('File request - File sent successfully');
+    } catch (err) {
+        console.error('File endpoint error:', err);
+        if (!res.headersSent) {
+            res.status(500).json({ 
+                success: false, 
+                message: 'Internal server error',
+                error: err.message
+            });
+        }
+    }
+});
+
 module.exports = router;

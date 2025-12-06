@@ -6,6 +6,16 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ErrorBoundary from "./ErrorBoundary";
 
+window.addEventListener("error", (event) => {
+    if (event.message === "Script error.") {
+        event.preventDefault();
+    }
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+    event.preventDefault();
+});
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <BrowserRouter>

@@ -194,13 +194,13 @@ const login = async (req, res) => {
 const getProfile = async (req, res) => {
     try {
         const { userId } = req.query;
-        
+
         if (!userId) {
             return res.status(401).json({ success: false, message: 'Not authorized' });
         }
 
         const usersCollection = await getUsersCollection();
-        const user = await usersCollection.findOne({ userId: userId });
+        const user = await usersCollection.findOne({ userId: Number(userId) });
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });

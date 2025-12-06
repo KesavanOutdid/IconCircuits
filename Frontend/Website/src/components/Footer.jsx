@@ -41,16 +41,16 @@ const Footer = () => {
     return (
         <div>
             {/* Newsletter Start */}
-            <div className="container-fluid bg-primary newsletter py-5">
+            <div className="container-fluid bg-primary newsletter py-2">
                 <div className="container">
-                    <div className="row g-5 align-items-center">
-                        <div className="col-md-5 ps-lg-0 pt-5 pt-md-0 text-start">
-                            <img className="img-fluid" src="/img/newsletter.png" alt="" />
+                    <div className="row align-items-center">
+                        <div className="col-md-6 ps-lg-0 pt-5 pt-md-0 text-end">
+                            <img className="img-fluid" src="/img/newsletter.png" alt="" style={{maxWidth:'35%'}}/>
                         </div>
-                        <div className="col-md-7 py-5 newsletter-text">
+                        <div className="col-md-6  newsletter-text">
                             <div className="btn btn-sm border rounded-pill text-white px-3 mb-3">Newsletter</div>
                             <h1 className="text-white mb-4">Subscribe to Our Newsletter</h1>
-                            <div className="position-relative w-100 mt-3 mb-2">
+                            <div className="position-relative w-50 mt-3 mb-2">
                                 <input className="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="email"
                                     placeholder="Enter your email address" style={{ height: "48px" }}
                                     value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)} />
@@ -65,7 +65,7 @@ const Footer = () => {
             </div>
             {/* Newsletter End */}
             <div className="container-fluid bg-dark text-white footer pt-5">
-                <div className="container py-5">
+                <div className="container">
                     <div className="row g-5">
                         {/* Logo */}
                         <div className="col-md-6 col-lg-3">
