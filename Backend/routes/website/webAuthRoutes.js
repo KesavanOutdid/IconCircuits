@@ -263,9 +263,9 @@ router.post('/login', login);
  *         name: userId
  *         required: true
  *         schema:
- *           type: integer
- *         description: User ID to fetch profile for
- *         example: 1
+ *           type: string
+ *         description: User ID to fetch profile for (supports both numeric and UUID formats)
+ *         example: 3
  *     responses:
  *       200:
  *         description: Profile fetched successfully
@@ -286,7 +286,10 @@ router.post('/login', login);
  *                     _id:
  *                       type: string
  *                     userId:
- *                       type: integer
+ *                       oneOf:
+ *                         - type: integer
+ *                         - type: string
+ *                       description: User ID (can be numeric or UUID string)
  *                     name:
  *                       type: string
  *                     email:
@@ -336,7 +339,13 @@ router.get('/getprofile', authMiddleware, getProfile);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - userId
  *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID (supports both numeric and UUID formats)
+ *                 example: 3
  *               name:
  *                 type: string
  *                 description: Updated name
@@ -417,7 +426,10 @@ router.get('/getprofile', authMiddleware, getProfile);
  *                     _id:
  *                       type: string
  *                     userId:
- *                       type: integer
+ *                       oneOf:
+ *                         - type: integer
+ *                         - type: string
+ *                       description: User ID (can be numeric or UUID string)
  *                     name:
  *                       type: string
  *                     email:
@@ -433,7 +445,7 @@ router.get('/getprofile', authMiddleware, getProfile);
  *                       type: string
  *                       format: date-time
  *       400:
- *         description: Bad request - Email cannot be updated
+ *         description: Bad request - userId is required or email cannot be updated
  *         content:
  *           application/json:
  *             schema:
@@ -457,7 +469,7 @@ router.get('/getprofile', authMiddleware, getProfile);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put('/getprofile', authMiddleware, updateProfile);
+router.put('/updateprofile', authMiddleware, updateProfile);
 
 /**
  * @swagger

@@ -29,7 +29,8 @@ const createRole = async (req, res) => {
             return res.status(409).json({ success: false, message: 'Role already exists' });
         }
 
-        const roleId = uuidv4();
+        const lastRole = await rolesCollection.find({}).sort({ role_id: -1 }).limit(1).toArray();
+        const roleId = lastRole.length > 0 && typeof lastRole[0].role_id === 'number' ? lastRole[0].role_id + 1 : 1;
         const timestamp = new Date();
 
         const roleDocument = {
@@ -69,8 +70,13 @@ const getRole = async (req, res) => {
             return res.status(400).json({ success: false, message: 'roleId param is required' });
         }
 
+        const roleIdInt = parseInt(roleId, 10);
+        if (isNaN(roleIdInt)) {
+            return res.status(400).json({ success: false, message: 'Invalid roleId' });
+        }
+
         const rolesCollection = await getRolesCollection();
-        const role = await rolesCollection.findOne({ role_id: roleId });
+        const role = await rolesCollection.findOne({ role_id: roleIdInt });
 
         if (!role) {
             return res.status(404).json({ success: false, message: 'Role not found' });
@@ -123,8 +129,13 @@ const updateRole = async (req, res) => {
             return res.status(400).json({ success: false, message: 'roleId param is required' });
         }
 
+        const roleIdInt = parseInt(roleId, 10);
+        if (isNaN(roleIdInt)) {
+            return res.status(400).json({ success: false, message: 'Invalid roleId' });
+        }
+
         const rolesCollection = await getRolesCollection();
-        const role = await rolesCollection.findOne({ role_id: roleId });
+        const role = await rolesCollection.findOne({ role_id: roleIdInt });
 
         if (!role) {
             return res.status(404).json({ success: false, message: 'Role not found' });
@@ -141,7 +152,7 @@ const updateRole = async (req, res) => {
             if (normalizedName !== role.name) {
                 const existingRole = await rolesCollection.findOne({
                     name: { $regex: `^${normalizedName}$`, $options: 'i' },
-                    role_id: { $ne: roleId }
+                    role_id: { $ne: roleIdInt }
                 });
                 if (existingRole) {
                     return res.status(409).json({ success: false, message: 'Role name already exists' });
@@ -155,11 +166,11 @@ const updateRole = async (req, res) => {
         }
 
         await rolesCollection.updateOne(
-            { role_id: roleId },
+            { role_id: roleIdInt },
             { $set: updateData }
         );
 
-        const updatedRole = await rolesCollection.findOne({ role_id: roleId });
+        const updatedRole = await rolesCollection.findOne({ role_id: roleIdInt });
 
         return res.status(200).json({
             success: true,
@@ -210,7 +221,11 @@ const createUser = async (req, res) => {
         let roleDocument;
         
         if (roleId !== undefined) {
-            roleDocument = await rolesCollection.findOne({ role_id: roleId });
+            const roleIdInt = parseInt(roleId, 10);
+            if (isNaN(roleIdInt)) {
+                return res.status(400).json({ success: false, message: 'Invalid roleId' });
+            }
+            roleDocument = await rolesCollection.findOne({ role_id: roleIdInt });
         } else {
             roleDocument = await rolesCollection.findOne({ name: { $regex: '^user$', $options: 'i' } });
         }
@@ -227,7 +242,8 @@ const createUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cannot create user with deactivated role' });
         }
 
-        const userId = uuidv4();
+        const lastUser = await usersCollection.find({}).sort({ userId: -1 }).limit(1).toArray();
+        const userId = lastUser.length > 0 && typeof lastUser[0].userId === 'number' ? lastUser[0].userId + 1 : 1;
         const timestamp = new Date();
 
         const userDocument = {
@@ -422,8 +438,13 @@ const updateUser = async (req, res) => {
         }
 
         if (roleId !== undefined) {
+            const roleIdInt = parseInt(roleId, 10);
+            if (isNaN(roleIdInt)) {
+                return res.status(400).json({ success: false, message: 'Invalid roleId' });
+            }
+
             const rolesCollection = await getRolesCollection();
-            const roleDocument = await rolesCollection.findOne({ role_id: roleId });
+            const roleDocument = await rolesCollection.findOne({ role_id: roleIdInt });
 
             if (!roleDocument) {
                 return res.status(400).json({ success: false, message: 'Role not found' });

@@ -200,7 +200,9 @@ const getProfile = async (req, res) => {
         }
 
         const usersCollection = await getUsersCollection();
-        const user = await usersCollection.findOne({ userId: Number(userId) });
+        const numericUserId = Number(userId);
+        const searchCriteria = isNaN(numericUserId) ? { userId: userId } : { userId: numericUserId };
+        const user = await usersCollection.findOne(searchCriteria);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -219,11 +221,11 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { userObjectId, userEmail } = req;
-        const { name, phone, email, addresses, status, password } = req.body;
+        const { userEmail } = req;
+        const { userId, name, phone, email, addresses, status, password } = req.body;
 
-        if (!userObjectId) {
-            return res.status(401).json({ success: false, message: 'Not authorized' });
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'userId is required' });
         }
 
         if (addresses && !Array.isArray(addresses)) {
@@ -244,7 +246,9 @@ const updateProfile = async (req, res) => {
         }
 
         const usersCollection = await getUsersCollection();
-        const user = await usersCollection.findOne({ _id: new ObjectId(userObjectId) });
+        const numericUserId = Number(userId);
+        const searchCriteria = isNaN(numericUserId) ? { userId: userId } : { userId: numericUserId };
+        const user = await usersCollection.findOne(searchCriteria);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -292,12 +296,12 @@ const updateProfile = async (req, res) => {
         }
 
         await usersCollection.updateOne(
-            { _id: new ObjectId(userObjectId) },
+            searchCriteria,
             { $set: updateData }
         );
 
         const updatedUser = await usersCollection.findOne(
-            { _id: new ObjectId(userObjectId) },
+            searchCriteria,
             { projection: { password: 0 } }
         );
 

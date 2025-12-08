@@ -6,13 +6,22 @@ const {
     getService, 
     getServices, 
     updateService, 
-    deleteService,
-    getAllServiceRequests,
-    getServiceRequestByIdAdmin,
-    updateServiceRequestStatus,
-    markServiceRequestCompleted,
-    downloadRequestFile
+    deleteService
 } = require('../../controllers/admin/serviceControllers');
+const {
+    getAllOrders,
+    getOrderByIdAdmin,
+    // updateOrderStatus,
+    markOrderCompleted
+} = require('../../controllers/admin/ordersController');
+const {
+    getNewsletterSubscribers,
+    getContacts,
+    updateNewsletterStatus,
+    deleteNewsletterSubscriber,
+    updateContactStatus,
+    deleteContact
+} = require('../../controllers/admin/contactControllers');
 const authMiddleware = require('../../middleware/authMiddleware');
 const pagination = require('../../middleware/pagination');
 
@@ -29,8 +38,10 @@ const router = express.Router();
  *     description: User management endpoints
  *   - name: Admin - Services
  *     description: Unified service management with nested config options, pricing rules, and lead times
- *   - name: Admin - Service Requests
- *     description: Admin service request management endpoints
+ *   - name: Admin - Orders
+ *     description: Admin orders management endpoints
+ *   - name: Admin - Contacts
+ *     description: Newsletter subscribers and contact form submissions management
  */
 
 router.use('/auth', adminAuthRoutes);
@@ -851,6 +862,10 @@ router.put('/users/:userId', authMiddleware, updateUser);
  *                 type: string
  *               category:
  *                 type: string
+ *               base_price:
+ *                 type: number
+ *                 description: Base price for the service
+ *                 example: 100000
  *               status:
  *                 type: boolean
  *               config:
@@ -880,6 +895,7 @@ router.put('/users/:userId', authMiddleware, updateUser);
  *                 code: PCB_LAYOUT
  *                 description: Professional PCB layout design service
  *                 category: Design
+ *                 base_price: 100000
  *                 status: true
  *                 config:
  *                   layers:
@@ -1023,7 +1039,8 @@ router.get('/services', authMiddleware, pagination, getServices);
  *         name: serviceId
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *         description: Service ID (UUID)
  *     responses:
  *       200:
  *         description: Service retrieved successfully
@@ -1049,7 +1066,8 @@ router.get('/services/:serviceId', authMiddleware, getService);
  *         name: serviceId
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *         description: Service ID (UUID)
  *     requestBody:
  *       required: true
  *       content:
@@ -1063,6 +1081,10 @@ router.get('/services/:serviceId', authMiddleware, getService);
  *                 type: string
  *               category:
  *                 type: string
+ *               base_price:
+ *                 type: number
+ *                 description: Base price for the service
+ *                 example: 100000
  *               status:
  *                 type: boolean
  *               config:
@@ -1106,6 +1128,7 @@ router.get('/services/:serviceId', authMiddleware, getService);
  *                 name: PCB Layout Design Updated
  *                 description: Updated PCB layout service
  *                 category: Design
+ *                 base_price: 120000
  *                 status: true
  *                 config:
  *                   layers:
@@ -1172,7 +1195,8 @@ router.put('/services/:serviceId', authMiddleware, updateService);
  *         name: serviceId
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *         description: Service ID (UUID)
  *     responses:
  *       200:
  *         description: Service deleted successfully
@@ -1187,10 +1211,10 @@ router.delete('/services/:serviceId', authMiddleware, deleteService);
 
 /**
  * @swagger
- * /api/admin/service-requests:
+ * /api/admin/orders:
  *   get:
- *     summary: Get all service requests with pagination and filters
- *     tags: [Admin - Service Requests]
+ *     summary: Get all orders with pagination and filters
+ *     tags: [Admin - Orders]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -1210,8 +1234,8 @@ router.delete('/services/:serviceId', authMiddleware, deleteService);
  *         name: status
  *         schema:
  *           type: string
- *           enum: [pending, accepted, rejected, completed]
- *         description: Filter by request status
+ *           enum: [created, confirmed, processing, shipped, delivered, cancelled, completed]
+ *         description: Filter by order status
  *       - in: query
  *         name: userId
  *         schema:
@@ -1219,7 +1243,7 @@ router.delete('/services/:serviceId', authMiddleware, deleteService);
  *         description: Filter by user ID
  *     responses:
  *       200:
- *         description: Service requests fetched successfully
+ *         description: Orders fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -1230,34 +1254,45 @@ router.delete('/services/:serviceId', authMiddleware, deleteService);
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Service requests fetched successfully
+ *                   example: Orders fetched successfully
  *                 data:
  *                   type: object
  *                   properties:
- *                     serviceRequests:
+ *                     orders:
  *                       type: array
  *                       items:
  *                         type: object
  *                         properties:
  *                           _id:
  *                             type: string
- *                           requestId:
- *                             type: integer
+ *                           orderId:
+ *                             type: string
  *                           userId:
  *                             type: integer
- *                           userObjectId:
+ *                           userEmail:
  *                             type: string
- *                           serviceId:
- *                             type: integer
- *                           serviceName:
- *                             type: string
- *                           description:
- *                             type: string
- *                           details:
+ *                           userProfile:
  *                             type: object
- *                           status:
+ *                           cartItems:
+ *                             type: array
+ *                           shippingAddress:
+ *                             type: object
+ *                           cartSummary:
+ *                             type: object
+ *                           paymentType:
  *                             type: string
- *                             enum: [pending, accepted, rejected, completed]
+ *                           paymentStatus:
+ *                             type: string
+ *                             enum: [pending, completed, failed]
+ *                           orderStatus:
+ *                             type: string
+ *                             enum: [created, confirmed, processing, shipped, delivered, cancelled, completed]
+ *                           razorpayOrderId:
+ *                             type: string
+ *                           razorpayPaymentId:
+ *                             type: string
+ *                           razorpaySignature:
+ *                             type: string
  *                           adminResponse:
  *                             type: string
  *                           completedAt:
@@ -1306,26 +1341,26 @@ router.delete('/services/:serviceId', authMiddleware, deleteService);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/service-requests', authMiddleware, getAllServiceRequests);
+router.get('/orders', authMiddleware, getAllOrders);
 
 /**
  * @swagger
- * /api/admin/service-requests/{requestId}:
+ * /api/admin/orders/{orderId}:
  *   get:
- *     summary: Get a specific service request by ID (Admin view with user details)
- *     tags: [Admin - Service Requests]
+ *     summary: Get a specific order by ID (Admin view with user details)
+ *     tags: [Admin - Orders]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: requestId
+ *         name: orderId
  *         required: true
  *         schema:
- *           type: integer
- *         description: Service request ID
+ *           type: string
+ *         description: Order ID (UUID)
  *     responses:
  *       200:
- *         description: Service request fetched successfully
+ *         description: Order fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -1336,29 +1371,40 @@ router.get('/service-requests', authMiddleware, getAllServiceRequests);
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Service request fetched successfully
+ *                   example: Order fetched successfully
  *                 data:
  *                   type: object
  *                   properties:
  *                     _id:
  *                       type: string
- *                     requestId:
- *                       type: integer
+ *                     orderId:
+ *                       type: string
  *                     userId:
  *                       type: integer
- *                     userObjectId:
+ *                     userEmail:
  *                       type: string
- *                     serviceId:
- *                       type: integer
- *                     serviceName:
- *                       type: string
- *                     description:
- *                       type: string
- *                     details:
+ *                     userProfile:
  *                       type: object
- *                     status:
+ *                     cartItems:
+ *                       type: array
+ *                     shippingAddress:
+ *                       type: object
+ *                     cartSummary:
+ *                       type: object
+ *                     paymentType:
  *                       type: string
- *                       enum: [pending, accepted, rejected, completed]
+ *                     paymentStatus:
+ *                       type: string
+ *                       enum: [pending, completed, failed]
+ *                     orderStatus:
+ *                       type: string
+ *                       enum: [created, confirmed, processing, shipped, delivered, cancelled, completed]
+ *                     razorpayOrderId:
+ *                       type: string
+ *                     razorpayPaymentId:
+ *                       type: string
+ *                     razorpaySignature:
+ *                       type: string
  *                     adminResponse:
  *                       type: string
  *                     completedAt:
@@ -1390,7 +1436,7 @@ router.get('/service-requests', authMiddleware, getAllServiceRequests);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *       404:
- *         description: Service request not found
+ *         description: Order not found
  *         content:
  *           application/json:
  *             schema:
@@ -1402,23 +1448,358 @@ router.get('/service-requests', authMiddleware, getAllServiceRequests);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/service-requests/:requestId', authMiddleware, getServiceRequestByIdAdmin);
+router.get('/orders/:requestId', authMiddleware, getOrderByIdAdmin);
+
+// /**
+//  * @swagger
+//  * /api/admin/orders/{orderId}/status:
+//  *   put:
+//  *     summary: Accept or reject an order
+//  *     tags: [Admin - Orders]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: orderId
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Order ID (UUID)
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - status
+//  *             properties:
+//  *               status:
+//  *                 type: string
+//  *                 enum: [processing, shipped, delivered, cancelled]
+//  *                 description: New status for the order
+//  *                 example: processing
+//  *               adminResponse:
+//  *                 type: string
+//  *                 description: Admin's response message
+//  *                 example: We can process your order within 5 business days
+//  *     responses:
+//  *       200:
+//  *         description: Order status updated successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 message:
+//  *                   type: string
+//  *                   example: Order status updated to processing successfully
+//  *                 data:
+//  *                   type: object
+//  *                   properties:
+//  *                     _id:
+//  *                       type: string
+//  *                     orderId:
+//  *                       type: string
+//  *                     orderStatus:
+//  *                       type: string
+//  *                     adminResponse:
+//  *                       type: string
+//  *                     updatedAt:
+//  *                       type: string
+//  *                       format: date-time
+//  *       400:
+//  *         description: Bad request - Invalid status or order cannot be updated
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Error'
+//  *       401:
+//  *         description: Unauthorized
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Error'
+//  *       404:
+//  *         description: Order not found
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Error'
+//  *       500:
+//  *         description: Internal server error
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Error'
+//  */
+// router.put('/orders/:requestId/status', authMiddleware, updateOrderStatus);
 
 /**
  * @swagger
- * /api/admin/service-requests/{requestId}/status:
+ * /api/admin/orders/{orderId}/complete:
  *   put:
- *     summary: Accept or reject a service request
- *     tags: [Admin - Service Requests]
+ *     summary: Mark an order as completed
+ *     tags: [Admin - Orders]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: requestId
+ *         name: orderId
  *         required: true
  *         schema:
+ *           type: string
+ *         description: Order ID (UUID)
+ *     responses:
+ *       200:
+ *         description: Order marked as completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Order marked as completed successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     orderId:
+ *                       type: string
+ *                     orderStatus:
+ *                       type: string
+ *                       example: completed
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Bad request - Order cannot be marked as completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Order not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.put('/orders/:requestId/complete', authMiddleware, markOrderCompleted);
+
+/**
+ * @swagger
+ * /api/admin/newsletter:
+ *   get:
+ *     summary: Get all newsletter subscribers
+ *     tags: [Admin - Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
  *           type: integer
- *         description: Service request ID
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *         description: Filter by status
+ *     responses:
+ *       200:
+ *         description: Newsletter subscribers retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Newsletter subscribers retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                         example: kesav@gmail.com
+ *                       status:
+ *                         type: boolean
+ *                         example: true
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/newsletter', authMiddleware, pagination, getNewsletterSubscribers);
+
+/**
+ * @swagger
+ * /api/admin/contacts:
+ *   get:
+ *     summary: Get all contact form submissions
+ *     tags: [Admin - Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *         description: Filter by status
+ *     responses:
+ *       200:
+ *         description: Contacts retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Contacts retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                         example: Kesavan D
+ *                       email:
+ *                         type: string
+ *                         example: kesav@gmail.com
+ *                       subject:
+ *                         type: string
+ *                         example: I need help
+ *                       message:
+ *                         type: string
+ *                         example: hi, I need help
+ *                       status:
+ *                         type: boolean
+ *                         example: true
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/contacts', authMiddleware, pagination, getContacts);
+
+/**
+ * @swagger
+ * /api/admin/newsletter/{id}:
+ *   put:
+ *     summary: Update newsletter subscriber status
+ *     tags: [Admin - Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Newsletter subscriber ID
  *     requestBody:
  *       required: true
  *       content:
@@ -1429,17 +1810,11 @@ router.get('/service-requests/:requestId', authMiddleware, getServiceRequestById
  *               - status
  *             properties:
  *               status:
- *                 type: string
- *                 enum: [accepted, rejected]
- *                 description: New status for the request
- *                 example: accepted
- *               adminResponse:
- *                 type: string
- *                 description: Admin's response message
- *                 example: We can process your request within 5 business days
+ *                 type: boolean
+ *                 example: false
  *     responses:
  *       200:
- *         description: Service request status updated successfully
+ *         description: Newsletter subscriber status updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -1450,23 +1825,9 @@ router.get('/service-requests/:requestId', authMiddleware, getServiceRequestById
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Service request accepted successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     requestId:
- *                       type: integer
- *                     status:
- *                       type: string
- *                     adminResponse:
- *                       type: string
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
+ *                   example: Newsletter subscriber status updated successfully
  *       400:
- *         description: Bad request - Invalid status or request cannot be updated
+ *         description: Invalid input
  *         content:
  *           application/json:
  *             schema:
@@ -1478,7 +1839,7 @@ router.get('/service-requests/:requestId', authMiddleware, getServiceRequestById
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *       404:
- *         description: Service request not found
+ *         description: Newsletter subscriber not found
  *         content:
  *           application/json:
  *             schema:
@@ -1489,110 +1850,32 @@ router.get('/service-requests/:requestId', authMiddleware, getServiceRequestById
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
- */
-router.put('/service-requests/:requestId/status', authMiddleware, updateServiceRequestStatus);
-
-/**
- * @swagger
- * /api/admin/service-requests/{requestId}/complete:
- *   put:
- *     summary: Mark a service request as completed
- *     tags: [Admin - Service Requests]
+ *   delete:
+ *     summary: Delete newsletter subscriber
+ *     tags: [Admin - Contacts]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: requestId
- *         required: true
- *         schema:
- *           type: integer
- *         description: Service request ID
- *     responses:
- *       200:
- *         description: Service request marked as completed successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Service request marked as completed successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     requestId:
- *                       type: integer
- *                     status:
- *                       type: string
- *                       example: completed
- *                     completedAt:
- *                       type: string
- *                       format: date-time
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *       400:
- *         description: Bad request - Request cannot be marked as completed
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       401:
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       404:
- *         description: Service request not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.put('/service-requests/:requestId/complete', authMiddleware, markServiceRequestCompleted);
-
-/**
- * @swagger
- * /api/admin/service-requests/{requestId}/download/{filename}:
- *   get:
- *     summary: Download a file from a service request (Admin)
- *     tags: [Admin - Service Requests]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: requestId
- *         required: true
- *         schema:
- *           type: integer
- *         description: Service request ID
- *       - in: path
- *         name: filename
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: File name to download
+ *         description: Newsletter subscriber ID
  *     responses:
  *       200:
- *         description: File downloaded successfully
+ *         description: Newsletter subscriber deleted successfully
  *         content:
- *           application/octet-stream:
+ *           application/json:
  *             schema:
- *               type: string
- *               format: binary
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Newsletter subscriber deleted successfully
  *       401:
  *         description: Unauthorized
  *         content:
@@ -1600,7 +1883,7 @@ router.put('/service-requests/:requestId/complete', authMiddleware, markServiceR
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *       404:
- *         description: Service request or file not found
+ *         description: Newsletter subscriber not found
  *         content:
  *           application/json:
  *             schema:
@@ -1612,6 +1895,120 @@ router.put('/service-requests/:requestId/complete', authMiddleware, markServiceR
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/service-requests/:requestId/download/:filename', authMiddleware, downloadRequestFile);
+router.put('/newsletter/:id', authMiddleware, updateNewsletterStatus);
+router.delete('/newsletter/:id', authMiddleware, deleteNewsletterSubscriber);
+
+/**
+ * @swagger
+ * /api/admin/contacts/{id}:
+ *   put:
+ *     summary: Update contact status
+ *     tags: [Admin - Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Contact ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Contact status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Contact status updated successfully
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Contact not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *   delete:
+ *     summary: Delete contact
+ *     tags: [Admin - Contacts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Contact ID
+ *     responses:
+ *       200:
+ *         description: Contact deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Contact deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Contact not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.put('/contacts/:id', authMiddleware, updateContactStatus);
+router.delete('/contacts/:id', authMiddleware, deleteContact);
 
 module.exports = router;

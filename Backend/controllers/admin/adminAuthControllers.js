@@ -75,9 +75,9 @@ const getProfile = async (req, res) => {
         const rolesCollection = await getRolesCollection();
         const userRole = await rolesCollection.findOne({ role_id: roleId });
         
-        if (!userRole || userRole.name.toLowerCase() !== 'admin') {
-            return res.status(403).json({ success: false, message: 'This is not admin' });
-        }
+        // if (!userRole || userRole.name.toLowerCase() !== 'admin') {
+        //     return res.status(403).json({ success: false, message: 'This is not admin' });
+        // }
 
         if (!profileId) {
             return res.status(400).json({ success: false, message: 'Profile ID is required' });
@@ -85,7 +85,8 @@ const getProfile = async (req, res) => {
 
         const adminsCollection = await getAdminsCollection();
         
-        const admin = await adminsCollection.findOne({ userId: profileId });
+        const parsedProfileId = !isNaN(profileId) ? parseInt(profileId, 10) : profileId;
+        const admin = await adminsCollection.findOne({ userId: parsedProfileId });
 
         if (!admin) {
             return res.status(404).json({ success: false, message: 'Admin not found' });
