@@ -12,6 +12,21 @@ const getRolesCollection = async () => {
     return db.collection('roles');
 };
 
+const getOrdersCollection = async () => {
+    const db = await database.connectToDatabase();
+    return db.collection('orders');
+};
+
+const getContactsCollection = async () => {
+    const db = await database.connectToDatabase();
+    return db.collection('contacts');
+};
+
+const getNewsletterCollection = async () => {
+    const db = await database.connectToDatabase();
+    return db.collection('newsletter');
+};
+
 const createRole = async (req, res) => {
     try {
         const { userEmail } = req;
@@ -317,7 +332,7 @@ const getUser = async (req, res) => {
         }
 
         const usersCollection = await getUsersCollection();
-        const user = await usersCollection.findOne({ _id: objectId }, { projection: { password: 0 } });
+        const user = await usersCollection.findOne({ _id: objectId });
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -489,6 +504,75 @@ const updateUser = async (req, res) => {
     }
 };
 
+const getDashboardAnalytics = async (req, res) => {
+    try {
+        const usersCollection = await getUsersCollection();
+        const rolesCollection = await getRolesCollection();
+        const ordersCollection = await getOrdersCollection();
+        const contactsCollection = await getContactsCollection();
+        const newsletterCollection = await getNewsletterCollection();
+
+        const totalUsers = await usersCollection.countDocuments({});
+        const activeUsers = await usersCollection.countDocuments({ status: true });
+        const inactiveUsers = await usersCollection.countDocuments({ status: false });
+
+        const roles = await rolesCollection.find({}).toArray();
+        const userCountByRole = await Promise.all(
+            roles.map(async (role) => {
+                const totalByRole = await usersCollection.countDocuments({ roleId: role.role_id });
+                const activeByRole = await usersCollection.countDocuments({ roleId: role.role_id, status: true });
+                const inactiveByRole = await usersCollection.countDocuments({ roleId: role.role_id, status: false });
+                
+                return {
+                    roleId: role.role_id,
+                    roleName: role.name,
+                    total: totalByRole,
+                    active: activeByRole,
+                    inactive: inactiveByRole,
+                };
+            })
+        );
+
+        const totalOrders = await ordersCollection.countDocuments({});
+        const completedOrders = await ordersCollection.countDocuments({ orderStatus: 'completed' });
+
+        const totalContacts = await contactsCollection.countDocuments({});
+
+        const totalNewsletterSubscribers = await newsletterCollection.countDocuments({});
+        const activeNewsletterSubscribers = await newsletterCollection.countDocuments({ status: true });
+        const inactiveNewsletterSubscribers = await newsletterCollection.countDocuments({ status: false });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Dashboard analytics fetched successfully',
+            data: {
+                users: {
+                    total: totalUsers,
+                    active: activeUsers,
+                    inactive: inactiveUsers,
+                    byRole: userCountByRole,
+                },
+                orders: {
+                    total: totalOrders,
+                    completed: completedOrders,
+                    pending: totalOrders - completedOrders,
+                },
+                contacts: {
+                    total: totalContacts,
+                },
+                newsletter: {
+                    total: totalNewsletterSubscribers,
+                    active: activeNewsletterSubscribers,
+                    inactive: inactiveNewsletterSubscribers,
+                },
+            },
+        });
+    } catch (error) {
+        console.error('Fetching dashboard analytics failed:', error);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
 module.exports = {
     createRole,
     getRole,
@@ -498,4 +582,5 @@ module.exports = {
     getUser,
     getUsers,
     updateUser,
+    getDashboardAnalytics,
 };

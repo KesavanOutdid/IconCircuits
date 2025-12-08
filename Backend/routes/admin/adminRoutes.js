@@ -1,6 +1,6 @@
 const express = require('express');
 const adminAuthRoutes = require('./adminAuthRoutes');
-const { createRole, getRole, getRoles, updateRole, createUser, getUser, getUsers, updateUser } = require('../../controllers/admin/adminControllers');
+const { createRole, getRole, getRoles, updateRole, createUser, getUser, getUsers, updateUser, getDashboardAnalytics } = require('../../controllers/admin/adminControllers');
 const { 
     createService, 
     getService, 
@@ -32,6 +32,8 @@ const router = express.Router();
  * tags:
  *   - name: Admin - Auth
  *     description: Admin authentication endpoints
+ *   - name: Admin - Dashboard
+ *     description: Dashboard analytics and statistics
  *   - name: Admin - Roles
  *     description: Role management endpoints
  *   - name: Admin - Users
@@ -45,6 +47,104 @@ const router = express.Router();
  */
 
 router.use('/auth', adminAuthRoutes);
+
+/**
+ * @swagger
+ * /api/admin/dashboard/analytics:
+ *   get:
+ *     summary: Get dashboard analytics
+ *     description: Retrieve comprehensive analytics including user counts, orders, contacts, and newsletter statistics
+ *     tags: [Admin - Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard analytics fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Dashboard analytics fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     users:
+ *                       type: object
+ *                       properties:
+ *                         total:
+ *                           type: integer
+ *                           example: 150
+ *                         active:
+ *                           type: integer
+ *                           example: 120
+ *                         inactive:
+ *                           type: integer
+ *                           example: 30
+ *                         byRole:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               roleId:
+ *                                 type: integer
+ *                               roleName:
+ *                                 type: string
+ *                               total:
+ *                                 type: integer
+ *                               active:
+ *                                 type: integer
+ *                               inactive:
+ *                                 type: integer
+ *                     orders:
+ *                       type: object
+ *                       properties:
+ *                         total:
+ *                           type: integer
+ *                           example: 500
+ *                         completed:
+ *                           type: integer
+ *                           example: 450
+ *                         pending:
+ *                           type: integer
+ *                           example: 50
+ *                     contacts:
+ *                       type: object
+ *                       properties:
+ *                         total:
+ *                           type: integer
+ *                           example: 75
+ *                     newsletter:
+ *                       type: object
+ *                       properties:
+ *                         total:
+ *                           type: integer
+ *                           example: 1000
+ *                         active:
+ *                           type: integer
+ *                           example: 950
+ *                         inactive:
+ *                           type: integer
+ *                           example: 50
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/dashboard/analytics', authMiddleware, getDashboardAnalytics);
 
 /**
  * @swagger
