@@ -542,6 +542,199 @@ const getDashboardAnalytics = async (req, res) => {
         const activeNewsletterSubscribers = await newsletterCollection.countDocuments({ status: true });
         const inactiveNewsletterSubscribers = await newsletterCollection.countDocuments({ status: false });
 
+        // Daily analytics (only today)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const dailyPayments = await ordersCollection.aggregate([
+            {
+                $match: {
+                    paymentStatus: 'completed',
+                    createdAt: { $gte: today, $lt: tomorrow }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                    total: { $sum: '$cartSummary.totalValue' },
+                    count: { $sum: 1 }
+                }
+            }
+        ]).toArray();
+
+        const dailyOrders = await ordersCollection.aggregate([
+            {
+                $match: {
+                    orderStatus: 'completed',
+                    createdAt: { $gte: today, $lt: tomorrow }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                    completed: { $sum: 1 }
+                }
+            }
+        ]).toArray();
+
+        // Weekly analytics (current week - Sunday to today)
+        const currentDate = new Date();
+        const first = currentDate.getDate() - currentDate.getDay();
+        const sundayOfCurrentWeek = new Date(currentDate.setDate(first));
+        sundayOfCurrentWeek.setHours(0, 0, 0, 0);
+        const nextMonday = new Date(sundayOfCurrentWeek);
+        nextMonday.setDate(nextMonday.getDate() + 7);
+
+        const weeklyPayments = await ordersCollection.aggregate([
+            {
+                $match: {
+                    paymentStatus: 'completed',
+                    createdAt: { $gte: sundayOfCurrentWeek, $lt: nextMonday }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                    total: { $sum: '$cartSummary.totalValue' },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ]).toArray();
+
+        const weeklyOrders = await ordersCollection.aggregate([
+            {
+                $match: {
+                    orderStatus: 'completed',
+                    createdAt: { $gte: sundayOfCurrentWeek, $lt: nextMonday }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                    completed: { $sum: 1 }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ]).toArray();
+
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const weeklyOrdersFormatted = dayNames.map((day, index) => {
+            const dayDate = new Date(sundayOfCurrentWeek);
+            dayDate.setDate(dayDate.getDate() + index);
+            const dateStr = dayDate.toISOString().split('T')[0];
+            const orderData = weeklyOrders.find(o => o._id === dateStr);
+            return {
+                day: day,
+                date: dateStr,
+                completed: orderData ? orderData.completed : 0
+            };
+        });
+
+        // Monthly analytics (all 12 months of current year)
+        const monthlyPayments = await ordersCollection.aggregate([
+            {
+                $match: { paymentStatus: 'completed' }
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: '$createdAt' },
+                        month: { $month: '$createdAt' }
+                    },
+                    total: { $sum: '$cartSummary.totalValue' },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id.year': 1, '_id.month': 1 }
+            }
+        ]).toArray();
+
+        const monthlyOrders = await ordersCollection.aggregate([
+            {
+                $match: { orderStatus: 'completed' }
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: '$createdAt' },
+                        month: { $month: '$createdAt' }
+                    },
+                    completed: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id.year': 1, '_id.month': 1 }
+            }
+        ]).toArray();
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const paymentsByMonth = monthNames.map((month, index) => {
+            const monthData = monthlyPayments.find(m => m._id.month === index + 1);
+            return {
+                month: month,
+                monthNumber: index + 1,
+                total: monthData ? monthData.total : 0,
+                count: monthData ? monthData.count : 0,
+            };
+        });
+
+        const ordersByMonth = monthNames.map((month, index) => {
+            const monthData = monthlyOrders.find(m => m._id.month === index + 1);
+            return {
+                month: month,
+                monthNumber: index + 1,
+                completed: monthData ? monthData.completed : 0,
+            };
+        });
+
+        // Yearly analytics
+        const yearlyPayments = await ordersCollection.aggregate([
+            {
+                $match: { paymentStatus: 'completed' }
+            },
+            {
+                $group: {
+                    _id: { $year: '$createdAt' },
+                    total: { $sum: '$cartSummary.totalValue' },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id': 1 }
+            }
+        ]).toArray();
+
+        const yearlyOrders = await ordersCollection.aggregate([
+            {
+                $match: { orderStatus: 'completed' }
+            },
+            {
+                $group: {
+                    _id: { $year: '$createdAt' },
+                    completed: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id': 1 }
+            }
+        ]).toArray();
+
+        const totalRevenue = paymentsByMonth.reduce((sum, m) => sum + m.total, 0);
+
+        const dailyOrdersFormatted = dailyOrders.map(d => ({
+            date: d._id,
+            completed: d.completed || 0
+        }));
+
+        const yearlyOrdersFormatted = yearlyOrders.map(y => ({
+            year: y._id,
+            completed: y.completed || 0
+        }));
+
         return res.status(200).json({
             success: true,
             message: 'Dashboard analytics fetched successfully',
@@ -553,9 +746,15 @@ const getDashboardAnalytics = async (req, res) => {
                     byRole: userCountByRole,
                 },
                 orders: {
-                    total: totalOrders,
-                    completed: completedOrders,
-                    pending: totalOrders - completedOrders,
+                    summary: {
+                        total: totalOrders,
+                        completed: completedOrders,
+                        pending: totalOrders - completedOrders,
+                    },
+                    daily: dailyOrdersFormatted,
+                    weekly: weeklyOrdersFormatted,
+                    monthly: ordersByMonth,
+                    yearly: yearlyOrdersFormatted,
                 },
                 contacts: {
                     total: totalContacts,
@@ -564,6 +763,13 @@ const getDashboardAnalytics = async (req, res) => {
                     total: totalNewsletterSubscribers,
                     active: activeNewsletterSubscribers,
                     inactive: inactiveNewsletterSubscribers,
+                },
+                payments: {
+                    totalRevenue: totalRevenue,
+                    daily: dailyPayments,
+                    weekly: weeklyPayments,
+                    monthly: paymentsByMonth,
+                    yearly: yearlyPayments,
                 },
             },
         });
