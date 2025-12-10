@@ -412,15 +412,15 @@ const Cart = () => {
         <div>
             <Navbar />
 
-            <div className="container-fluid pt-5 bg-primary hero-header" style={{ height: '20vh' }}>
-                <div className="container pt-5">
-                    <div className="row g-5 pt-3">
+            <div className="container-fluid bg-primary hero-header" style={{ height: '15vh' }}>
+                <div className="container pt-4">
+                    <div className="row g-5 pt-5">
                         <div className="col-lg-12 text-center">
-                            <h1 className="display-4 text-white mb-4 animated slideInRight">Shopping Cart</h1>
+                            {/* <h1 className="display-4 text-white mb-4 animated slideInRight">Shopping Cart</h1> */}
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb justify-content-center mb-0">
-                                    <li className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></li>
-                                    <li className="breadcrumb-item text-white active">Cart</li>
+                                    <h5 className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></h5>
+                                    <h5 className="breadcrumb-item text-white active">Cart</h5>
                                 </ol>
                             </nav>
                         </div>
@@ -588,8 +588,6 @@ const Cart = () => {
                                             ₹ {Math.round(cartSummary.totalValue * 0.18 / 1.18)?.toLocaleString()}
                                         </span>
                                     </div>
-
-                                    <hr />
 
                                     <div className="summary-row total-summary">
                                         <span>Total Amount:</span>

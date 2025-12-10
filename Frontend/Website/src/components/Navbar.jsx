@@ -86,10 +86,10 @@ const Navbar = () => {
                                 <NavLink to="/pcb-layout" className={`nav-link dropdown-toggle ${isServiceActivePCB ? "active" : ""}`} data-bs-toggle="dropdown">PCB Services</NavLink>
                                 <div className="dropdown-menu bg-light mt-2">
                                     <NavLink to="/pcb-layout" className={`dropdown-item ${location.pathname === "/pcb-layout" ? "active" : ""}`}>PCB Layout</NavLink>
-                                    <NavLink to="/pcb-fabrication" className={`dropdown-item ${location.pathname === "/fabrication" ? "active" : ""}`}>PCB Fabrication</NavLink>
+                                    {/* <NavLink to="/pcb-fabrication" className={`dropdown-item ${location.pathname === "/fabrication" ? "active" : ""}`}>PCB Fabrication</NavLink>
                                     <NavLink to="/pcb-assembly" className={`dropdown-item ${location.pathname === "/assembly" ? "active" : ""}`}>PCB Assembly</NavLink>
                                     <NavLink to="/pcb-stencil" className={`dropdown-item ${location.pathname === "/pcb-stencil" ? "active" : ""}`}>PCB Stencil</NavLink>
-                                    <NavLink to="/pcb-component-sourcing" className={`dropdown-item ${location.pathname === "/pcb-component-sourcing" ? "active" : ""}`}>Component Sourcing</NavLink>
+                                    <NavLink to="/pcb-component-sourcing" className={`dropdown-item ${location.pathname === "/pcb-component-sourcing" ? "active" : ""}`}>Component Sourcing</NavLink> */}
                                 </div>
                             </div>
 

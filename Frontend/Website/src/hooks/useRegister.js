@@ -52,13 +52,13 @@ export const useRegister = () => {
     const validateStep1 = () => {
         const errors = {};
         
-        if (!formData.name) errors.name = 'Name is required';
-        if (!formData.email) errors.email = 'Email is required';
-        if (!formData.password) errors.password = 'Password is required';
+        if (!formData.name) errors.name = 'Please enter full name';
+        if (!formData.email) errors.email = 'Please enter email address';
+        if (!formData.password) errors.password = 'Please enter password';
         if (!formData.confirmPassword) errors.confirmPassword = 'Please confirm password';
         
         if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            errors.email = 'Invalid email format';
+            errors.email = 'Please enter valid email address';
         }
         
         if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
@@ -76,15 +76,15 @@ export const useRegister = () => {
         const errors = {};
         const { street, city, district, state, pincode } = formData.address;
 
-        if (!formData.phone) errors.phone = 'Phone is required';
-        if (!street) errors.street = 'Street address is required';
-        if (!city) errors.city = 'City is required';
-        if (!district) errors.district = 'District is required';
-        if (!state) errors.state = 'State is required';
-        if (!pincode) errors.pincode = 'Pincode is required';
+        if (!formData.phone) errors.phone = 'Please enter phone number';
+        if (!street) errors['address.street'] = 'Please enter street address';
+        if (!city) errors['address.city'] = 'Please enter city';
+        if (!district) errors['address.district'] = 'Please enter district';
+        if (!state) errors['address.state'] = 'Please enter state';
+        if (!pincode) errors['address.pincode'] = 'Please enter pincode';
 
         if (pincode && !/^\d{6}$/.test(pincode)) {
-            errors.pincode = 'Pincode must be 6 digits';
+            errors['address.pincode'] = 'Pincode must be 6 digits';
         }
 
         return errors;

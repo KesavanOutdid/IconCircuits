@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 import { useAddresses } from '../hooks/useAddresses';
 import '../assets/css/AddressManagement.css';
@@ -7,6 +7,7 @@ const ADDRESSES_PER_PAGE = 5;
 
 const AddressManagement = ({ addresses: initialAddresses, onAddressChange }) => {
     const { addresses, addAddress, updateAddress, deleteAddress, isLoading } = useAddresses();
+    const formRef = useRef(null);
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [isFormDirty, setIsFormDirty] = useState(false);
@@ -176,6 +177,12 @@ const AddressManagement = ({ addresses: initialAddresses, onAddressChange }) => 
         setIsFormDirty(false);
         setEditingId(address._id);
         setShowAddForm(true);
+        
+        setTimeout(() => {
+            if (formRef.current) {
+                formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 0);
     };
 
     const handleDeleteAddress = async (addressId) => {
@@ -243,7 +250,7 @@ const AddressManagement = ({ addresses: initialAddresses, onAddressChange }) => 
             </div>
 
             {showAddForm && (
-                <div className="address-form-card">
+                <div ref={formRef} className="address-form-card">
                     <h3>{editingId ? 'Edit Address' : 'Add New Address'}</h3>
 
                     <div className="form-group-row">
@@ -425,6 +432,11 @@ const AddressManagement = ({ addresses: initialAddresses, onAddressChange }) => 
                             </div>
 
                             <div className="address-details">
+                                {address.phone && (
+                                    <p>
+                                        <i className="fa fa-phone"></i> {address.phone}
+                                    </p>
+                                )}
                                 <p>
                                     <i className="fa fa-map-marker-alt"></i> {address.street}
                                 </p>

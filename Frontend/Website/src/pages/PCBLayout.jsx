@@ -33,6 +33,8 @@ const PCBLayout = () => {
 
     const [isEditing, setIsEditing] = useState(false);
     const [editingCartItem, setEditingCartItem] = useState(null);
+    const [originalSelections, setOriginalSelections] = useState(null);
+    const [hasChanges, setHasChanges] = useState(false);
 
     const pricing = usePriceCalculation(selections, services?.config);
 
@@ -44,7 +46,7 @@ const PCBLayout = () => {
                 setEditingCartItem(item);
                 setIsEditing(true);
                 const config = item.config;
-                setSelections({
+                const initialSelections = {
                     pcb_name: item.pcb_name || '',
                     layers: config?.layers?.toString() || '1',
                     components: config?.components?.toString() || '100',
@@ -52,7 +54,9 @@ const PCBLayout = () => {
                     controlled_impedance: config?.controlled_impedance || false,
                     dimension_x: config?.dimension_x?.toString() || '100',
                     dimension_y: config?.dimension_y?.toString() || '100',
-                });
+                };
+                setSelections(initialSelections);
+                setOriginalSelections(initialSelections);
                 localStorage.removeItem('editingCartItem');
             } catch (err) {
                 console.error('Error loading editing item:', err);
@@ -74,6 +78,14 @@ const PCBLayout = () => {
             localStorage.setItem('pcbLayoutSelections', JSON.stringify(selections));
         }
     }, [selections, isEditing]);
+
+    useEffect(() => {
+        if (isEditing && originalSelections) {
+            const selectionsChanged = JSON.stringify(selections) !== JSON.stringify(originalSelections);
+            const filesChanged = files.schematic !== null || files.bom !== null;
+            setHasChanges(selectionsChanged || filesChanged);
+        }
+    }, [selections, files, isEditing, originalSelections]);
 
     const handleSelectChange = (field, value) => {
         setSelections(prev => ({
@@ -111,7 +123,93 @@ const PCBLayout = () => {
                 title: 'Error',
                 text: 'Please enter PCB Name',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.layers) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please select Layers',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.components) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please select Components',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.dimension_x || selections.dimension_x <= 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please enter valid Dimension X',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.dimension_y || selections.dimension_y <= 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please enter valid Dimension Y',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.lead_time) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please select Lead Time',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!files.schematic) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please upload Schematic File (JPG, PNG)',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!files.bom) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please upload Bill of Materials (PDF)',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
             return;
         }
@@ -179,7 +277,9 @@ const PCBLayout = () => {
                     title: 'Success',
                     text: 'Item added to cart successfully',
                     icon: 'success',
-                    confirmButtonText: 'OK'
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
                 }).then(() => {
                     setSelections({
                         pcb_name: '',
@@ -191,6 +291,7 @@ const PCBLayout = () => {
                         dimension_y: '100',
                     });
                     setFiles({ schematic: null, bom: null });
+                    window.location.href = '/cart';
                 });
             } else {
                 throw new Error(data.message || 'Failed to add to cart');
@@ -201,7 +302,9 @@ const PCBLayout = () => {
                 title: 'Error',
                 text: err.message || 'Failed to add to cart',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
         }
     };
@@ -212,7 +315,93 @@ const PCBLayout = () => {
                 title: 'Error',
                 text: 'Please enter PCB Name',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.layers) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please select Layers',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.components) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please select Components',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.dimension_x || selections.dimension_x <= 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please enter valid Dimension X',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.dimension_y || selections.dimension_y <= 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please enter valid Dimension Y',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!selections.lead_time) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please select Lead Time',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!files.schematic && !editingCartItem?.files?.schematic) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please upload Schematic File (JPG, PNG)',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        if (!files.bom && !editingCartItem?.files?.bom) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please upload Bill of Materials (PDF)',
+                icon: 'error',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
             return;
         }
@@ -222,7 +411,9 @@ const PCBLayout = () => {
                 title: 'Error',
                 text: 'Unable to update item',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
             return;
         }
@@ -255,6 +446,8 @@ const PCBLayout = () => {
             }).then(() => {
                 setIsEditing(false);
                 setEditingCartItem(null);
+                setOriginalSelections(null);
+                setHasChanges(false);
                 setSelections({
                     pcb_name: '',
                     layers: '1',
@@ -347,16 +540,16 @@ const PCBLayout = () => {
     return (
         <div>
             <Navbar />
-
-            <div className="container-fluid pt-5 bg-primary hero-header" style={{ height: '25vh' }}>
-                <div className="container pt-5">
+            
+            <div className="container-fluid bg-primary hero-header" style={{ height: '15vh' }}>
+                <div className="container pt-4">
                     <div className="row g-5 pt-5">
-                        <div className="col-lg-12 text-center mb-lg-5">
-                            <h1 className="display-4 text-white mb-4 animated slideInRight">PCB Layout</h1>
+                        <div className="col-lg-12 text-center">
+                            {/* <h1 className="display-4 text-white mb-4 animated slideInRight">PCB Layout</h1> */}
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb justify-content-center mb-0">
-                                    <li className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></li>
-                                    <li className="breadcrumb-item text-white active">PCB Layout</li>
+                                    <h5 className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></h5>
+                                    <h5 className="breadcrumb-item text-white active">PCB Layout</h5>
                                 </ol>
                             </nav>
                         </div>
@@ -538,15 +731,16 @@ const PCBLayout = () => {
                                     <div className="row ">
                                         <div className="col-md-6">
                                             <label className="form-label fw-bold">
-                                                Schematic File
+                                                Schematic File <span className="text-danger">*</span>
                                             </label>
+                                            <small className="d-block text-muted mb-2">Supports: JPG, PNG</small>
                                             <div className="file-upload-wrapper">
                                                 <input
                                                     type="file"
                                                     id="schematicFile"
                                                     className="form-control"
                                                     onChange={(e) => handleFileChange('schematic', e.target.files[0])}
-                                                    accept=".pdf,.png,.jpg,.jpeg"
+                                                    accept=".png,.jpg,.jpeg"
                                                 />
                                                 {files.schematic && (
                                                     <small className="d-block mt-2">
@@ -558,15 +752,16 @@ const PCBLayout = () => {
 
                                         <div className="col-md-6">
                                             <label className="form-label fw-bold">
-                                                Bill of Materials
+                                                Bill of Materials <span className="text-danger">*</span>
                                             </label>
+                                            <small className="d-block text-muted mb-2">Supports: PDF</small>
                                             <div className="file-upload-wrapper">
                                                 <input
                                                     type="file"
                                                     id="bomFile"
                                                     className="form-control"
                                                     onChange={(e) => handleFileChange('bom', e.target.files[0])}
-                                                    accept=".xlsx,.xls,.csv,.pdf"
+                                                    accept=".pdf"
                                                 />
                                                 {files.bom && (
                                                     <small className="d-block mt-2">
@@ -585,6 +780,8 @@ const PCBLayout = () => {
                                             onClick={() => {
                                                 setIsEditing(false);
                                                 setEditingCartItem(null);
+                                                setOriginalSelections(null);
+                                                setHasChanges(false);
                                                 setSelections({
                                                     pcb_name: '',
                                                     layers: '1',
@@ -603,6 +800,7 @@ const PCBLayout = () => {
                                     <button
                                         className="btn btn-success btn-cart"
                                         onClick={isEditing ? handleUpdateCart : handleAddToCart}
+                                        disabled={isEditing && !hasChanges}
                                     >
                                         <i className={`fa ${isEditing ? 'fa-refresh' : 'fa-shopping-cart'} me-2`}></i>
                                         {isEditing ? 'Update Item' : 'Add To Cart'}

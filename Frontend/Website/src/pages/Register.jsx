@@ -81,7 +81,7 @@ const Register = () => {
                                     {/* Name Field */}
                                     <div className="form-group">
                                         <label htmlFor="name" className="form-label">
-                                            <i className="fa fa-user"></i> Full Name
+                                            <i className="fa fa-user"></i> Full Name <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -91,12 +91,15 @@ const Register = () => {
                                             value={formData.name}
                                             onChange={handleChange}
                                         />
+                                        {validationErrors.name && (
+                                            <small className="text-danger">{validationErrors.name}</small>
+                                        )}
                                     </div>
 
                                     {/* Email Field */}
                                     <div className="form-group">
                                         <label htmlFor="email" className="form-label">
-                                            <i className="fa fa-envelope"></i> Email Address
+                                            <i className="fa fa-envelope"></i> Email Address <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -106,12 +109,15 @@ const Register = () => {
                                             value={formData.email}
                                             onChange={handleChange}
                                         />
+                                        {validationErrors.email && (
+                                            <small className="text-danger">{validationErrors.email}</small>
+                                        )}
                                     </div>
 
                                     {/* Password Field */}
                                     <div className="form-group">
                                         <label htmlFor="password" className="form-label">
-                                            <i className="fa fa-lock"></i> Password
+                                            <i className="fa fa-lock"></i> Password <span className="text-danger">*</span>
                                         </label>
                                         <div className="password-wrapper">
                                             <input
@@ -141,7 +147,7 @@ const Register = () => {
                                     {/* Confirm Password Field */}
                                     <div className="form-group">
                                         <label htmlFor="confirmPassword" className="form-label">
-                                            <i className="fa fa-lock"></i> Confirm Password
+                                            <i className="fa fa-lock"></i> Confirm Password <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
@@ -174,7 +180,7 @@ const Register = () => {
                                     {/* Phone Field */}
                                     <div className="form-group">
                                         <label htmlFor="phone" className="form-label">
-                                            <i className="fa fa-phone"></i> Phone Number
+                                            <i className="fa fa-phone"></i> Phone Number <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="tel"
@@ -183,13 +189,18 @@ const Register = () => {
                                             placeholder="+91 XXXXXXXXXX"
                                             value={formData.phone}
                                             onChange={handleChange}
+                                            maxLength={10}
+                                            minLength={10}
                                         />
+                                        {validationErrors.phone && (
+                                            <small className="text-danger">{validationErrors.phone}</small>
+                                        )}
                                     </div>
 
                                     {/* Street Field */}
                                     <div className="form-group">
                                         <label htmlFor="address.street" className="form-label">
-                                            <i className="fa fa-home"></i> Street Address
+                                            <i className="fa fa-home"></i> Street Address <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -199,6 +210,9 @@ const Register = () => {
                                             value={formData.address.street}
                                             onChange={handleChange}
                                         />
+                                        {validationErrors['address.street'] && (
+                                            <small className="text-danger">{validationErrors['address.street']}</small>
+                                        )}
                                     </div>
 
                                     {/* Two Column Fields */}
@@ -206,7 +220,7 @@ const Register = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label htmlFor="address.city" className="form-label">
-                                                    City
+                                                    City <span className="text-danger">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -216,12 +230,15 @@ const Register = () => {
                                                     value={formData.address.city}
                                                     onChange={handleChange}
                                                 />
+                                                {validationErrors['address.city'] && (
+                                                    <small className="text-danger">{validationErrors['address.city']}</small>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label htmlFor="address.district" className="form-label">
-                                                    District
+                                                    District <span className="text-danger">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -231,6 +248,9 @@ const Register = () => {
                                                     value={formData.address.district}
                                                     onChange={handleChange}
                                                 />
+                                                {validationErrors['address.district'] && (
+                                                    <small className="text-danger">{validationErrors['address.district']}</small>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -240,7 +260,7 @@ const Register = () => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label htmlFor="address.state" className="form-label">
-                                                    State
+                                                    State <span className="text-danger">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -250,12 +270,15 @@ const Register = () => {
                                                     value={formData.address.state}
                                                     onChange={handleChange}
                                                 />
+                                                {validationErrors['address.state'] && (
+                                                    <small className="text-danger">{validationErrors['address.state']}</small>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label htmlFor="address.pincode" className="form-label">
-                                                    Pincode
+                                                    Pincode <span className="text-danger">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -265,6 +288,9 @@ const Register = () => {
                                                     value={formData.address.pincode}
                                                     onChange={handleChange}
                                                 />
+                                                {validationErrors['address.pincode'] && (
+                                                    <small className="text-danger">{validationErrors['address.pincode']}</small>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -272,13 +298,13 @@ const Register = () => {
                                     {/* Location Field */}
                                     <div className="form-group">
                                         <label htmlFor="address.location" className="form-label">
-                                            <i className="fa fa-map-marker-alt"></i> Landmark/Location
+                                            <i className="fa fa-map-marker-alt"></i> Landmark/Location <span className="text-muted">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
                                             id="address.location"
                                             className="form-control auth-input"
-                                            placeholder="Near Central Park (Optional)"
+                                            placeholder="Near Central Park"
                                             value={formData.address.location}
                                             onChange={handleChange}
                                         />

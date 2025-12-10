@@ -69,7 +69,7 @@ const Login = () => {
                             {/* Email Field */}
                             <div className="form-group">
                                 <label htmlFor="email" className="form-label">
-                                    <i className="fa fa-envelope"></i> Email Address
+                                    <i className="fa fa-envelope"></i> Email Address <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="email"
@@ -80,12 +80,15 @@ const Login = () => {
                                     onChange={handleChange}
                                     required
                                 />
+                                {validationErrors.email && (
+                                    <small className="text-danger">{validationErrors.email}</small>
+                                )}
                             </div>
 
                             {/* Password Field */}
                             <div className="form-group">
                                 <label htmlFor="password" className="form-label">
-                                    <i className="fa fa-lock"></i> Password
+                                    <i className="fa fa-lock"></i> Password <span className="text-danger">*</span>
                                 </label>
                                 <div className="password-wrapper">
                                     <input

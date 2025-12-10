@@ -92,7 +92,7 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
     };
 
     const handleSaveAddress = async () => {
-        if (!formData.street || !formData.city || !formData.district || !formData.state || !formData.pincode || !formData.phone || !formData.gstNo) {
+        if (!formData.street || !formData.city || !formData.district || !formData.state || !formData.pincode || !formData.phone || !formData.location || !formData.gstNo) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Missing Fields',
@@ -316,6 +316,18 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
                                 maxLength="6"
                             />
                         </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="location">Location/Landmark <span className="required">*</span></label>
+                        <input
+                            type="text"
+                            id="location"
+                            className="form-control"
+                            placeholder="Enter location or landmark"
+                            value={formData.location}
+                            onChange={handleChange}
+                        />
                     </div>
 
                     <div className="form-group">

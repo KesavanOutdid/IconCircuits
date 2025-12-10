@@ -9,15 +9,15 @@ const Assembly = () => {
             <Navbar />
 
             {/* Hero Start */}
-            <div className="container-fluid pt-5 bg-primary hero-header" style={{ height: '25vh' }}>
-                <div className="container pt-5">
+            <div className="container-fluid bg-primary hero-header" style={{ height: '15vh' }}>
+                <div className="container pt-4">
                     <div className="row g-5 pt-5">
-                        <div className="col-lg-12 text-center mb-lg-5">
-                            <h1 className="display-4 text-white mb-4 animated slideInRight">Assembly Services</h1>
+                        <div className="col-lg-12 text-center">
+                            {/* <h1 className="display-4 text-white mb-4 animated slideInRight">Assembly Services</h1> */}
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb justify-content-center mb-0">
-                                    <li className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></li>
-                                    <li className="breadcrumb-item text-white active" aria-current="page">Assembly</li>
+                                    <h5 className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></h5>
+                                    <h5 className="breadcrumb-item text-white active" aria-current="page">Assembly</h5>
                                 </ol>
                             </nav>
                         </div>

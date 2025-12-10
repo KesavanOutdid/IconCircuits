@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import "../assets/css/Footer.css"; // Add this CSS file
+const API_URL = process.env.REACT_APP_API_URL;
 
 const Footer = () => {
     const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -20,7 +21,7 @@ const Footer = () => {
 
         try {
             // Replace with your API endpoint
-            await axios.post('/api/newsletter', { email: newsletterEmail });
+            await axios.post(`${API_URL}/newsletter`, { email: newsletterEmail });
 
             Swal.fire({
                 icon: 'success',

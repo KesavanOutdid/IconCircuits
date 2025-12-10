@@ -16,6 +16,7 @@ const Profile = () => {
     const { addresses, setAddressesList } = useAddresses();
     const [isEditing, setIsEditing] = useState(false);
     const [initialFormData, setInitialFormData] = useState({
+        userId:'',
         name: '',
         email: '',
         phone: '',
@@ -30,6 +31,7 @@ const Profile = () => {
         country: 'India',
     });
     const [formData, setFormData] = useState({
+        userId: '',
         name: '',
         email: '',
         phone: '',
@@ -59,6 +61,7 @@ const Profile = () => {
         if (profile) {
             const address = profile.address || {};
             const newData = {
+                userId: profile.userId || '',
                 name: profile.name || '',
                 email: profile.email || '',
                 phone: profile.phone || '',
@@ -86,14 +89,14 @@ const Profile = () => {
         const { id, value } = e.target;
         const updatedFormData = { ...formData, [id]: value };
         setFormData(updatedFormData);
-        
+
         const hasChanges = JSON.stringify(updatedFormData) !== JSON.stringify(initialFormData);
         setIsFormDirty(hasChanges);
     };
 
     const handleSaveProfile = async () => {
         setPasswordError('');
-        
+
         if (formData.password && formData.password !== formData.confirmPassword) {
             setPasswordError('Passwords do not match');
             return;
@@ -110,6 +113,7 @@ const Profile = () => {
 
         try {
             const dataToSend = {
+                userId: formData.userId,
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
@@ -174,15 +178,15 @@ const Profile = () => {
     return (
         <>
             <Navbar />
-            <div className="container-fluid pt-5 bg-primary hero-header" style={{ height: '20vh' }}>
-                <div className="container pt-5">
-                    <div className="row g-5 pt-3">
+            <div className="container-fluid bg-primary hero-header" style={{ height: '15vh' }}>
+                <div className="container pt-4">
+                    <div className="row g-5 pt-5">
                         <div className="col-lg-12 text-center">
-                            <h1 className="display-4 text-white mb-4 animated slideInRight">My Profile</h1>
+                            {/* <h1 className="display-4 text-white mb-4 animated slideInRight">My Profile</h1> */}
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb justify-content-center mb-0">
-                                    <li className="breadcrumb-item"><a href="/" className="text-white">Home</a></li>
-                                    <li className="breadcrumb-item text-white active">Profile</li>
+                                    <h5 className="breadcrumb-item"><a href="/" className="text-white">Home</a></h5>
+                                    <h5 className="breadcrumb-item text-white active">Profile</h5>
                                 </ol>
                             </nav>
                         </div>
@@ -201,13 +205,13 @@ const Profile = () => {
                         </div>
 
                         <nav className="profile-nav">
-                            <button 
+                            <button
                                 className={`profile-nav-item ${activeSection === 'profile' ? 'active' : ''}`}
                                 onClick={() => setActiveSection('profile')}
                             >
                                 <i className="fa fa-user"></i> Profile
                             </button>
-                            <button 
+                            <button
                                 className={`profile-nav-item ${activeSection === 'addresses' ? 'active' : ''}`}
                                 onClick={() => setActiveSection('addresses')}
                             >
@@ -232,271 +236,281 @@ const Profile = () => {
 
                     <div className="profile-content">
                         {activeSection === 'profile' && (
-                        <div className="profile-section">
-                            <div className="section-header">
-                                <h2>Profile</h2>
-                                {!isEditing && (
-                                    <button class="btn-add-address" onClick={() => setIsEditing(true)}><i class="fa fa-edit"></i> Edit Profile</button>
-                                )}
-                            </div>
-
-                            {isEditing ? (
-                                <div className="profile-form">
-                                    <div className="form-row">
-                                        <div className="form-group">
-                                            <label htmlFor="name">Full Name <span className="required">*</span></label>
-                                            <input
-                                                type="text"
-                                                id="name"
-                                                className="form-control"
-                                                placeholder="Enter your full name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="phone">Phone Number <span className="required">*</span></label>
-                                            <input
-                                                type="tel"
-                                                id="phone"
-                                                className="form-control"
-                                                placeholder="Enter 10-digit phone number"
-                                                value={formData.phone}
-                                                onChange={(e) => {
-                                                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                                    const event = { ...e, target: { ...e.target, id: 'phone', value } };
-                                                    handleChange(event);
-                                                }}
-                                                maxLength="10"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="form-row">
-                                        <div className="form-group">
-                                            <label htmlFor="email">Email Address <span className="required">*</span></label>
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                className="form-control"
-                                                placeholder="Enter your email"
-                                                value={formData.email}
-                                                readOnly
-                                                style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="password">New Password <span className="optional">(Optional)</span></label>
-                                            <input
-                                                type="password"
-                                                id="password"
-                                                className="form-control"
-                                                placeholder="Leave blank to keep current password"
-                                                value={formData.password}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {formData.password && (
-                                        <div className="form-row">
-                                            <div className="form-group">
-                                                <label htmlFor="confirmPassword">Confirm Password <span className="required">*</span></label>
-                                                <input
-                                                    type="password"
-                                                    id="confirmPassword"
-                                                    className="form-control"
-                                                    placeholder="Confirm your new password"
-                                                    value={formData.confirmPassword}
-                                                    onChange={handleChange}
-                                                    style={passwordError ? { borderColor: '#d9534f' } : {}}
-                                                />
-                                                {passwordError && (
-                                                    <small style={{ color: '#d9534f', marginTop: '5px', display: 'block' }}>
-                                                        {passwordError}
-                                                    </small>
-                                                )}
-                                            </div>
-                                        </div>
+                            <div className="profile-section">
+                                <div className="section-header">
+                                    <h2>Profile</h2>
+                                    {!isEditing && (
+                                        <button class="btn-add-address" onClick={() => setIsEditing(true)}><i class="fa fa-edit"></i> Edit Profile</button>
                                     )}
+                                </div>
 
-                                    <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #e9ecef' }}>
-                                        <h3 style={{ color: '#10304e', marginBottom: '8px', marginTop: '0', fontSize: '13px', fontWeight: '600' }}>Address Information</h3>
-                                        
-                                        <div className="form-group">
-                                            <label htmlFor="street">Street Address</label>
-                                            <input
-                                                type="text"
-                                                id="street"
-                                                className="form-control"
-                                                placeholder="Enter street address"
-                                                value={formData.street}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-
+                                {isEditing ? (
+                                    <div className="profile-form">
                                         <div className="form-row">
                                             <div className="form-group">
-                                                <label htmlFor="city">City</label>
+                                                <label htmlFor="name">Full Name <span className="required">*</span></label>
                                                 <input
                                                     type="text"
-                                                    id="city"
+                                                    id="name"
                                                     className="form-control"
-                                                    placeholder="Enter city"
-                                                    value={formData.city}
+                                                    placeholder="Enter your full name"
+                                                    value={formData.name}
                                                     onChange={handleChange}
+                                                    required
                                                 />
                                             </div>
-                                            <div className="form-group">
-                                                <label htmlFor="district">District</label>
-                                                <input
-                                                    type="text"
-                                                    id="district"
-                                                    className="form-control"
-                                                    placeholder="Enter district"
-                                                    value={formData.district}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
-                                        </div>
 
-                                        <div className="form-row">
                                             <div className="form-group">
-                                                <label htmlFor="state">State</label>
-                                                <input
-                                                    type="text"
-                                                    id="state"
-                                                    className="form-control"
-                                                    placeholder="Enter state"
-                                                    value={formData.state}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label htmlFor="pincode">Pincode</label>
+                                                <label htmlFor="phone">Phone Number <span className="required">*</span></label>
                                                 <input
                                                     type="tel"
-                                                    id="pincode"
+                                                    id="phone"
                                                     className="form-control"
-                                                    placeholder="Enter 6-digit pincode"
-                                                    value={formData.pincode}
+                                                    placeholder="Enter 10-digit phone number"
+                                                    value={formData.phone}
                                                     onChange={(e) => {
-                                                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                                        const event = { ...e, target: { ...e.target, id: 'pincode', value } };
+                                                        const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                                        const event = { ...e, target: { ...e.target, id: 'phone', value } };
                                                         handleChange(event);
                                                     }}
-                                                    maxLength="6"
+                                                    maxLength="10"
+                                                    required
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="form-row">
                                             <div className="form-group">
-                                                <label htmlFor="location">Location/Landmark</label>
+                                                <label htmlFor="email">Email Address <span className="required">*</span></label>
+                                                <input
+                                                    type="email"
+                                                    id="email"
+                                                    className="form-control"
+                                                    placeholder="Enter your email"
+                                                    value={formData.email}
+                                                    readOnly
+                                                    style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label htmlFor="password">New Password <span className="optional">(Optional)</span></label>
                                                 <input
                                                     type="text"
-                                                    id="location"
+                                                    id="password"
                                                     className="form-control"
-                                                    placeholder="Enter location or landmark"
-                                                    value={formData.location}
+                                                    placeholder="Leave blank to keep current password"
+                                                    value={formData.password}
                                                     onChange={handleChange}
+                                                    required
                                                 />
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="form-actions">
-                                        <button
-                                            className="btn-cancel"
-                                            onClick={handleCancel}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="btn-save"
-                                            onClick={handleSaveProfile}
-                                            disabled={!isFormDirty}
-                                        >
-                                            <i className="fa fa-check"></i> Save Changes
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="profile-info">
-                                    <div className="info-section">
-                                        <h3>Personal Information</h3>
-                                        <div className="info-grid">
-                                            <div className="info-item">
-                                                <span className="info-label">Name:</span>
-                                                <span className="info-value">{profile.name}</span>
+                                        {formData.password && (
+                                            <div className="form-row">
+                                                <div className="form-group">
+                                                    <label htmlFor="confirmPassword">Confirm Password <span className="required">*</span></label>
+                                                    <input
+                                                        type="password"
+                                                        id="confirmPassword"
+                                                        className="form-control"
+                                                        placeholder="Confirm your new password"
+                                                        value={formData.confirmPassword}
+                                                        onChange={handleChange}
+                                                        style={passwordError ? { borderColor: '#d9534f' } : {}}
+                                                        required
+                                                    />
+                                                    {passwordError && (
+                                                        <small style={{ color: '#d9534f', marginTop: '5px', display: 'block' }}>
+                                                            {passwordError}
+                                                        </small>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="info-item">
-                                                <span className="info-label">Email:</span>
-                                                <span className="info-value">{profile.email}</span>
+                                        )}
+
+                                        <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #e9ecef' }}>
+                                            <h3 style={{ color: '#10304e', marginBottom: '8px', marginTop: '0', fontSize: '13px', fontWeight: '600' }}>Address Information</h3>
+
+                                            <div className="form-group">
+                                                <label htmlFor="street">Street Address</label>
+                                                <input
+                                                    type="text"
+                                                    id="street"
+                                                    className="form-control"
+                                                    placeholder="Enter street address"
+                                                    value={formData.street}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
                                             </div>
-                                            <div className="info-item">
-                                                <span className="info-label">Phone:</span>
-                                                <span className="info-value">{profile.phone || 'Not provided'}</span>
+
+                                            <div className="form-row">
+                                                <div className="form-group">
+                                                    <label htmlFor="city">City</label>
+                                                    <input
+                                                        type="text"
+                                                        id="city"
+                                                        className="form-control"
+                                                        placeholder="Enter city"
+                                                        value={formData.city}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="district">District</label>
+                                                    <input
+                                                        type="text"
+                                                        id="district"
+                                                        className="form-control"
+                                                        placeholder="Enter district"
+                                                        value={formData.district}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="form-row">
+                                                <div className="form-group">
+                                                    <label htmlFor="state">State</label>
+                                                    <input
+                                                        type="text"
+                                                        id="state"
+                                                        className="form-control"
+                                                        placeholder="Enter state"
+                                                        value={formData.state}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="pincode">Pincode</label>
+                                                    <input
+                                                        type="tel"
+                                                        id="pincode"
+                                                        className="form-control"
+                                                        placeholder="Enter 6-digit pincode"
+                                                        value={formData.pincode}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                                                            const event = { ...e, target: { ...e.target, id: 'pincode', value } };
+                                                            handleChange(event);
+                                                        }}
+                                                        maxLength="6"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="form-row">
+                                                <div className="form-group">
+                                                    <label htmlFor="location">Location/Landmark</label>
+                                                    <input
+                                                        type="text"
+                                                        id="location"
+                                                        className="form-control"
+                                                        placeholder="Enter location or landmark"
+                                                        value={formData.location}
+                                                        onChange={handleChange}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {profile.address && (
+                                        <div className="form-actions">
+                                            <button
+                                                className="btn-cancel"
+                                                onClick={handleCancel}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="btn-save"
+                                                onClick={handleSaveProfile}
+                                                disabled={!isFormDirty}
+                                            >
+                                                <i className="fa fa-check"></i> Save Changes
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="profile-info">
                                         <div className="info-section">
-                                            <h3>Address Information</h3>
+                                            <h3>Personal Information</h3>
                                             <div className="info-grid">
                                                 <div className="info-item">
-                                                    <span className="info-label">Street:</span>
-                                                    <span className="info-value">{profile.address.street || 'Not provided'}</span>
+                                                    <span className="info-label">Name:</span>
+                                                    <span className="info-value">{profile.name}</span>
                                                 </div>
                                                 <div className="info-item">
-                                                    <span className="info-label">City:</span>
-                                                    <span className="info-value">{profile.address.city || 'Not provided'}</span>
+                                                    <span className="info-label">Email:</span>
+                                                    <span className="info-value">{profile.email}</span>
                                                 </div>
                                                 <div className="info-item">
-                                                    <span className="info-label">District:</span>
-                                                    <span className="info-value">{profile.address.district || 'Not provided'}</span>
+                                                    <span className="info-label">Phone:</span>
+                                                    <span className="info-value">{profile.phone || 'Not provided'}</span>
                                                 </div>
-                                                <div className="info-item">
-                                                    <span className="info-label">State:</span>
-                                                    <span className="info-value">{profile.address.state || 'Not provided'}</span>
-                                                </div>
-                                                <div className="info-item">
-                                                    <span className="info-label">Pincode:</span>
-                                                    <span className="info-value">{profile.address.pincode || 'Not provided'}</span>
-                                                </div>
-                                                {profile.address.location && (
-                                                    <div className="info-item">
-                                                        <span className="info-label">Location:</span>
-                                                        <span className="info-value">{profile.address.location}</span>
-                                                    </div>
-                                                )}
                                             </div>
                                         </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+
+                                        {profile.address && (
+                                            <div className="info-section">
+                                                <h3>Address Information</h3>
+                                                <div className="info-grid">
+                                                    <div className="info-item">
+                                                        <span className="info-label">Street:</span>
+                                                        <span className="info-value">{profile.address.street || 'Not provided'}</span>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <span className="info-label">City:</span>
+                                                        <span className="info-value">{profile.address.city || 'Not provided'}</span>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <span className="info-label">District:</span>
+                                                        <span className="info-value">{profile.address.district || 'Not provided'}</span>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <span className="info-label">State:</span>
+                                                        <span className="info-value">{profile.address.state || 'Not provided'}</span>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <span className="info-label">Pincode:</span>
+                                                        <span className="info-value">{profile.address.pincode || 'Not provided'}</span>
+                                                    </div>
+                                                    {profile.address.location && (
+                                                        <div className="info-item">
+                                                            <span className="info-label">Location:</span>
+                                                            <span className="info-value">{profile.address.location}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         )}
 
                         {activeSection === 'addresses' && (
-                        <div className="profile-section address-management-scrollable">
-                            <AddressManagement addresses={addresses} onAddressChange={fetchProfile} />
-                        </div>
+                            <div className="profile-section address-management-scrollable">
+                                <AddressManagement addresses={addresses} onAddressChange={fetchProfile} />
+                            </div>
                         )}
 
                         {activeSection === 'orders' && (
-                        <div className="profile-section">
-                            <div className="section-header">
-                                <h2>My Orders</h2>
+                            <div className="profile-section">
+                                <div className="section-header">
+                                    <h2>My Orders</h2>
+                                </div>
+                                <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                                    <i className="fa fa-shopping-bag" style={{ fontSize: '48px', display: 'block', marginBottom: '20px' }}></i>
+                                    <p>No orders yet</p>
+                                </div>
                             </div>
-                            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                                <i className="fa fa-shopping-bag" style={{ fontSize: '48px', display: 'block', marginBottom: '20px' }}></i>
-                                <p>No orders yet</p>
-                            </div>
-                        </div>
                         )}
                     </div>
                 </div>

@@ -1,11 +1,26 @@
 /********** Template CSS **********/
 :root {
-    /* --primary: #1363C6;
-    --secondary: #15ACE1; */
     --primary: #10304e;
+    --primary-dark: #0a1f2e;
+    --primary-light: #1a4a7a;
     --secondary: #fcb535;
+    --secondary-dark: #e6a42e;
+    --secondary-light: #fdd676;
     --light: #F4F7FE;
+    --light-gray: #f8f9fa;
     --dark: #14183E;
+    --dark-gray: #333;
+    --gray: #6c757d;
+    --gray-light: #e9ecef;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #17a2b8;
+    --white: #FFFFFF;
+    --text-primary: #10304e;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --transition: all 0.3s ease;
 }
 
 

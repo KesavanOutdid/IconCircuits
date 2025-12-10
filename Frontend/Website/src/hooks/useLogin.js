@@ -26,10 +26,10 @@ export const useLogin = () => {
 
     const validate = () => {
         const errors = {};
-        if (!formData.email) errors.email = 'Email is required';
-        if (!formData.password) errors.password = 'Password is required';
+        if (!formData.email) errors.email = 'Please enter email address';
+        if (!formData.password) errors.password = 'Please enter password';
         if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            errors.email = 'Invalid email format';
+            errors.email = 'Please enter valid email address';
         }
         return errors;
     };

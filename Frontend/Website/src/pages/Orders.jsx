@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../context/AuthContext';
 import '../assets/css/Orders.css';
+import { Link } from 'react-router-dom';
 
 const Orders = () => {
     const navigate = useNavigate();
@@ -42,11 +43,27 @@ const Orders = () => {
         return paymentType === 'razorpay' ? 'Razorpay' : 'Cash on Delivery';
     };
 
+    const getPendingTimeInfo = (createdAt) => {
+        const orderDate = new Date(createdAt);
+        const now = new Date();
+        const diffInHours = Math.floor((now - orderDate) / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diffInHours / 24);
+        
+        if (diffInDays > 0) {
+            return `${diffInDays} day${diffInDays > 1 ? 's' : ''} pending`;
+        } else if (diffInHours > 0) {
+            return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} pending`;
+        } else {
+            const diffInMinutes = Math.floor((now - orderDate) / (1000 * 60));
+            return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} pending`;
+        }
+    };
+
     const allFilteredOrders = filterStatus === 'all'
         ? orders
         : orders.filter(order => {
             if (filterStatus === 'success') return order.paymentStatus === 'completed' && order.orderStatus !== 'cancelled';
-            if (filterStatus === 'pending') return order.paymentStatus === 'pending';
+            if (filterStatus === 'pending') return order.paymentStatus === 'pending' && order.orderStatus !== 'cancelled';
             if (filterStatus === 'failed') return order.paymentStatus === 'failed' || order.orderStatus === 'cancelled';
             return true;
         });
@@ -69,7 +86,7 @@ const Orders = () => {
     const orderStats = {
         total: orders.length,
         success: orders.filter(o => o.paymentStatus === 'completed' && o.orderStatus !== 'cancelled').length,
-        pending: orders.filter(o => o.paymentStatus === 'pending').length,
+        pending: orders.filter(o => o.paymentStatus === 'pending' && o.orderStatus !== 'cancelled').length,
         cancelled: orders.filter(o => o.orderStatus === 'cancelled').length,
     };
 
@@ -116,15 +133,15 @@ const Orders = () => {
         <div>
             <Navbar />
 
-            <div className="container-fluid pt-5 bg-primary hero-header" style={{ height: '20vh' }}>
-                <div className="container pt-5">
-                    <div className="row g-5 pt-3">
+            <div className="container-fluid bg-primary hero-header" style={{ height: '15vh' }}>
+                <div className="container pt-4">
+                    <div className="row g-5 pt-5">
                         <div className="col-lg-12 text-center">
-                            <h1 className="display-4 text-white mb-4 animated slideInRight">My Orders</h1>
+                            {/* <h1 className="display-4 text-white mb-4 animated slideInRight">My Orders</h1> */}
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb justify-content-center mb-0">
-                                    <li className="breadcrumb-item"><a href="/" className="text-white">Home</a></li>
-                                    <li className="breadcrumb-item text-white active">Orders</li>
+                                    <h5 className="breadcrumb-item"><Link className="text-white" to="/">Home</Link></h5>
+                                    <h5 className="breadcrumb-item text-white active" aria-current="page">Orders</h5>
                                 </ol>
                             </nav>
                         </div>
@@ -247,21 +264,31 @@ const Orders = () => {
                                 </div>
 
                                 <div className="order-footer">
-                                    <button
-                                        className="btn-expand"
-                                        onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
-                                    >
-                                        <i className={`fa fa-chevron-${expandedOrderId === order._id ? 'up' : 'down'}`}></i>
-                                        {expandedOrderId === order._id ? 'Hide' : 'View'} Details
-                                    </button>
-                                    {(order.paymentStatus === 'pending' || order.orderStatus === 'created') && (
+                                    <div className="footer-left">
+                                        {order.paymentStatus === 'pending' && order.orderStatus !== 'cancelled' && (
+                                            <span className="pending-time">
+                                                <i className="fa fa-hourglass-half me-2"></i>
+                                                {getPendingTimeInfo(order.createdAt)}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="footer-right">
                                         <button
-                                            className="btn-cancel"
-                                            onClick={() => handleCancelOrder(order.orderId)}
+                                            className="btn-expand"
+                                            onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
                                         >
-                                            <i className="fa fa-times me-2"></i>Cancel Order
+                                            <i className={`fa fa-chevron-${expandedOrderId === order._id ? 'up' : 'down'}`}></i>
+                                            {expandedOrderId === order._id ? 'Hide' : 'View'} Details
                                         </button>
-                                    )}
+                                        {order.paymentStatus === 'pending' && order.orderStatus !== 'cancelled' && (
+                                            <button
+                                                className="btn-cancel"
+                                                onClick={() => handleCancelOrder(order.orderId)}
+                                            >
+                                                <i className="fa fa-times me-2"></i>Cancel Order
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {expandedOrderId === order._id && (

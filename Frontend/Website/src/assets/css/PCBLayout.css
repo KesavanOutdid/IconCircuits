@@ -132,7 +132,7 @@
     border-left: 4px solid #10304e;
     border-radius: 8px;
     padding: 1.5rem;
-    position: sticky;
+    /* position: sticky; */
     top: 100px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow: hidden;
@@ -221,7 +221,8 @@
     padding: 1.5rem;
     margin-top: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .alternatives::before {
