@@ -37,6 +37,13 @@ const signup = async (req, res) => {
                         return res.status(400).json({ success: false, message: 'Address type values must be "invoice" or "delivery"' });
                     }
                 }
+                if (addr.phone && addr.phone.trim()) {
+                    const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
+                    const cleanPhone = addr.phone.trim().replace(/\s+/g, '');
+                    if (!phoneRegex.test(cleanPhone)) {
+                        return res.status(400).json({ success: false, message: 'Invalid phone number in address. Must be a valid 10-digit Indian mobile number' });
+                    }
+                }
             }
         }
 
@@ -100,6 +107,7 @@ const signup = async (req, res) => {
                 pincode: addr.pincode ? addr.pincode.trim() : null,
                 companyName: addr.companyName ? addr.companyName.trim() : null,
                 gstNo: addr.gstNo ? addr.gstNo.trim() : null,
+                phone: addr.phone ? addr.phone.trim() : null,
             }));
         } else {
             userDocument.addresses = [];
@@ -145,15 +153,19 @@ const login = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ success: false, message: 'Email and password are required' });
         }
+        
 
         const normalizedEmail = email.trim().toLowerCase();
         const usersCollection = await getUsersCollection();
         const user = await usersCollection.findOne({ email: normalizedEmail });
+       
 
         if (!user) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
-
+         if (user.roleId!==2){
+            return res.status(401).json({ success: false, message: 'Not authorized' })
+        }
         if (user.password !== password) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
@@ -242,6 +254,13 @@ const updateProfile = async (req, res) => {
                         return res.status(400).json({ success: false, message: 'Address type values must be "invoice" or "delivery"' });
                     }
                 }
+                if (addr.phone && addr.phone.trim()) {
+                    const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
+                    const cleanPhone = addr.phone.trim().replace(/\s+/g, '');
+                    if (!phoneRegex.test(cleanPhone)) {
+                        return res.status(400).json({ success: false, message: 'Invalid phone number in address. Must be a valid 10-digit Indian mobile number' });
+                    }
+                }
             }
         }
 
@@ -292,6 +311,7 @@ const updateProfile = async (req, res) => {
                 pincode: addr.pincode ? addr.pincode.trim() : null,
                 companyName: addr.companyName ? addr.companyName.trim() : null,
                 gstNo: addr.gstNo ? addr.gstNo.trim() : null,
+                phone: addr.phone ? addr.phone.trim() : null,
             }));
         }
 
@@ -319,7 +339,7 @@ const updateProfile = async (req, res) => {
 const addAddress = async (req, res) => {
     try {
         const { userObjectId, userEmail } = req;
-        const { type, street, city, location, district, state, country, pincode, companyName, gstNo } = req.body;
+        const { type, street, city, location, district, state, country, pincode, companyName, gstNo, phone } = req.body;
 
         if (!userObjectId) {
             return res.status(401).json({ success: false, message: 'Not authorized' });
@@ -331,6 +351,14 @@ const addAddress = async (req, res) => {
         for (const t of type) {
             if (!['invoice', 'delivery'].includes(t)) {
                 return res.status(400).json({ success: false, message: 'Address type values must be "invoice" or "delivery"' });
+            }
+        }
+
+        if (phone && phone.trim()) {
+            const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
+            const cleanPhone = phone.trim().replace(/\s+/g, '');
+            if (!phoneRegex.test(cleanPhone)) {
+                return res.status(400).json({ success: false, message: 'Invalid phone number. Must be a valid 10-digit Indian mobile number' });
             }
         }
 
@@ -353,6 +381,7 @@ const addAddress = async (req, res) => {
             pincode: pincode ? pincode.trim() : null,
             companyName: companyName ? companyName.trim() : null,
             gstNo: gstNo ? gstNo.trim() : null,
+            phone: phone ? phone.trim() : null,
         };
 
         await usersCollection.updateOne(
@@ -382,7 +411,7 @@ const updateAddress = async (req, res) => {
     try {
         const { userObjectId, userEmail } = req;
         const { addressId } = req.params;
-        const { type, street, city, location, district, state, country, pincode, companyName, gstNo } = req.body;
+        const { type, street, city, location, district, state, country, pincode, companyName, gstNo, phone } = req.body;
 
         if (!userObjectId) {
             return res.status(401).json({ success: false, message: 'Not authorized' });
@@ -400,6 +429,14 @@ const updateAddress = async (req, res) => {
                 if (!['invoice', 'delivery'].includes(t)) {
                     return res.status(400).json({ success: false, message: 'Address type values must be "invoice" or "delivery"' });
                 }
+            }
+        }
+
+        if (phone !== undefined && phone && phone.trim()) {
+            const phoneRegex = /^(\+91)?[6-9]\d{9}$/;
+            const cleanPhone = phone.trim().replace(/\s+/g, '');
+            if (!phoneRegex.test(cleanPhone)) {
+                return res.status(400).json({ success: false, message: 'Invalid phone number. Must be a valid 10-digit Indian mobile number' });
             }
         }
 
@@ -433,6 +470,7 @@ const updateAddress = async (req, res) => {
         if (pincode !== undefined) updateFields['addresses.$.pincode'] = pincode ? pincode.trim() : null;
         if (companyName !== undefined) updateFields['addresses.$.companyName'] = companyName ? companyName.trim() : null;
         if (gstNo !== undefined) updateFields['addresses.$.gstNo'] = gstNo ? gstNo.trim() : null;
+        if (phone !== undefined) updateFields['addresses.$.phone'] = phone ? phone.trim() : null;
 
         await usersCollection.updateOne(
             { _id: new ObjectId(userObjectId), 'addresses._id': addressObjectId },
