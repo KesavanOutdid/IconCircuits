@@ -3,6 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiCall } from "@/lib/api-client";
+import Swal from "sweetalert2";
 
 interface Address {
   type: string[];
@@ -22,6 +23,7 @@ interface UserDetail {
   userId: number;
   name: string;
   email: string;
+  password: string;
   roleId: number;
   phone: string;
   status: boolean;
@@ -42,6 +44,7 @@ export default function ViewUser() {
   const [user, setUser] = useState<UserDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -67,6 +70,35 @@ export default function ViewUser() {
       setError("Failed to load user details. Invalid user ID or user not found.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async () => {
+    if (!user) return;
+
+    try {
+      setIsUpdatingStatus(true);
+      const newStatus = !user.status;
+
+      await apiCall(`/api/admin/users/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          roleId: user.roleId,
+          phone: user.phone,
+          status: newStatus,
+          addresses: user.addresses,
+        }),
+      });
+
+      setUser({ ...user, status: newStatus });
+      Swal.fire("Success", `User status changed to ${newStatus ? "Active" : "Inactive"}`, "success");
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      Swal.fire("Error", "Failed to update user status", "error");
+    } finally {
+      setIsUpdatingStatus(false);
     }
   };
 
@@ -99,7 +131,12 @@ export default function ViewUser() {
           USER DETAILS
         </h1>
         <div className="flex gap-3">
-         
+          <button
+            onClick={() => router.push(`/management/users/${userId}/edit`)}
+            className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white hover:bg-opacity-90"
+          >
+            Edit
+          </button>
           <button
             onClick={() => router.back()}
             className="inline-flex items-center justify-center rounded-lg bg-gray-300 px-5 py-2 text-sm font-medium text-dark hover:bg-gray-400 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
@@ -136,6 +173,15 @@ export default function ViewUser() {
 
             <div>
               <label className="text-base font-semibold text-dark dark:text-white">
+                Password
+              </label>
+              <p className="mt-2 text-base text-dark dark:text-white">
+                {user.password}
+              </p>
+            </div>
+
+            <div>
+              <label className="text-base font-semibold text-dark dark:text-white">
                 Phone
               </label>
               <p className="mt-2 text-base text-dark dark:text-white">
@@ -156,7 +202,7 @@ export default function ViewUser() {
               <label className="text-base font-semibold text-dark dark:text-white">
                 Status
               </label>
-              <p className="mt-2">
+              <div className="mt-2 flex items-center gap-3">
                 <span
                   className={`inline-flex rounded-full px-3.5 py-1 text-base font-normal ${
                     user.status
@@ -166,7 +212,8 @@ export default function ViewUser() {
                 >
                   {user.status ? "Active" : "Inactive"}
                 </span>
-              </p>
+             
+              </div>
             </div>
 
             <div>

@@ -69,7 +69,8 @@ export function useAnalytics() {
               totalNewsletter: { value: newsletter?.total || 0, growthRate: 0 },
               ordersChart: [
                 { name: "Completed", amount: orders?.summary?.completed || 0 },
-                { name: "Pending", amount: orders?.summary?.pending || 0 },
+                { name: "Confirmed", amount: orders?.summary?.confirmed || 0 },
+                { name: "Cancelled", amount: orders?.summary?.cancelled || 0 },
               ],
               ordersData: { completed: orders?.summary?.completed || 0, pending: orders?.summary?.pending || 0 },
               ordersByPeriod: orders?.daily || orders?.weekly || orders?.monthly || orders?.yearly

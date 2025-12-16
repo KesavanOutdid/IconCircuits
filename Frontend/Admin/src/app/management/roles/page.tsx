@@ -99,12 +99,12 @@ export default function ManageRoles() {
           <h2 className="text-body-1xlg font-semibold text-dark dark:text-white">
             ROLES LIST
           </h2>
-          <button
+          {/* <button
             onClick={() => router.push("/management/roles/add")}
             className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-center font-medium text-white hover:bg-opacity-90"
           >
             Add New Role
-          </button>
+          </button> */}
         </div>
 
         {roles.length === 0 ? (

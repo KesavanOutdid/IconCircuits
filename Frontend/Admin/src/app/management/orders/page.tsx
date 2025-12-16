@@ -116,6 +116,44 @@ export default function ManageOrders() {
   };
 
   const handleCompleteOrder = async (orderId: string) => {
+    const order = orders.find(o => o.orderId === orderId);
+    
+    if (!order) {
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Order not found",
+      });
+      return;
+    }
+
+    if (order.orderStatus.toLowerCase() === "cancelled") {
+      await Swal.fire({
+        icon: "error",
+        title: "Cannot Complete Order",
+        text: "Cannot mark a cancelled order as completed.",
+      });
+      return;
+    }
+
+    if (order.paymentStatus.toLowerCase() === "pending") {
+      await Swal.fire({
+        icon: "error",
+        title: "Cannot Complete Order",
+        text: "Payment is still pending. Complete the payment before marking the order as completed.",
+      });
+      return;
+    }
+
+    if (order.orderStatus.toLowerCase() === "completed") {
+      await Swal.fire({
+        icon: "error",
+        title: "Cannot Complete Order",
+        text: "This order is already completed.",
+      });
+      return;
+    }
+
     const result = await Swal.fire({
       title: "Complete Order?",
       text: "Are you sure you want to mark this order as completed?",
@@ -260,8 +298,27 @@ export default function ManageOrders() {
                       </button>
                       <button
                         onClick={() => handleCompleteOrder(order.orderId)}
-                        className="inline-flex items-center justify-center text-primary hover:text-opacity-80"
-                        title="Complete order"
+                        disabled={
+                          order.orderStatus.toLowerCase() === "cancelled" ||
+                          order.paymentStatus.toLowerCase() === "pending" ||
+                          order.orderStatus.toLowerCase() === "completed"
+                        }
+                        className={`inline-flex items-center justify-center ${
+                          order.orderStatus.toLowerCase() === "cancelled" ||
+                          order.paymentStatus.toLowerCase() === "pending" ||
+                          order.orderStatus.toLowerCase() === "completed"
+                            ? "text-gray-300 cursor-not-allowed"
+                            : "text-primary hover:text-opacity-80"
+                        }`}
+                        title={
+                          order.orderStatus.toLowerCase() === "cancelled"
+                            ? "Cannot complete a cancelled order"
+                            : order.paymentStatus.toLowerCase() === "pending"
+                            ? "Cannot complete order with pending payment"
+                            : order.orderStatus.toLowerCase() === "completed"
+                            ? "Order is already completed"
+                            : "Complete order"
+                        }
                       >
                         <PencilSquareIcon />
                       </button>

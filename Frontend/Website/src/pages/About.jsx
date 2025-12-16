@@ -11,7 +11,7 @@ const About = () => {
             <Navbar />
 
             {/*Hero Start */}
-            <div className="container-fluid bg-primary hero-header" style={{ height: '15vh' }}>
+            <div className="container-fluid bg-primary hero-header" style={{ height: '30vh' }}>
                 <div className="container pt-4">
                     <div className="row g-5 pt-5">
                         <div className="col-lg-12 text-center">
@@ -62,8 +62,9 @@ const About = () => {
                             <div className="btn btn-sm border rounded-pill text-primary px-3 mb-3">About Us</div>
                             <h1 className="mb-4">We Empower Innovation with Intelligent PCB Solutions</h1>
 
-                            <div className="pcb-line mb-4" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <span className="resistor mt-40" style={{ display: "block" }}></span>
+                            <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginBottom: "24px", gap: "8px" }}>
+                                <div style={{ width: "40px", height: "3px", backgroundColor: "#0d6efd" }}></div>
+                                <span style={{ fontSize: "14px", fontWeight: "600", color: "#0d6efd" }}>OUR STORY</span>
                             </div>
 
                             <p className="mb-4">
@@ -277,19 +278,16 @@ const About = () => {
 
 
             {/*PCB Power's Start */}
-            <div className="container-fluid bg-light mt-5 py-5">
+             <div className="pcb-powers-section">
                 <div className="container py-5">
                     <div className="row g-5">
-                        <div className="col-12 wow fadeIn" data-wow-delay="0.1s">
-                            <h1>PCB Power's</h1>
-                            <p>Enabling Smarter, Faster Electronics with Icon Circuits</p>
-                            <div
-                                className="pcb-line mb-4"
-                                style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-                            >
-                                <span className="resistor mt-40" style={{ display: "block" }}></span>
+                        <div className="col-12 text-center mb-5">
+                            <h2 className="powers-title">PCB Power's</h2>
+                            <p className="powers-subtitle">Enabling Smarter, Faster Electronics with Icon Circuits</p>
+                            <div className="powers-divider">
+                                <span className="powers-line"></span>
                             </div>
-                            <p className="mb-2">
+                            <p className="powers-description">
                                 As a company, we are clear on our vision and mission, both of which revolve around you.
                                 A company is built for providing solutions. A brand is built for promises.
                                 An institution is built for excellence. We are a company, building a brand with an ambition to become an institution.
@@ -302,39 +300,39 @@ const About = () => {
                         <div className="col-12">
                             <div className="row g-4">
                                 {/* Vision */}
-                                <div className="col-md-4 wow fadeIn" data-wow-delay="0.1s">
-                                    <div className="service-item d-flex flex-column justify-content-center text-center rounded h-100">
-                                        <div className="service-icon btn-square">
-                                            <i className="fa fa-microchip fa-2x"></i>
+                                <div className="col-md-4">
+                                    <div className="principle-card vision-card">
+                                        <div className="principle-icon vision-icon">
+                                            <i className="fa fa-microchip"></i>
                                         </div>
-                                        <h5 className="mb-3">Vision</h5>
-                                        <p>To become the integrated electronics, design and manufacturing partner of all innovative electronics manufacturing companies.</p>
+                                        <h5 className="principle-title">Vision</h5>
+                                        <p className="principle-text">To become the integrated electronics, design and manufacturing partner of all innovative electronics manufacturing companies.</p>
                                     </div>
                                 </div>
 
                                 {/* Mission */}
-                                <div className="col-md-4 wow fadeIn" data-wow-delay="0.2s">
-                                    <div className="service-item d-flex flex-column justify-content-center text-center rounded h-100">
-                                        <div className="service-icon btn-square">
-                                            <i className="fa fa-rocket fa-2x"></i>
+                                <div className="col-md-4">
+                                    <div className="principle-card mission-card">
+                                        <div className="principle-icon mission-icon">
+                                            <i className="fa fa-rocket"></i>
                                         </div>
-                                        <h5 className="mb-3">Mission</h5>
-                                        <p>To empower innovators in the electronics industry by becoming the foundation of their products and services.</p>
+                                        <h5 className="principle-title">Mission</h5>
+                                        <p className="principle-text">To empower innovators in the electronics industry by becoming the foundation of their products and services.</p>
                                     </div>
                                 </div>
 
                                 {/* Principles */}
-                                <div className="col-md-4 wow fadeIn" data-wow-delay="0.3s">
-                                    <div className="service-item d-flex flex-column justify-content-center text-center rounded h-100">
-                                        <div className="service-icon btn-square">
-                                            <i className="fa fa-balance-scale fa-2x"></i>
+                                <div className="col-md-4">
+                                    <div className="principle-card principles-card">
+                                        <div className="principle-icon principles-icon">
+                                            <i className="fa fa-balance-scale"></i>
                                         </div>
-                                        <h5 className="mb-3">Principles</h5>
-                                        <p>
-                                            ✔️ Customer at the Centre of Everything.<br />
-                                            ✔️ Ethics, Transparency and Honesty in All Our Dealings.<br />
-                                            ✔️ Excellence Driven Action Over Everything Else.
-                                        </p>
+                                        <h5 className="principle-title">Principles</h5>
+                                        <ul className="principles-list">
+                                            <li>Customer at the Centre of Everything</li>
+                                            <li>Ethics, Transparency and Honesty in All Dealings</li>
+                                            <li>Excellence Driven Action Over Everything Else</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -350,3 +348,4 @@ const About = () => {
 };
 
 export default About;
+

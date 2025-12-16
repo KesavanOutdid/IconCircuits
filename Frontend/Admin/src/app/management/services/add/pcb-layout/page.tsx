@@ -358,7 +358,7 @@ export default function AddPCBLayout() {
 
     for (const field of REQUIRED_FIELDS) {
       if (field === "dimension") {
-        if (!dimensionData || !dimensionData.max) {
+        if (!dimensionData || dimensionData.max.x === 0 || dimensionData.max.y === 0) {
           return false;
         }
       } else {
@@ -591,11 +591,11 @@ export default function AddPCBLayout() {
                       <input
                         type="number"
                         step="0.01"
-                        value={dimensionData.min.x}
+                        value={dimensionData.min.x === 0 ? "" : dimensionData.min.x}
                         onChange={(e) =>
                           setDimensionData((prev) => ({
                             ...prev,
-                            min: { ...prev.min, x: parseFloat(e.target.value) || 0 },
+                            min: { ...prev.min, x: e.target.value === "" ? 0 : parseFloat(e.target.value) },
                           }))
                         }
                         onWheel={(e) => e.currentTarget.blur()}
@@ -609,11 +609,11 @@ export default function AddPCBLayout() {
                       <input
                         type="number"
                         step="0.01"
-                        value={dimensionData.min.y}
+                        value={dimensionData.min.y === 0 ? "" : dimensionData.min.y}
                         onChange={(e) =>
                           setDimensionData((prev) => ({
                             ...prev,
-                            min: { ...prev.min, y: parseFloat(e.target.value) || 0 },
+                            min: { ...prev.min, y: e.target.value === "" ? 0 : parseFloat(e.target.value) },
                           }))
                         }
                         onWheel={(e) => e.currentTarget.blur()}
@@ -630,11 +630,11 @@ export default function AddPCBLayout() {
                       <input
                         type="number"
                         step="0.01"
-                        value={dimensionData.max.x}
+                        value={dimensionData.max.x === 0 ? "" : dimensionData.max.x}
                         onChange={(e) =>
                           setDimensionData((prev) => ({
                             ...prev,
-                            max: { ...prev.max, x: parseFloat(e.target.value) || 0 },
+                            max: { ...prev.max, x: e.target.value === "" ? 0 : parseFloat(e.target.value) },
                           }))
                         }
                         onWheel={(e) => e.currentTarget.blur()}
@@ -648,11 +648,11 @@ export default function AddPCBLayout() {
                       <input
                         type="number"
                         step="0.01"
-                        value={dimensionData.max.y}
+                        value={dimensionData.max.y === 0 ? "" : dimensionData.max.y}
                         onChange={(e) =>
                           setDimensionData((prev) => ({
                             ...prev,
-                            max: { ...prev.max, y: parseFloat(e.target.value) || 0 },
+                            max: { ...prev.max, y: e.target.value === "" ? 0 : parseFloat(e.target.value) },
                           }))
                         }
                         onWheel={(e) => e.currentTarget.blur()}

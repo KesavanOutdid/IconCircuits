@@ -190,8 +190,11 @@ export default function EditUser() {
       }
     }
 
-    if (formData.phone && !/^[0-9\-\+\s]{10,}$/.test(formData.phone)) {
-      newErrors.phone = "Enter a valid phone number";
+    if (formData.phone && formData.phone.trim()) {
+      const digitsOnly = formData.phone.replace(/\D/g, "");
+      if (digitsOnly.length !== 10) {
+        newErrors.phone = "Phone number must contain exactly 10 digits";
+      }
     }
 
     const addressErrors: { [key: number]: { [key: string]: string } } = {};
@@ -241,11 +244,15 @@ export default function EditUser() {
     if (addressIndex !== undefined) {
       const newAddresses = [...formData.addresses];
       if (name === "type") {
-        newAddresses[addressIndex].type = value
-          .split(",")
-          .map((t) => t.trim());
+        newAddresses[addressIndex] = {
+          ...newAddresses[addressIndex],
+          type: value.split(",").map((t) => t.trim()),
+        };
       } else {
-        (newAddresses[addressIndex] as any)[name] = value;
+        newAddresses[addressIndex] = {
+          ...newAddresses[addressIndex],
+          [name]: value,
+        };
       }
       setFormData({ ...formData, addresses: newAddresses });
     } else {
@@ -253,6 +260,9 @@ export default function EditUser() {
         setFormData({ ...formData, [name]: parseInt(value) });
       } else if (name === "status") {
         setFormData({ ...formData, [name]: isCheckbox ? (e.target as any).checked : value === "true" });
+      } else if (name === "phone") {
+        const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+        setFormData({ ...formData, [name]: digitsOnly });
       } else {
         setFormData({ ...formData, [name]: value });
       }
@@ -289,6 +299,11 @@ export default function EditUser() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!hasChanges()) {
+      Swal.fire("Info", "No changes were made to the user", "info");
+      return;
+    }
 
     if (!validateForm()) {
       Swal.fire("Error", "Please fix the validation errors", "error");
@@ -456,8 +471,8 @@ export default function EditUser() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Enter phone number (min 10 digits)"
-                  maxLength={20}
+                  placeholder="Enter phone number (10 digits)"
+                  maxLength={10}
                   className={`mt-2 w-full rounded-lg border-[1.5px] bg-transparent px-5 py-3 text-dark outline-none transition dark:bg-dark-2 dark:text-white ${
                     errors.phone
                       ? "border-red-500 focus:border-red-500 dark:border-red-500"

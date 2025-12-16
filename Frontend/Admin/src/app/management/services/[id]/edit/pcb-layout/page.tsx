@@ -255,6 +255,15 @@ export default function EditPCBLayout() {
         },
       };
     });
+
+    setInputValues((prev) => ({
+      ...prev,
+      [fieldName]: prev[fieldName]
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0 && String(item) !== String(option))
+        .join(", "),
+    }));
   };
 
   const handleMultiplierChange = (fieldName: string, optionValue: string, multiplierValue: number) => {
@@ -665,7 +674,7 @@ export default function EditPCBLayout() {
               ))}
 
               <div>
-                <label className="mb-3 block text-lg font-bold text-dark dark:text-white">
+                <label className="mb-3 block text-md font-bold text-dark dark:text-white">
                   {FIELD_LABELS["dimension"]} <span className="text-red-500">*</span>
                 </label>
                 <div className="space-y-4">

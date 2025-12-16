@@ -16,12 +16,20 @@ interface ProfileData {
   name: string;
   email: string;
   phone: string | null;
-  password?: string;
+  password: string;
   status: boolean;
+}
+
+interface ErrorsType {
+  name?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
 }
 
 export default function SettingsPage() {
   const { user, isLoading: authLoading } = useAuth();
+
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
     email: "",
@@ -29,8 +37,11 @@ export default function SettingsPage() {
     password: "",
     status: true,
   });
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [initialFormData, setInitialFormData] = useState<ProfileData | null>(null);
+  const [errors, setErrors] = useState<ErrorsType>({});
 
   useEffect(() => {
     if (!authLoading && user?.userId) {
@@ -43,90 +54,95 @@ export default function SettingsPage() {
   const fetchProfileData = async () => {
     try {
       setLoading(true);
-      
+
       if (!user?.userId) {
-        console.warn("No userId found in user context");
         setLoading(false);
         return;
       }
 
-      console.log("Fetching profile for userId:", user.userId);
-      const data = await apiCall<ProfileData>(`/api/admin/auth/profile?profileId=${user.userId}`);
-      console.log("Profile data received:", data);
-      
-      setFormData({
+      const data = await apiCall<ProfileData>(
+        `/api/admin/auth/profile?profileId=${user.userId}`
+      );
+
+      const profileData: ProfileData = {
         name: data.name || "",
         email: data.email || "",
         phone: data.phone || null,
-        password: data.password || "",
+        password: data.password || "", // ✅ KEEP PASSWORD FROM API
         status: data.status !== undefined ? data.status : true,
-      });
+      };
+
+      setFormData(profileData);
+      setInitialFormData({ ...profileData });
     } catch (error) {
-      console.error("Failed to fetch profile:", error);
-      Swal.fire("Error", `Failed to load profile: ${error instanceof Error ? error.message : "Unknown error"}`, "error");
+      Swal.fire("Error", "Failed to load profile", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Check if any field is changed
+  const hasChanges = (): boolean => {
+    if (!initialFormData) return false;
+
+    return (
+      formData.name !== initialFormData.name ||
+      formData.email !== initialFormData.email ||
+      formData.phone !== initialFormData.phone ||
+      formData.password !== initialFormData.password || // password compare
+      formData.status !== initialFormData.status
+    );
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    
+
     if (name === "phone") {
       const phoneOnly = value.replace(/\D/g, "").slice(0, 10);
       setFormData((prev) => ({
         ...prev,
-        [name]: phoneOnly,
+        phone: phoneOnly,
       }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name as keyof ProfileData]: value,
-      }));
+      return;
     }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.email) {
-      Swal.fire("Error", "Please fill in all required fields", "error");
+
+    if (!hasChanges()) {
+      Swal.fire("Info", "No changes were made", "info");
       return;
     }
 
     try {
       setSubmitting(true);
-      
-      if (!user?.userId) {
-        Swal.fire("Error", "User ID not found. Please login again.", "error");
-        return;
-      }
 
-      const updateBody: any = {
+      const updateBody = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone || "",
         status: formData.status,
+        password: formData.password, // ✅ KEEP PASSWORD ALWAYS
       };
-
-      if (formData.password) {
-        updateBody.password = formData.password;
-      }
-
-      console.log("Sending update payload:", updateBody);
 
       await apiCall(`/api/admin/auth/profile`, {
         method: "PUT",
         body: JSON.stringify(updateBody),
       });
-      
-      console.log("Profile updated successfully");
-      
+
+      // ✅ DO NOT RESET PASSWORD
+      setInitialFormData({ ...formData });
+
       Swal.fire("Success", "Profile updated successfully", "success");
-      
-      await fetchProfileData();
     } catch (error) {
-      console.error("Failed to update profile:", error);
       Swal.fire("Error", "Failed to update profile", "error");
     } finally {
       setSubmitting(false);
@@ -136,7 +152,7 @@ export default function SettingsPage() {
   if (loading || authLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-dark dark:text-white">Loading...</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -144,16 +160,14 @@ export default function SettingsPage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-dark dark:text-white">Please login to access settings</p>
+        <p>Please login to access settings</p>
       </div>
     );
   }
 
   return (
     <div className="mx-auto w-full max-w-[1080px]">
-      <h1 className="mb-6 text-body-1xlg font-bold text-dark dark:text-white">
-        SETTINGS
-      </h1>
+      <h1 className="mb-6 text-body-1xlg font-bold text-dark">SETTINGS</h1>
 
       <div className="flex justify-center">
         <div className="w-full max-w-4xl">
@@ -178,12 +192,13 @@ export default function SettingsPage() {
                   type="text"
                   name="phone"
                   label="Phone Number"
-                  placeholder="+1234567890"
+                  placeholder="1234567890"
                   value={formData.phone || ""}
                   handleChange={handleChange}
                   icon={<CallIcon />}
                   iconPosition="left"
                   height="sm"
+                  maxLength="10"
                 />
               </div>
 
@@ -207,27 +222,31 @@ export default function SettingsPage() {
                 name="password"
                 label="Password"
                 placeholder="Enter password"
-                value={formData.password || ""}
+                value={formData.password}
                 handleChange={handleChange}
                 icon={<UserIcon />}
                 iconPosition="left"
                 height="sm"
+                autoComplete="current-password" // ✅ Enable autofill
               />
 
               <div className="flex justify-end gap-3">
                 <button
-                  className="rounded-lg border border-stroke px-6 py-[7px] font-medium text-dark hover:shadow-1 dark:border-dark-3 dark:text-white"
+                  className="rounded-lg border px-6 py-[7px]"
                   type="button"
-                  onClick={() => fetchProfileData()}
+                  onClick={() => {
+                    setFormData(initialFormData || formData);
+                    setErrors({});
+                  }}
                   disabled={submitting}
                 >
                   Cancel
                 </button>
 
                 <button
-                  className="rounded-lg bg-primary px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90 disabled:opacity-50"
+                  className="rounded-lg bg-primary px-6 py-[7px] text-gray-2 hover:bg-opacity-90 disabled:opacity-50"
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || !hasChanges()}
                 >
                   {submitting ? "Saving..." : "Save"}
                 </button>
@@ -238,5 +257,4 @@ export default function SettingsPage() {
       </div>
     </div>
   );
-};
-
+}
