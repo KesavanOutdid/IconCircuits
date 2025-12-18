@@ -40,15 +40,16 @@ export const useLogin = () => {
         
         if (Object.keys(errors).length > 0) {
             setValidationErrors(errors);
-            return false;
+            return { success: false, error: null };
         }
 
         try {
             await login(formData.email, formData.password);
-            return true;
+            return { success: true, error: null };
         } catch (err) {
-            setValidationErrors({ submit: error || 'Login failed' });
-            return false;
+            const errorMsg = err.message || 'Login failed';
+            setValidationErrors({ submit: errorMsg });
+            return { success: false, error: errorMsg };
         }
     };
 

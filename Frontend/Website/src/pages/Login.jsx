@@ -19,8 +19,8 @@ const Login = () => {
     } = useLogin();
 
     const handleSubmit = async (e) => {
-        const success = await onSubmit(e);
-        if (success) {
+        const result = await onSubmit(e);
+        if (result.success) {
             const token = localStorage.getItem('token');
             if (token) {
                 fetchCart(token);
@@ -36,10 +36,18 @@ const Login = () => {
                 navigate('/');
             });
         } else {
+            const errorMessage = result.error || error || 'Please check your email and password';
             Swal.fire({
                 icon: 'error',
                 title: 'Login Failed',
-                text: error || 'Please check your email and password',
+                text: errorMessage,
+                confirmButtonText: 'OK',
+                didOpen: (modal) => {
+                    const textElement = modal.querySelector('.swal2-html-container');
+                    if (textElement) {
+                        textElement.style.wordWrap = 'break-word';
+                    }
+                }
             });
         }
     };

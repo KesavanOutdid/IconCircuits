@@ -35,11 +35,14 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ email, password }),
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error('Login failed');
+                const errorMessage = data.message || 'Login failed';
+                setError(errorMessage);
+                throw new Error(errorMessage);
             }
 
-            const data = await response.json();
             if (data.success && data.data) {
                 const userData = data.data.user;
                 const authToken = data.data.token;
@@ -48,11 +51,13 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('user', JSON.stringify(userData));
                 localStorage.setItem('token', authToken);
             } else {
-                throw new Error(data.message || 'Login failed');
+                const errorMessage = data.message || 'Login failed';
+                setError(errorMessage);
+                throw new Error(errorMessage);
             }
             return data;
         } catch (err) {
-            const errorMessage = getErrorMessage(err);
+            const errorMessage = err.message || getErrorMessage(err);
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {
@@ -72,19 +77,26 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify(userData),
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error('Signup failed');
+                const errorMessage = data.message || 'Signup failed';
+                setError(errorMessage);
+                throw new Error(errorMessage);
             }
 
-            const data = await response.json();
             if (data.success && data.data) {
                 const signupToken = data.data.token;
                 localStorage.setItem('token', signupToken);
                 setToken(signupToken);
+            } else {
+                const errorMessage = data.message || 'Signup failed';
+                setError(errorMessage);
+                throw new Error(errorMessage);
             }
             return data;
         } catch (err) {
-            const errorMessage = getErrorMessage(err);
+            const errorMessage = err.message || getErrorMessage(err);
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {

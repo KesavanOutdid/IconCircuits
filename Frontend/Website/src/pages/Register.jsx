@@ -10,6 +10,7 @@ const Register = () => {
         showPassword,
         currentStep,
         isLoading,
+        error,
         validationErrors,
         handleChange,
         handleNextStep,
@@ -19,8 +20,8 @@ const Register = () => {
     } = useRegister();
 
     const handleSubmit = async (e) => {
-        const success = await onSubmit(e);
-        if (success) {
+        const result = await onSubmit(e);
+        if (result.success) {
             Swal.fire({
                 icon: 'success',
                 title: 'Account Created!',
@@ -32,10 +33,18 @@ const Register = () => {
                 navigate('/login');
             });
         } else {
+            const errorMessage = result.error || error || 'Please enter missing Required Fields';
             Swal.fire({
                 icon: 'error',
                 title: 'Registration Failed',
-                text: 'Please try again with different details',
+                text: errorMessage,
+                confirmButtonText: 'OK',
+                didOpen: (modal) => {
+                    const textElement = modal.querySelector('.swal2-html-container');
+                    if (textElement) {
+                        textElement.style.wordWrap = 'break-word';
+                    }
+                }
             });
         }
     };

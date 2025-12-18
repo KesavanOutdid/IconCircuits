@@ -112,7 +112,7 @@ export const useRegister = () => {
 
         if (Object.keys(errors).length > 0) {
             setValidationErrors(errors);
-            return false;
+            return { success: false, error: null };
         }
 
         try {
@@ -124,10 +124,11 @@ export const useRegister = () => {
                 roleId: formData.roleId,
                 address: formData.address,
             });
-            return true;
+            return { success: true, error: null };
         } catch (err) {
-            setValidationErrors({ submit: error || 'Registration failed' });
-            return false;
+            const errorMsg = err.message || 'Registration failed';
+            setValidationErrors({ submit: errorMsg });
+            return { success: false, error: errorMsg };
         }
     };
 

@@ -175,7 +175,7 @@ const Orders = () => {
                         <i className="fa fa-check-circle me-2"></i>Success ({orderStats.success})
                     </button>
 
-                    <button
+                    {/* <button
                         className="filter-btn"
                         style={{
                             backgroundColor: filterStatus === 'pending' ? '#fcb535' : '#e9ecef',
@@ -184,7 +184,7 @@ const Orders = () => {
                         onClick={() => handleFilterChange('pending')}
                     >
                         <i className="fa fa-hourglass-half me-2"></i>Pending ({orderStats.pending})
-                    </button>
+                    </button> */}
 
                     <button
                         className="filter-btn"
