@@ -1,0 +1,443 @@
+{
+  "name": "PCB Fabrication (Rigid)",
+  "code": "PCB_FAB_RIGID",
+  "description": "Standard rigid PCB fabrication service for FR4 and high-frequency materials",
+  "category": "Manufacturing",
+  "config_options": [
+    {
+      "type": "dispatch_unit",
+      "name": "Single Board",
+      "value": "single_board",
+      "displayName": "Single Board",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "dispatch_unit",
+      "name": "Panel",
+      "value": "panel",
+      "displayName": "Panel Format",
+      "unit": null,
+      "priceModifier": 0.9,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "FR4 Standard",
+      "value": "fr4_standard",
+      "displayName": "FR4 Standard Tg 135-140",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "FR4 High Tg",
+      "value": "fr4_high_tg",
+      "displayName": "FR4 High Tg 170-180",
+      "unit": null,
+      "priceModifier": 1.25,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "Rogers",
+      "value": "rogers",
+      "displayName": "Rogers High Frequency",
+      "unit": null,
+      "priceModifier": 2.5,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "Aluminum",
+      "value": "aluminum",
+      "displayName": "Aluminum (Metal Core)",
+      "unit": null,
+      "priceModifier": 1.8,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "1 Layer",
+      "value": "1",
+      "displayName": "1 Layer",
+      "unit": "layers",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "2 Layer",
+      "value": "2",
+      "displayName": "2 Layer",
+      "unit": "layers",
+      "priceModifier": 1.5,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "4 Layer",
+      "value": "4",
+      "displayName": "4 Layer",
+      "unit": "layers",
+      "priceModifier": 2.5,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "6 Layer",
+      "value": "6",
+      "displayName": "6 Layer",
+      "unit": "layers",
+      "priceModifier": 3.5,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "8 Layer",
+      "value": "8",
+      "displayName": "8 Layer",
+      "unit": "layers",
+      "priceModifier": 4.5,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "0.4mm",
+      "value": "0.4",
+      "displayName": "0.4mm",
+      "unit": "mm",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "0.6mm",
+      "value": "0.6",
+      "displayName": "0.6mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "0.8mm",
+      "value": "0.8",
+      "displayName": "0.8mm",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "1.0mm",
+      "value": "1.0",
+      "displayName": "1.0mm",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "1.2mm",
+      "value": "1.2",
+      "displayName": "1.2mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "1.6mm",
+      "value": "1.6",
+      "displayName": "1.6mm (Standard)",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "pcb_thickness",
+      "name": "2.0mm",
+      "value": "2.0",
+      "displayName": "2.0mm",
+      "unit": "mm",
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "copper_weight",
+      "name": "1 oz",
+      "value": "1",
+      "displayName": "1 oz (35µm)",
+      "unit": "oz",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "copper_weight",
+      "name": "2 oz",
+      "value": "2",
+      "displayName": "2 oz (70µm)",
+      "unit": "oz",
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "copper_weight",
+      "name": "3 oz",
+      "value": "3",
+      "displayName": "3 oz (105µm)",
+      "unit": "oz",
+      "priceModifier": 1.6,
+      "status": true
+    },
+    {
+      "type": "solder_mask",
+      "name": "Green",
+      "value": "green",
+      "displayName": "Green",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "solder_mask",
+      "name": "Red",
+      "value": "red",
+      "displayName": "Red",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "solder_mask",
+      "name": "Blue",
+      "value": "blue",
+      "displayName": "Blue",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "solder_mask",
+      "name": "Black",
+      "value": "black",
+      "displayName": "Black",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "solder_mask",
+      "name": "White",
+      "value": "white",
+      "displayName": "White",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "silkscreen",
+      "name": "White",
+      "value": "white",
+      "displayName": "White",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "silkscreen",
+      "name": "Black",
+      "value": "black",
+      "displayName": "Black",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "HASL",
+      "value": "hasl",
+      "displayName": "HASL (Lead Free)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "ENIG",
+      "value": "enig",
+      "displayName": "ENIG (Gold)",
+      "unit": null,
+      "priceModifier": 1.4,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "OSP",
+      "value": "osp",
+      "displayName": "OSP",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "Immersion Silver",
+      "value": "immersion_silver",
+      "displayName": "Immersion Silver",
+      "unit": null,
+      "priceModifier": 1.25,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "Immersion Tin",
+      "value": "immersion_tin",
+      "displayName": "Immersion Tin",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "via_process",
+      "name": "Tenting",
+      "value": "tenting",
+      "displayName": "Tenting Vias",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "via_process",
+      "name": "Plugging",
+      "value": "plugging",
+      "displayName": "Plugging Vias",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "via_process",
+      "name": "Epoxy Filled",
+      "value": "epoxy_filled",
+      "displayName": "Epoxy Filled & Capped",
+      "unit": null,
+      "priceModifier": 1.35,
+      "status": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "ruleName": "Base Rigid PCB - 1 Layer",
+      "conditions": {
+        "layer": "1",
+        "material": "fr4_standard",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 500,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 5000) + (quantity * 50)",
+      "status": true
+    },
+    {
+      "ruleName": "Base Rigid PCB - 2 Layer",
+      "conditions": {
+        "layer": "2",
+        "material": "fr4_standard",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 750,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 7500) + (quantity * 75)",
+      "status": true
+    },
+    {
+      "ruleName": "Base Rigid PCB - 4 Layer",
+      "conditions": {
+        "layer": "4",
+        "material": "fr4_standard",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 1200,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 12000) + (quantity * 120)",
+      "status": true
+    },
+    {
+      "ruleName": "Base Rigid PCB - 6 Layer",
+      "conditions": {
+        "layer": "6",
+        "material": "fr4_standard",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 1800,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 18000) + (quantity * 180)",
+      "status": true
+    },
+    {
+      "ruleName": "Volume Discount - Medium",
+      "conditions": {
+        "quantity": "50-100"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage_discount",
+      "formula": "10",
+      "status": true
+    },
+    {
+      "ruleName": "Volume Discount - High",
+      "conditions": {
+        "quantity": ">100"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage_discount",
+      "formula": "20",
+      "status": true
+    }
+  ],
+  "lead_times": [
+    {
+      "name": "Super Rush - 24 Hours",
+      "days": 1,
+      "priceMultiplier": 3.0,
+      "displayText": "24 Hours (Super Rush)",
+      "status": true
+    },
+    {
+      "name": "Rush - 48 Hours",
+      "days": 2,
+      "priceMultiplier": 2.0,
+      "displayText": "48 Hours (Rush)",
+      "status": true
+    },
+    {
+      "name": "Express - 5 Working Days",
+      "days": 5,
+      "priceMultiplier": 1.5,
+      "displayText": "5 WD (Express)",
+      "status": true
+    },
+    {
+      "name": "Standard - 7 Working Days",
+      "days": 7,
+      "priceMultiplier": 1.0,
+      "displayText": "7 WD (Standard)",
+      "status": true
+    },
+    {
+      "name": "Economy - 10 Working Days",
+      "days": 10,
+      "priceMultiplier": 0.8,
+      "displayText": "10 WD (Economy)",
+      "status": true
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+/* Make all nav links blue */
+.navbar .nav-link {
+    color: #10304e !important;
+    font-weight: 500;
+    position: relative;
+    padding-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Add bottom border on hover or active */
+.navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #fcb535;
+    transition: width 0.3s ease;
+} 
+
+/* On hover or when active, show line */
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
+    width: 100%;
+}
+
+/* Keep dropdown items readable */
+.dropdown-menu .dropdown-item {
+    color: #10304e !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #d0e1f9eb;
+    color: #10304e !important;
+}
+
+.dropdown-menu .dropdown-item.active {
+    background-color: #10304e;
+    color: white !important;
+}
+
+/* Dropdown toggle active state */
+.navbar .dropdown-toggle.active::after {
+    width: 100%;
+}
+
+/* Auth Section */
+.navbar-auth-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.nav-link-auth {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-auth.login-link {
+    color: #10304e;
+    border: 2px solid #10304e;
+}
+
+.nav-link-auth.login-link:hover {
+    background-color: #f0f5ff;
+}
+
+.nav-link-auth.register-link {
+    background-color: #fcb535;
+    color: #10304e;
+}
+
+.nav-link-auth.register-link:hover {
+    background-color: #e6a42e;
+}
+
+/* Cart Icon */
+.nav-link-cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #10304e;
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-cart:hover {
+    color: #fcb535;
+    transform: scale(1.1);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #fcb535;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* User Menu Toggle */
+.user-menu-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #10304e !important;
+    font-weight: 500;
+}
+
+.user-menu-toggle:hover {
+    color: #fcb535 !important;
+}
+
+.user-menu-toggle i {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+.user-menu-toggle:hover i {
+    transform: scale(1.15);
+}
+
+.dropdown-menu .dropdown-item[data-logout] {
+    color: #d9534f !important;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item[data-logout]:hover {
+    background-color: #f8d7da !important;
+}
+
+.dropdown-menu .dropdown-item[data-logout] i {
+    display: inline-block;
+    animation: logoutIconMove 0.6s ease forwards;
+}
+
+.dropdown-menu .dropdown-item[data-logout]:hover i {
+    animation: logoutIconWobble 0.5s ease infinite;
+}
+
+@keyframes logoutIconMove {
+    0% {
+        transform: translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(20px) rotate(-15deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(25px) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes logoutIconWobble {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateX(-3px) rotate(-5deg);
+    }
+    75% {
+        transform: translateX(3px) rotate(5deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .navbar-auth-section {
+        margin-left: 10px;
+        gap: 10px;
+    }
+
+    .nav-link-auth {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .nav-link-auth.register-link {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-auth-section {
+        margin-left: 5px;
+        gap: 8px;
+    }
+
+    .nav-link-auth {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .nav-link-auth i {
+        display: none;
+    }
+}
+
+/* Yellow highlight for user dropdown button when on /profile, /orders, /cart */
+.user-menu-toggle.active-user {
+    color: #ffc107 !important;
+    /* text yellow */
+    font-weight: 600;
+}
+
+/* Yellow highlight for active items inside user dropdown */
+.dropdown-menu .dropdown-item.active-account-link {
+    background-color: #10304e !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}

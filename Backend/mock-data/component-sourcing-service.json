@@ -1,0 +1,265 @@
+{
+  "name": "Component Sourcing",
+  "code": "COMPONENT_SOURCING",
+  "description": "Professional component procurement service with verified suppliers and quality assurance",
+  "category": "Procurement",
+  "config_options": [
+    {
+      "type": "sourcing_type",
+      "name": "Standard Components",
+      "value": "standard",
+      "displayName": "Standard Components (In Stock)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "sourcing_type",
+      "name": "Custom Components",
+      "value": "custom",
+      "displayName": "Custom/Hard-to-Find Components",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "component_category",
+      "name": "Passive Components",
+      "value": "passive",
+      "displayName": "Passive (Resistors, Capacitors, Inductors)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "component_category",
+      "name": "Active Components",
+      "value": "active",
+      "displayName": "Active (ICs, Transistors, Diodes)",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "component_category",
+      "name": "Connectors",
+      "value": "connectors",
+      "displayName": "Connectors & Terminals",
+      "unit": null,
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "component_category",
+      "name": "Electromechanical",
+      "value": "electromechanical",
+      "displayName": "Electromechanical (Switches, Relays)",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "component_quality",
+      "name": "Standard Grade",
+      "value": "standard",
+      "displayName": "Standard Grade",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "component_quality",
+      "name": "Industrial Grade",
+      "value": "industrial",
+      "displayName": "Industrial Grade",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "component_quality",
+      "name": "Automotive Grade",
+      "value": "automotive",
+      "displayName": "Automotive Grade",
+      "unit": null,
+      "priceModifier": 1.4,
+      "status": true
+    },
+    {
+      "type": "component_quality",
+      "name": "Military Grade",
+      "value": "military",
+      "displayName": "Military/Aerospace Grade",
+      "unit": null,
+      "priceModifier": 1.8,
+      "status": true
+    },
+    {
+      "type": "verification",
+      "name": "No Verification",
+      "value": "no",
+      "displayName": "No Additional Verification",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "verification",
+      "name": "Basic Verification",
+      "value": "basic",
+      "displayName": "Basic Verification (Visual Inspection)",
+      "unit": null,
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "verification",
+      "name": "Advanced Verification",
+      "value": "advanced",
+      "displayName": "Advanced Verification (Testing + X-Ray)",
+      "unit": null,
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "packaging",
+      "name": "Standard Packaging",
+      "value": "standard",
+      "displayName": "Standard Packaging",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "packaging",
+      "name": "ESD Packaging",
+      "value": "esd",
+      "displayName": "ESD Safe Packaging",
+      "unit": null,
+      "priceModifier": 1.08,
+      "status": true
+    },
+    {
+      "type": "packaging",
+      "name": "Moisture Barrier",
+      "value": "moisture_barrier",
+      "displayName": "Moisture Barrier Packaging",
+      "unit": null,
+      "priceModifier": 1.12,
+      "status": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "ruleName": "Base Component Sourcing Fee",
+      "conditions": {
+        "component_count": "<=50"
+      },
+      "basePrice": 500,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Component Sourcing Fee - Medium BOM",
+      "conditions": {
+        "component_count": "51-150"
+      },
+      "basePrice": 800,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Component Sourcing Fee - Large BOM",
+      "conditions": {
+        "component_count": "151+"
+      },
+      "basePrice": 1200,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Component Cost Markup - Standard",
+      "conditions": {
+        "sourcing_type": "standard"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage",
+      "formula": "component_cost * 1.10",
+      "status": true
+    },
+    {
+      "ruleName": "Component Cost Markup - Custom",
+      "conditions": {
+        "sourcing_type": "custom"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage",
+      "formula": "component_cost * 1.20",
+      "status": true
+    },
+    {
+      "ruleName": "Hard-to-Find Component Fee",
+      "conditions": {
+        "sourcing_type": "custom",
+        "availability": "hard_to_find"
+      },
+      "basePrice": 300,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Advanced Verification Fee",
+      "conditions": {
+        "verification": "advanced"
+      },
+      "basePrice": 400,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    },
+    {
+      "ruleName": "Express Sourcing Premium",
+      "conditions": {
+        "lead_time": "<=7"
+      },
+      "basePrice": 0,
+      "calculationType": "percentage",
+      "formula": "total_cost * 1.25",
+      "status": true
+    }
+  ],
+  "lead_times": [
+    {
+      "name": "Express - 5-7 Working Days",
+      "days": 7,
+      "priceMultiplier": 1.5,
+      "displayText": "5-7 WD (Express)",
+      "status": true
+    },
+    {
+      "name": "Fast - 7-10 Working Days",
+      "days": 10,
+      "priceMultiplier": 1.2,
+      "displayText": "7-10 WD (Fast)",
+      "status": true
+    },
+    {
+      "name": "Standard - 10-14 Working Days",
+      "days": 14,
+      "priceMultiplier": 1.0,
+      "displayText": "10-14 WD (Standard)",
+      "status": true
+    },
+    {
+      "name": "Economy - 14-18 Working Days",
+      "days": 18,
+      "priceMultiplier": 0.9,
+      "displayText": "14-18 WD (Economy)",
+      "status": true
+    }
+  ]
+}

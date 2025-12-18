@@ -1,0 +1,214 @@
+{
+  "name": "PCB Fabrication (Flex)",
+  "code": "PCB_FAB_FLEX",
+  "description": "Flexible PCB fabrication service for bendable and foldable PCB applications",
+  "category": "Manufacturing",
+  "config_options": [
+    {
+      "type": "dispatch_unit",
+      "name": "Single Board",
+      "value": "single_board",
+      "displayName": "Single Board",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "dispatch_unit",
+      "name": "Panel",
+      "value": "panel",
+      "displayName": "Panel",
+      "unit": null,
+      "priceModifier": 0.95,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "Polyimide (PI)",
+      "value": "polyimide",
+      "displayName": "Polyimide (Standard Flex)",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "material",
+      "name": "PET",
+      "value": "pet",
+      "displayName": "PET (Budget Flex)",
+      "unit": null,
+      "priceModifier": 0.8,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "1 Layer",
+      "value": "1",
+      "displayName": "1 Layer Flex",
+      "unit": "layers",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "2 Layer",
+      "value": "2",
+      "displayName": "2 Layer Flex",
+      "unit": "layers",
+      "priceModifier": 1.6,
+      "status": true
+    },
+    {
+      "type": "layer",
+      "name": "4 Layer",
+      "value": "4",
+      "displayName": "4 Layer Rigid-Flex",
+      "unit": "layers",
+      "priceModifier": 2.8,
+      "status": true
+    },
+    {
+      "type": "fpc_thickness",
+      "name": "0.05mm",
+      "value": "0.05",
+      "displayName": "0.05mm (Ultra Thin)",
+      "unit": "mm",
+      "priceModifier": 1.15,
+      "status": true
+    },
+    {
+      "type": "fpc_thickness",
+      "name": "0.1mm",
+      "value": "0.1",
+      "displayName": "0.1mm (Standard)",
+      "unit": "mm",
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "fpc_thickness",
+      "name": "0.2mm",
+      "value": "0.2",
+      "displayName": "0.2mm",
+      "unit": "mm",
+      "priceModifier": 1.05,
+      "status": true
+    },
+    {
+      "type": "fpc_thickness",
+      "name": "0.3mm",
+      "value": "0.3",
+      "displayName": "0.3mm",
+      "unit": "mm",
+      "priceModifier": 1.1,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "ENIG",
+      "value": "enig",
+      "displayName": "ENIG (Gold)",
+      "unit": null,
+      "priceModifier": 1.3,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "OSP",
+      "value": "osp",
+      "displayName": "OSP",
+      "unit": null,
+      "priceModifier": 1.0,
+      "status": true
+    },
+    {
+      "type": "surface_finish",
+      "name": "Immersion Silver",
+      "value": "immersion_silver",
+      "displayName": "Immersion Silver",
+      "unit": null,
+      "priceModifier": 1.2,
+      "status": true
+    },
+    {
+      "type": "temperature_gradient",
+      "name": "High Tg",
+      "value": "high_tg",
+      "displayName": "High Tg (230°C)",
+      "unit": "°C",
+      "priceModifier": 1.0,
+      "status": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "ruleName": "Base Flex PCB - 1 Layer",
+      "conditions": {
+        "layer": "1",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 800,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 8000) + (quantity * 80)",
+      "status": true
+    },
+    {
+      "ruleName": "Base Flex PCB - 2 Layer",
+      "conditions": {
+        "layer": "2",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 1300,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 13000) + (quantity * 130)",
+      "status": true
+    },
+    {
+      "ruleName": "Rigid-Flex PCB - 4 Layer",
+      "conditions": {
+        "layer": "4",
+        "board_area_sqm": "<=0.01",
+        "quantity": "<=10"
+      },
+      "basePrice": 2200,
+      "calculationType": "formula",
+      "formula": "basePrice + (board_area_sqm * 22000) + (quantity * 220)",
+      "status": true
+    },
+    {
+      "ruleName": "Setup Charges - One Time",
+      "conditions": {
+        "first_order": true
+      },
+      "basePrice": 400,
+      "calculationType": "fixed",
+      "formula": null,
+      "status": true
+    }
+  ],
+  "lead_times": [
+    {
+      "name": "Express - 10 Working Days",
+      "days": 10,
+      "priceMultiplier": 1.5,
+      "displayText": "10 WD (Express)",
+      "status": true
+    },
+    {
+      "name": "Standard - 15 Working Days",
+      "days": 15,
+      "priceMultiplier": 1.0,
+      "displayText": "15 WD (Standard)",
+      "status": true
+    },
+    {
+      "name": "Economy - 20 Working Days",
+      "days": 20,
+      "priceMultiplier": 0.85,
+      "displayText": "20 WD (Economy)",
+      "status": true
+    }
+  ]
+}

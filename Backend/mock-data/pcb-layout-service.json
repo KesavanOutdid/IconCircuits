@@ -1,0 +1,99 @@
+{
+  "name": "PCB Layout Design",
+  "code": "PCB_LAYOUT",
+  "description": "Professional PCB layout design service with schematic and BOM review",
+  "category": "Design",
+  "status": true,
+  "config": {
+    "layers": {
+      "type": "select",
+      "options": ["1", "2", "4", "6", "8", "12", "24"],
+      "multiplier": {
+        "1": 1.0,
+        "2": 1.2,
+        "4": 1.5,
+        "6": 1.8,
+        "8": 2.2,
+        "12": 2.8,
+        "24": 4.0
+      }
+    },
+    "components": {
+      "type": "select",
+      "options": [75, 150, 250, 750, 1250, 2000, 3000],
+      "multiplier": {
+        "75": 1.0,
+        "150": 1.3,
+        "250": 1.6,
+        "750": 2.2,
+        "1250": 3.0,
+        "2000": 4.0,
+        "3000": 5.5
+      }
+    },
+    "pcb_type": {
+      "type": "select",
+      "options": ["regular_rigid", "flex", "power", "hdi", "rf"],
+      "multiplier": {
+        "regular_rigid": 1.0,
+        "flex": 1.8,
+        "power": 1.5,
+        "hdi": 2.5,
+        "rf": 2.0
+      }
+    },
+    "dimension": {
+      "type": "numeric_xy",
+      "unit": "mm",
+      "min": { "x": 5, "y": 5 },
+      "max": { "x": 415, "y": 280 },
+      "area_pricing": {
+        "min_area_sqmm": 25,
+        "max_area_sqmm": 116200,
+        "slabs": [
+          { "min": 0, "max": 5000, "multiplier": 1.0 },
+          { "min": 5001, "max": 20000, "multiplier": 1.2 },
+          { "min": 20001, "max": 50000, "multiplier": 1.5 },
+          { "min": 50001, "max": 116200, "multiplier": 2.0 }
+        ]
+      }
+    },
+    "component_placement": {
+      "type": "select",
+      "options": ["top", "bottom", "top_and_bottom"],
+      "multiplier": {
+        "top": 1.0,
+        "bottom": 1.0,
+        "top_and_bottom": 1.3
+      }
+    },
+    "controlled_impedance": {
+      "type": "boolean",
+      "multiplier": {
+        "true": 1.4,
+        "false": 1.0
+      }
+    },
+    "lead_time_days": {
+      "type": "select",
+      "options": [3, 5, 7, 10],
+      "multiplier": {
+        "3": 1.5,
+        "5": 1.3,
+        "7": 1.1,
+        "10": 1.0
+      }
+    },
+    "delivery_format": {
+      "type": "multi_select",
+      "options": ["gerber", "bom", "step_file", "dxf", "layer_pdf"],
+      "multiplier": {
+        "gerber": 1.0,
+        "bom": 1.1,
+        "step_file": 1.2,
+        "dxf": 1.15,
+        "layer_pdf": 1.05
+      }
+    }
+  }
+}
