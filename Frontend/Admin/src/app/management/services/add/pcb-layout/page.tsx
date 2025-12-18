@@ -56,19 +56,25 @@ const FIELD_LABELS: Record<string, string> = {
   controlled_impedance: "Control Impedance",
   pcb_type: "PCB Type",
   delivery_format: "Delivery Format",
+  material: "Material",
+  surface_finish: "Surface Finish",
+  fpc_thickness: "FPC Thickness",
   dimension: "PCB Dimension",
 };
 
 const FIELD_PLACEHOLDERS: Record<string, string> = {
   layers: "e.g., 1,2,3,4",
-  components: "e.g., 25,100,230",
+  components: "e.g., 0-75,75-500,500+",
   lead_time_days: "e.g., 2,3,4",
   controlled_impedance: "true,false",
-  pcb_type: "e.g., Regular rigid flex",
+  pcb_type: "e.g., regular,flex",
   delivery_format: "e.g., Gerber,BOM,DXF",
+  material: "e.g., Polymide",
+  surface_finish: "e.g., Copper,Electroless Nickel Immersion Gold,Immersion Tin",
+  fpc_thickness: "e.g., 0.0031\"/0.08mm,0.0047\"/0.12mm",
 };
 
-const REQUIRED_FIELDS = ["layers", "components", "lead_time_days", "controlled_impedance", "pcb_type", "delivery_format", "dimension"];
+const REQUIRED_FIELDS = ["layers", "components", "lead_time_days", "controlled_impedance", "pcb_type", "delivery_format"];
 
 export default function AddPCBLayout() {
   const router = useRouter();
@@ -80,24 +86,20 @@ export default function AddPCBLayout() {
     controlled_impedance: 1,
     pcb_type: 1,
     delivery_format: 1,
+    material: 1,
+    surface_finish: 1,
+    fpc_thickness: 1,
   });
   const [inputValues, setInputValues] = useState<Record<string, string>>({
-    layers: "",
-    components: "",
-    lead_time_days: "",
+    layers: "2,4,6,8",
+    components: "0-75,75-500,500+",
+    lead_time_days: "2,3,5,7",
     controlled_impedance: "true,false",
-    pcb_type: "",
-    delivery_format: "",
-  });
-
-  const [dimensionData, setDimensionData] = useState<DimensionConfig>({
-    type: "numeric_xy",
-    unit: "mm",
-    min: { x: 0, y: 0 },
-    max: { x: 0, y: 0 },
-    area_pricing: {
-      slabs: [],
-    },
+    pcb_type: "regular,flex",
+    delivery_format: "Gerber,BOM,DXF",
+    material: "Polyimide",
+    surface_finish: "Copper,ENIG,Immersion Tin",
+    fpc_thickness: "0.0031\"/0.08mm,0.0047\"/0.12mm",
   });
 
   const [formData, setFormData] = useState<ServiceData>({
@@ -109,6 +111,14 @@ export default function AddPCBLayout() {
     base_price: 0,
     status: true,
     config: {},
+  });
+
+  const [dimensionConfig, setDimensionConfig] = useState({
+    unit: "mm",
+    x_min: "",
+    x_max: "",
+    y_min: "",
+    y_max: "",
   });
 
   const MAX_SERVICE_NAME = 100;
@@ -135,6 +145,13 @@ export default function AddPCBLayout() {
     }));
   };
 
+  const handleDimensionChange = (field: string, value: string) => {
+    setDimensionConfig((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const parseAndSetOptions = (fieldName: string) => {
     const input = inputValues[fieldName];
     if (!input.trim()) {
@@ -152,23 +169,49 @@ export default function AddPCBLayout() {
       return;
     }
 
-    const options = input.split(",").map((item) => item.trim()).filter((item) => item.length > 0);
-    const numericOptions = options.map((opt) => {
-      const num = parseFloat(opt);
-      return isNaN(num) ? opt : num;
+    const items = input.split(",").map((item) => item.trim()).filter((item) => item.length > 0);
+    const options: (string | number)[] = [];
+
+    items.forEach((item) => {
+      const hasSpecialChars = item.includes("/") || item.includes('"') || item.includes("'");
+      
+      if (item.includes("-") && !hasSpecialChars) {
+        const parts = item.split("-");
+        if (parts.length === 2) {
+          const start = parseFloat(parts[0].trim());
+          const end = parseFloat(parts[1].trim());
+          if (!isNaN(start) && !isNaN(end)) {
+            options.push(item);
+          } else {
+            options.push(item);
+          }
+        } else {
+          options.push(item);
+        }
+      } else if (!hasSpecialChars) {
+        const num = parseFloat(item);
+        options.push(isNaN(num) ? item : num);
+      } else {
+        options.push(item);
+      }
     });
 
     const newMultipliers: Record<string, number> = {};
     const minMult = minMultipliers[fieldName] || 1;
     const MULTIPLIER = 1.2;
 
-    numericOptions.forEach((opt, index) => {
+    options.forEach((opt, index) => {
       const key = String(opt);
       const existingValue = (formData.config as any)[fieldName]?.multiplier?.[key];
       if (existingValue) {
         newMultipliers[key] = existingValue;
+      } else if (fieldName === "controlled_impedance") {
+        newMultipliers[key] = key === "true" ? 1 : 0;
+      } else if (fieldName === "delivery_format") {
+        newMultipliers[key] = 1;
       } else {
-        newMultipliers[key] = parseFloat((minMult * Math.pow(MULTIPLIER, index)).toFixed(2));
+        const reversedIndex = fieldName === "lead_time_days" ? (options.length - 1 - index) : index;
+        newMultipliers[key] = parseFloat((minMult * Math.pow(MULTIPLIER, reversedIndex)).toFixed(2));
       }
     });
 
@@ -178,7 +221,7 @@ export default function AddPCBLayout() {
         ...prev.config,
         [fieldName]: {
           type: fieldName === "controlled_impedance" ? "boolean" : "select",
-          options: numericOptions,
+          options: options,
           multiplier: newMultipliers,
         },
       },
@@ -221,24 +264,9 @@ export default function AddPCBLayout() {
     }));
   };
 
-  const addAreaSlab = () => {
-    setDimensionData((prev) => ({
-      ...prev,
-      area_pricing: {
-        ...prev.area_pricing!,
-        slabs: [...prev.area_pricing!.slabs, { min: 0, max: 0, multiplier: 1 }],
-      },
-    }));
-  };
-
-  const removeAreaSlab = (index: number) => {
-    setDimensionData((prev) => ({
-      ...prev,
-      area_pricing: {
-        ...prev.area_pricing!,
-        slabs: prev.area_pricing!.slabs.filter((_, i) => i !== index),
-      },
-    }));
+  const isFlexSelected = () => {
+    const pcbTypeConfig = formData.config.pcb_type;
+    return pcbTypeConfig?.options?.some((opt) => String(opt).toLowerCase().includes("flex"));
   };
 
   const validateForm = (data: ServiceData): boolean => {
@@ -256,15 +284,19 @@ export default function AddPCBLayout() {
     }
 
     for (const field of REQUIRED_FIELDS) {
-      if (field === "dimension") {
-        if (!data.config.dimension) {
-          Swal.fire({ icon: "error", title: "Validation Error", text: `${FIELD_LABELS[field]} is required` });
-          return false;
-        }
-      } else {
+      const config = data.config[field as keyof ServiceConfig];
+      if (!config?.options || config.options.length === 0) {
+        Swal.fire({ icon: "error", title: "Validation Error", text: `${FIELD_LABELS[field]} is required` });
+        return false;
+      }
+    }
+
+    if (isFlexSelected()) {
+      const flexRequiredFields = ["material", "surface_finish", "fpc_thickness"];
+      for (const field of flexRequiredFields) {
         const config = data.config[field as keyof ServiceConfig];
         if (!config?.options || config.options.length === 0) {
-          Swal.fire({ icon: "error", title: "Validation Error", text: `${FIELD_LABELS[field]} is required` });
+          Swal.fire({ icon: "error", title: "Validation Error", text: `${FIELD_LABELS[field]} is required for Flex PCB` });
           return false;
         }
       }
@@ -277,40 +309,76 @@ export default function AddPCBLayout() {
     e.preventDefault();
 
     let updatedConfig: ServiceConfig = {};
+    const fieldsToProcess = [...REQUIRED_FIELDS];
+    
+    if (isFlexSelected()) {
+      fieldsToProcess.push("material", "surface_finish", "fpc_thickness");
+    }
 
-    for (const fieldName of REQUIRED_FIELDS) {
-      if (fieldName === "dimension") {
-        (updatedConfig as any).dimension = dimensionData;
-      } else {
-        const input = inputValues[fieldName] || "";
-        if (input.trim()) {
-          const options = input.split(",").map((item) => item.trim()).filter((item) => item.length > 0);
-          const numericOptions = options.map((opt) => {
-            const num = parseFloat(opt);
-            return isNaN(num) ? opt : num;
-          });
+    for (const fieldName of fieldsToProcess) {
+      const input = inputValues[fieldName] || "";
+      if (input.trim()) {
+        const items = input.split(",").map((item) => item.trim()).filter((item) => item.length > 0);
+        const options: (string | number)[] = [];
 
-          const newMultipliers: Record<string, number> = {};
-          const minMult = minMultipliers[fieldName] || 1;
-          const MULTIPLIER = 1.2;
-
-          numericOptions.forEach((opt, index) => {
-            const optKey = String(opt);
-            const existingValue = (formData.config as any)[fieldName]?.multiplier?.[optKey];
-            if (existingValue) {
-              newMultipliers[optKey] = existingValue;
+        items.forEach((item) => {
+          const hasSpecialChars = item.includes("/") || item.includes('"') || item.includes("'");
+          
+          if (item.includes("-") && !hasSpecialChars) {
+            const parts = item.split("-");
+            if (parts.length === 2) {
+              const start = parseFloat(parts[0].trim());
+              const end = parseFloat(parts[1].trim());
+              if (!isNaN(start) && !isNaN(end)) {
+                options.push(item);
+              } else {
+                options.push(item);
+              }
             } else {
-              newMultipliers[optKey] = parseFloat((minMult * Math.pow(MULTIPLIER, index)).toFixed(2));
+              options.push(item);
             }
-          });
+          } else if (!hasSpecialChars) {
+            const num = parseFloat(item);
+            options.push(isNaN(num) ? item : num);
+          } else {
+            options.push(item);
+          }
+        });
 
-          (updatedConfig as any)[fieldName] = {
-            type: fieldName === "controlled_impedance" ? "boolean" : "select",
-            options: numericOptions,
-            multiplier: newMultipliers,
-          };
-        }
+        const newMultipliers: Record<string, number> = {};
+        const minMult = minMultipliers[fieldName] || 1;
+        const MULTIPLIER = 1.2;
+
+        options.forEach((opt, index) => {
+          const optKey = String(opt);
+          const existingValue = (formData.config as any)[fieldName]?.multiplier?.[optKey];
+          if (existingValue) {
+            newMultipliers[optKey] = existingValue;
+          } else if (fieldName === "controlled_impedance") {
+            newMultipliers[optKey] = optKey === "true" ? 1 : 0;
+          } else if (fieldName === "delivery_format") {
+            newMultipliers[optKey] = 1;
+          } else {
+            const reversedIndex = fieldName === "lead_time_days" ? (options.length - 1 - index) : index;
+            newMultipliers[optKey] = parseFloat((minMult * Math.pow(MULTIPLIER, reversedIndex)).toFixed(2));
+          }
+        });
+
+        (updatedConfig as any)[fieldName] = {
+          type: fieldName === "controlled_impedance" ? "boolean" : "select",
+          options: options,
+          multiplier: newMultipliers,
+        };
       }
+    }
+
+    if (dimensionConfig.x_max && dimensionConfig.y_max) {
+      (updatedConfig as any).dimension = {
+        type: "dimension",
+        unit: dimensionConfig.unit,
+        min: { x: parseFloat(dimensionConfig.x_min as string) || 0, y: parseFloat(dimensionConfig.y_min as string) || 0 },
+        max: { x: parseFloat(dimensionConfig.x_max as string) || 0, y: parseFloat(dimensionConfig.y_max as string) || 0 },
+      };
     }
 
     const finalFormData: ServiceData = {
@@ -357,11 +425,15 @@ export default function AddPCBLayout() {
     }
 
     for (const field of REQUIRED_FIELDS) {
-      if (field === "dimension") {
-        if (!dimensionData || dimensionData.max.x === 0 || dimensionData.max.y === 0) {
-          return false;
-        }
-      } else {
+      const config = formData.config[field as keyof ServiceConfig];
+      if (!config?.options || config.options.length === 0) {
+        return false;
+      }
+    }
+
+    if (isFlexSelected()) {
+      const flexRequiredFields = ["material", "surface_finish", "fpc_thickness"];
+      for (const field of flexRequiredFields) {
         const config = formData.config[field as keyof ServiceConfig];
         if (!config?.options || config.options.length === 0) {
           return false;
@@ -551,16 +623,22 @@ export default function AddPCBLayout() {
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  min="0.1"
-                                  value={multiplier}
-                                  onChange={(e) =>
-                                    handleMultiplierChange(fieldName, String(option), parseFloat(e.target.value) || 1)
-                                  }
-                                  className="w-24 rounded border border-[#E8E8E8] bg-transparent px-2 py-1 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                                />
+                                {fieldName === "delivery_format" ? (
+                                  <span className="text-sm text-gray-600 dark:text-gray-400 w-24 text-center">
+                                    {multiplier}
+                                  </span>
+                                ) : (
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0.1"
+                                    value={multiplier}
+                                    onChange={(e) =>
+                                      handleMultiplierChange(fieldName, String(option), parseFloat(e.target.value) || 1)
+                                    }
+                                    className="w-24 rounded border border-[#E8E8E8] bg-transparent px-2 py-1 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                                  />
+                                )}
                                 <button
                                   type="button"
                                   onClick={() => removeOption(fieldName, option)}
@@ -578,184 +656,178 @@ export default function AddPCBLayout() {
                 </div>
               ))}
 
-              <div>
-                <label className="mb-3 block text-md font-bold text-dark dark:text-white">
-                  {FIELD_LABELS["dimension"]} <span className="text-red-500">*</span>
-                </label>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-dark dark:text-white">
-                        Min X (mm)
+              {isFlexSelected() && (
+                <>
+                  {["material", "surface_finish", "fpc_thickness"].map((fieldName) => (
+                    <div key={fieldName}>
+                      <label className="mb-3 block text-md font-bold text-dark dark:text-white">
+                        {FIELD_LABELS[fieldName]} <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={dimensionData.min.x === 0 ? "" : dimensionData.min.x}
-                        onChange={(e) =>
-                          setDimensionData((prev) => ({
-                            ...prev,
-                            min: { ...prev.min, x: e.target.value === "" ? 0 : parseFloat(e.target.value) },
-                          }))
-                        }
-                        onWheel={(e) => e.currentTarget.blur()}
-                        className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-dark dark:text-white">
-                        Min Y (mm)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={dimensionData.min.y === 0 ? "" : dimensionData.min.y}
-                        onChange={(e) =>
-                          setDimensionData((prev) => ({
-                            ...prev,
-                            min: { ...prev.min, y: e.target.value === "" ? 0 : parseFloat(e.target.value) },
-                          }))
-                        }
-                        onWheel={(e) => e.currentTarget.blur()}
-                        className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                      />
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-dark dark:text-white">
-                        Max X (mm)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={dimensionData.max.x === 0 ? "" : dimensionData.max.x}
-                        onChange={(e) =>
-                          setDimensionData((prev) => ({
-                            ...prev,
-                            max: { ...prev.max, x: e.target.value === "" ? 0 : parseFloat(e.target.value) },
-                          }))
-                        }
-                        onWheel={(e) => e.currentTarget.blur()}
-                        className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-dark dark:text-white">
-                        Max Y (mm)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={dimensionData.max.y === 0 ? "" : dimensionData.max.y}
-                        onChange={(e) =>
-                          setDimensionData((prev) => ({
-                            ...prev,
-                            max: { ...prev.max, y: e.target.value === "" ? 0 : parseFloat(e.target.value) },
-                          }))
-                        }
-                        onWheel={(e) => e.currentTarget.blur()}
-                        className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  {dimensionData.area_pricing && (
-                    <div>
-                      <div className="mb-3 flex items-center justify-between">
-                        <h4 className="text-sm font-bold text-dark dark:text-white">
-                          Area Pricing Slabs
-                        </h4>
-                        <button
-                          type="button"
-                          onClick={addAreaSlab}
-                          className="rounded bg-primary px-3 py-1 text-sm font-medium text-white hover:bg-opacity-90"
-                        >
-                          + Add Slab
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        {dimensionData.area_pricing.slabs.map((slab, index) => (
-                          <div key={index} className="grid grid-cols-3 gap-2">
-                            <div>
-                              <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">
-                                Min Area
-                              </label>
-                              <input
-                                type="number"
-                                value={slab.min}
-                                onChange={(e) => {
-                                  const newSlabs = [...dimensionData.area_pricing!.slabs];
-                                  newSlabs[index].min = parseFloat(e.target.value) || 0;
-                                  setDimensionData((prev) => ({
-                                    ...prev,
-                                    area_pricing: {
-                                      ...prev.area_pricing!,
-                                      slabs: newSlabs,
-                                    },
-                                  }));
-                                }}
-                                className="w-full rounded border border-[#E8E8E8] bg-transparent px-2 py-1 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">
-                                Max Area
-                              </label>
-                              <input
-                                type="number"
-                                value={slab.max}
-                                onChange={(e) => {
-                                  const newSlabs = [...dimensionData.area_pricing!.slabs];
-                                  newSlabs[index].max = parseFloat(e.target.value) || 0;
-                                  setDimensionData((prev) => ({
-                                    ...prev,
-                                    area_pricing: {
-                                      ...prev.area_pricing!,
-                                      slabs: newSlabs,
-                                    },
-                                  }));
-                                }}
-                                className="w-full rounded border border-[#E8E8E8] bg-transparent px-2 py-1 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                              />
-                            </div>
-                            <div className="flex items-end gap-2">
-                              <div className="flex-1">
-                                <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">
-                                  Multiplier
-                                </label>
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  value={slab.multiplier}
-                                  onChange={(e) => {
-                                    const newSlabs = [...dimensionData.area_pricing!.slabs];
-                                    newSlabs[index].multiplier = parseFloat(e.target.value) || 1;
-                                    setDimensionData((prev) => ({
-                                      ...prev,
-                                      area_pricing: {
-                                        ...prev.area_pricing!,
-                                        slabs: newSlabs,
-                                      },
-                                    }));
-                                  }}
-                                  className="w-full rounded border border-[#E8E8E8] bg-transparent px-2 py-1 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                                />
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => removeAreaSlab(index)}
-                                className="mb-1 text-red-500 hover:text-red-600"
-                              >
-                                ✕
-                              </button>
-                            </div>
+                      <div className="space-y-3">
+                        <div className="flex items-end gap-2">
+                          <div className="flex-1">
+                            <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                              Min Multiplier
+                            </label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              min="0.1"
+                              value={minMultipliers[fieldName]}
+                              onChange={(e) =>
+                                setMinMultipliers((prev) => ({
+                                  ...prev,
+                                  [fieldName]: parseFloat(e.target.value) || 1,
+                                }))
+                              }
+                              className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                            />
                           </div>
-                        ))}
+                        </div>
+
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={inputValues[fieldName]}
+                            onChange={(e) => handleConfigInputChange(fieldName, e.target.value)}
+                            placeholder={FIELD_PLACEHOLDERS[fieldName] || "Enter options separated by commas"}
+                            className="flex-1 rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-base text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => parseAndSetOptions(fieldName)}
+                            className="rounded bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90"
+                          >
+                            Add Options
+                          </button>
+                        </div>
+
+                        {(formData.config[fieldName as keyof ServiceConfig]?.options || []).length > 0 && (
+                          <div className="space-y-2 rounded border border-[#E8E8E8] p-3 dark:border-form-strokedark">
+                            {(formData.config[fieldName as keyof ServiceConfig]?.options || []).map((option) => {
+                              const multiplier = formData.config[fieldName as keyof ServiceConfig]?.multiplier?.[String(option)] || 1.0;
+                              return (
+                                <div key={option} className="flex items-center justify-between gap-2 rounded border border-[#E8E8E8] p-2 dark:border-form-strokedark">
+                                  <div className="flex-1">
+                                    <span className="text-base font-medium text-dark dark:text-white">
+                                      {option}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      min="0.1"
+                                      value={multiplier}
+                                      onChange={(e) =>
+                                        handleMultiplierChange(fieldName, String(option), parseFloat(e.target.value) || 1)
+                                      }
+                                      className="w-24 rounded border border-[#E8E8E8] bg-transparent px-2 py-1 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => removeOption(fieldName, option)}
+                                      className="text-red-500 hover:text-red-600"
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  )}
+                  ))}
+                </>
+              )}
+
+              <div className="rounded-lg border border-[#E8E8E8] p-6 dark:border-form-strokedark">
+                <label className="mb-4 block text-lg font-bold text-dark dark:text-white">
+                  {FIELD_LABELS.dimension}
+                </label>
+
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-semibold text-dark dark:text-white">
+                    Unit
+                  </label>
+                  <select
+                    value={dimensionConfig.unit}
+                    onChange={(e) => handleDimensionChange("unit", e.target.value)}
+                    className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                  >
+                    <option value="mm">mm</option>
+                    <option value="cm">cm</option>
+                    <option value="inch">inch</option>
+                  </select>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold text-dark dark:text-white">
+                      X Axis
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                          Min
+                        </label>
+                        <input
+                          type="text"
+                          value={dimensionConfig.x_min}
+                          onChange={(e) => handleDimensionChange("x_min", e.target.value)}
+                          placeholder="Min value"
+                          className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                          Max
+                        </label>
+                        <input
+                          type="text"
+                          value={dimensionConfig.x_max}
+                          onChange={(e) => handleDimensionChange("x_max", e.target.value)}
+                          placeholder="Max value"
+                          className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="mb-3 text-sm font-semibold text-dark dark:text-white">
+                      Y Axis
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                          Min
+                        </label>
+                        <input
+                          type="text"
+                          value={dimensionConfig.y_min}
+                          onChange={(e) => handleDimensionChange("y_min", e.target.value)}
+                          placeholder="Min value"
+                          className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                          Max
+                        </label>
+                        <input
+                          type="text"
+                          value={dimensionConfig.y_max}
+                          onChange={(e) => handleDimensionChange("y_max", e.target.value)}
+                          placeholder="Max value"
+                          className="w-full rounded border border-[#E8E8E8] bg-transparent px-3 py-2 text-sm text-dark outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

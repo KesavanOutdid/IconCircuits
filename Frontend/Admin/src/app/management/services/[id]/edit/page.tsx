@@ -24,7 +24,11 @@ export default function EditServiceRouter() {
     const config = data.config || {};
     const configKeys = Object.keys(config);
     
-    if (configKeys.includes("board_thickness") || configKeys.includes("copper_weight") || configKeys.includes("surface_finish")) {
+    if (configKeys.includes("dimension") || configKeys.includes("controlled_impedance") || configKeys.includes("pcb_type") || configKeys.includes("delivery_format")) {
+      return "pcb_layout";
+    }
+    
+    if (configKeys.includes("board_thickness") || configKeys.includes("copper_weight")) {
       return "pcb_fabrication";
     }
     
@@ -34,10 +38,6 @@ export default function EditServiceRouter() {
     
     if (configKeys.includes("supplier_type") || configKeys.includes("warranty_period") || configKeys.includes("quality_assurance")) {
       return "component_sourcing";
-    }
-    
-    if (configKeys.includes("dimension") || configKeys.includes("controlled_impedance") || configKeys.includes("pcb_type") || configKeys.includes("delivery_format")) {
-      return "pcb_layout";
     }
     
     return "pcb_layout";
