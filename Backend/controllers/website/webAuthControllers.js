@@ -17,18 +17,23 @@ const getRolesCollection = async () => {
 
 const signup = async (req, res) => {
     try {
-        const { name, email, password, phone, addresses, roleId } = req.body;
+        const { name, email, password, phone, addresses, address, roleId } = req.body;
 
         if (!name || !email || !password) {
             return res.status(400).json({ success: false, message: 'Name, email, and password are required' });
         }
 
-        if (addresses && !Array.isArray(addresses)) {
+        let addressList = addresses;
+        if (!addressList && address) {
+            addressList = [{ ...address, type: address.type || ['delivery'] }];
+        }
+
+        if (addressList && !Array.isArray(addressList)) {
             return res.status(400).json({ success: false, message: 'Addresses must be an array' });
         }
 
-        if (addresses) {
-            for (const addr of addresses) {
+        if (addressList) {
+            for (const addr of addressList) {
                 if (!addr.type || !Array.isArray(addr.type) || addr.type.length === 0) {
                     return res.status(400).json({ success: false, message: 'Address type must be an array with at least one value' });
                 }
@@ -95,20 +100,21 @@ const signup = async (req, res) => {
             updatedAt: timestamp,
         };
 
-        if (addresses && addresses.length > 0) {
-            userDocument.addresses = addresses.map(addr => ({
-                type: addr.type,
-                street: addr.street ? addr.street.trim() : null,
-                city: addr.city ? addr.city.trim() : null,
-                location: addr.location ? addr.location.trim() : null,
-                district: addr.district ? addr.district.trim() : null,
-                state: addr.state ? addr.state.trim() : null,
-                country: addr.country ? addr.country.trim() : null,
-                pincode: addr.pincode ? addr.pincode.trim() : null,
-                companyName: addr.companyName ? addr.companyName.trim() : null,
-                gstNo: addr.gstNo ? addr.gstNo.trim() : null,
-                phone: addr.phone ? addr.phone.trim() : null,
-            }));
+        if (addressList && addressList.length > 0) {
+            userDocument.addresses = addressList.map(addr => {
+                const addressObj = {
+                    _id: new ObjectId(),
+                    type: addr.type,
+                };
+                if (addr.street) addressObj.street = addr.street.trim();
+                if (addr.city) addressObj.city = addr.city.trim();
+                if (addr.location) addressObj.location = addr.location.trim();
+                if (addr.district) addressObj.district = addr.district.trim();
+                if (addr.state) addressObj.state = addr.state.trim();
+                if (addr.country) addressObj.country = addr.country.trim();
+                if (addr.pincode) addressObj.pincode = addr.pincode.trim();
+                return addressObj;
+            });
         } else {
             userDocument.addresses = [];
         }
@@ -301,6 +307,7 @@ const updateProfile = async (req, res) => {
 
         if (addresses !== undefined) {
             updateData.addresses = addresses.map(addr => ({
+                _id: addr._id ? new ObjectId(addr._id) : new ObjectId(),
                 type: addr.type,
                 street: addr.street ? addr.street.trim() : null,
                 city: addr.city ? addr.city.trim() : null,
@@ -454,7 +461,7 @@ const updateAddress = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const addressIndex = user.addresses?.findIndex(addr => addr._id.toString() === addressId);
+        const addressIndex = user.addresses?.findIndex(addr => addr._id && addr._id.toString() === addressId);
         if (addressIndex === -1 || addressIndex === undefined) {
             return res.status(404).json({ success: false, message: 'Address not found' });
         }
@@ -489,7 +496,7 @@ const updateAddress = async (req, res) => {
             { projection: { password: 0 } }
         );
 
-        const updatedAddress = updatedUser.addresses?.find(addr => addr._id.toString() === addressId);
+        const updatedAddress = updatedUser.addresses?.find(addr => addr._id && addr._id.toString() === addressId);
 
         return res.status(200).json({
             success: true,
@@ -529,7 +536,7 @@ const deleteAddress = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const addressExists = user.addresses?.some(addr => addr._id.toString() === addressId);
+        const addressExists = user.addresses?.some(addr => addr._id && addr._id.toString() === addressId);
         if (!addressExists) {
             return res.status(404).json({ success: false, message: 'Address not found' });
         }
@@ -587,7 +594,7 @@ const removeTypeFromAddress = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const address = user.addresses?.find(addr => addr._id.toString() === addressId);
+        const address = user.addresses?.find(addr => addr._id && addr._id.toString() === addressId);
         if (!address) {
             return res.status(404).json({ success: false, message: 'Address not found' });
         }
@@ -609,7 +616,7 @@ const removeTypeFromAddress = async (req, res) => {
         );
 
         const updatedUser = await usersCollection.findOne({ _id: new ObjectId(userObjectId) });
-        const updatedAddress = updatedUser.addresses?.find(addr => addr._id.toString() === addressId);
+        const updatedAddress = updatedUser.addresses?.find(addr => addr._id && addr._id.toString() === addressId);
 
         if (updatedAddress && updatedAddress.type.length === 0) {
             await usersCollection.updateOne(
