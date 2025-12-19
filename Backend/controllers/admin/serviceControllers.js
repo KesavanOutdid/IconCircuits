@@ -35,7 +35,6 @@ const createService = async (req, res) => {
             description: body.description ? body.description.trim() : '',
             category: body.category ? body.category.trim() : '',
             type: body.type ? body.type.trim() : '',
-            base_price: body.base_price ? Number(body.base_price) : 0,
             status: body.status !== undefined ? Boolean(body.status) : true,
             config: body.config || {},
             createdBy: userEmail,
@@ -167,10 +166,6 @@ const updateService = async (req, res) => {
 
         if (body.type !== undefined) {
             updateData.type = body.type ? body.type.trim() : '';
-        }
-
-        if (body.base_price !== undefined) {
-            updateData.base_price = Number(body.base_price);
         }
 
         if (body.status !== undefined) {

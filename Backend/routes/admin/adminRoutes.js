@@ -15,6 +15,11 @@ const {
     markOrderCompleted
 } = require('../../controllers/admin/ordersController');
 const {
+    getAllQuotations,
+    getQuotationById,
+    updateQuotation
+} = require('../../controllers/admin/quotationControllers');
+const {
     getNewsletterSubscribers,
     getContacts,
     updateNewsletterStatus,
@@ -40,6 +45,8 @@ const router = express.Router();
  *     description: User management endpoints
  *   - name: Admin - Services
  *     description: Unified service management with nested config options, pricing rules, and lead times
+ *   - name: Admin - Quotations
+ *     description: Admin quotation management - quote prices, accept/reject requests
  *   - name: Admin - Orders
  *     description: Admin orders management endpoints
  *   - name: Admin - Contacts
@@ -1709,6 +1716,355 @@ router.get('/orders/:requestId', authMiddleware, getOrderByIdAdmin);
  *               $ref: '#/components/schemas/Error'
  */
 router.put('/orders/:requestId/complete', authMiddleware, markOrderCompleted);
+
+/**
+ * @swagger
+ * /api/admin/quotations:
+ *   get:
+ *     summary: Get all quotations with pagination and filtering
+ *     tags: [Admin - Quotations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, quoted, accepted, requote_requested, rejected, cancelled]
+ *         description: Filter by quotation status
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         description: Filter by user ID
+ *     responses:
+ *       200:
+ *         description: Quotations retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quotations retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       quotation_id:
+ *                         type: string
+ *                       user_id:
+ *                         type: string
+ *                       userId:
+ *                         type: integer
+ *                       user_details:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           mobile:
+ *                             type: string
+ *                       service_id:
+ *                         type: string
+ *                       service_code:
+ *                         type: string
+ *                       service_name:
+ *                         type: string
+ *                       pcb_name:
+ *                         type: string
+ *                       config:
+ *                         type: object
+ *                       description:
+ *                         type: string
+ *                       files:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       status:
+ *                         type: string
+ *                         enum: [pending, quoted, accepted, requote_requested, rejected, cancelled]
+ *                       quoted_amount:
+ *                         type: number
+ *                       admin_reason:
+ *                         type: string
+ *                       user_reason:
+ *                         type: string
+ *                       history:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/quotations', authMiddleware, getAllQuotations);
+
+/**
+ * @swagger
+ * /api/admin/quotations/{quotationId}:
+ *   get:
+ *     summary: Get quotation details by ID
+ *     tags: [Admin - Quotations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: quotationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Quotation ID
+ *     responses:
+ *       200:
+ *         description: Quotation retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quotation retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     quotation_id:
+ *                       type: string
+ *                     user_id:
+ *                       type: string
+ *                     userId:
+ *                       type: integer
+ *                     user_details:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         mobile:
+ *                           type: string
+ *                     service_id:
+ *                       type: string
+ *                     service_code:
+ *                       type: string
+ *                     service_name:
+ *                       type: string
+ *                     pcb_name:
+ *                       type: string
+ *                     config:
+ *                       type: object
+ *                     description:
+ *                       type: string
+ *                     files:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           filename:
+ *                             type: string
+ *                           originalName:
+ *                             type: string
+ *                           mimetype:
+ *                             type: string
+ *                           size:
+ *                             type: integer
+ *                           path:
+ *                             type: string
+ *                           uploadedAt:
+ *                             type: string
+ *                             format: date-time
+ *                     status:
+ *                       type: string
+ *                       enum: [pending, quoted, accepted, requote_requested, rejected, cancelled]
+ *                     quoted_amount:
+ *                       type: number
+ *                     admin_reason:
+ *                       type: string
+ *                     user_reason:
+ *                       type: string
+ *                     history:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           action:
+ *                             type: string
+ *                           reason:
+ *                             type: string
+ *                           status:
+ *                             type: string
+ *                           updatedBy:
+ *                             type: string
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Quotation not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *   put:
+ *     summary: Update quotation with action-based operations
+ *     tags: [Admin - Quotations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: quotationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Quotation ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - action
+ *             properties:
+ *               action:
+ *                 type: string
+ *                 enum: [quote, accept, reject, cancel]
+ *                 description: Action to perform (quote - provide price, accept - accept requote request, reject - reject quotation, cancel - cancel quotation)
+ *               quoted_amount:
+ *                 type: number
+ *                 description: Required for 'quote' action
+ *                 example: 5000
+ *               reason:
+ *                 type: string
+ *                 description: Required for quote, reject, and cancel actions. Optional for accept action
+ *                 example: Price quoted based on specifications
+ *             examples:
+ *               quote:
+ *                 value:
+ *                   action: quote
+ *                   quoted_amount: 5000
+ *                   reason: Price quoted based on specifications
+ *               accept:
+ *                 value:
+ *                   action: accept
+ *                   reason: Requote request accepted
+ *               reject:
+ *                 value:
+ *                   action: reject
+ *                   reason: Requirements not feasible
+ *               cancel:
+ *                 value:
+ *                   action: cancel
+ *                   reason: Cancelled by admin
+ *     responses:
+ *       200:
+ *         description: Quotation updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Price quoted successfully
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Invalid input or invalid status transition
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Quotation not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/quotations/:quotationId', authMiddleware, getQuotationById);
+
+router.put('/quotations/:quotationId', authMiddleware, updateQuotation);
 
 /**
  * @swagger

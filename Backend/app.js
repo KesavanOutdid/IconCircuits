@@ -86,7 +86,7 @@ app.use(cors());
 
 // Middleware: Secure HTTP Headers (skip for Swagger docs and file serving)
 app.use((req, res, next) => {
-    if (req.path.startsWith('/api-docs') || req.path.includes('/cart/file')) {
+    if (req.path.startsWith('/api-docs')) {
         return next();
     }
     helmet({

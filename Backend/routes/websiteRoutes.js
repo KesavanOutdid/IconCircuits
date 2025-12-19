@@ -1,7 +1,7 @@
 const express = require('express');
 const webAuthRoutes = require('./website/webAuthRoutes');
 const servicesRoutes = require('./website/servicesRoutes');
-const cartRoutes = require('./website/cartRoutes');
+const quotationRoutes = require('./website/quotationRoutes');
 const ordersRoutes = require('./website/ordersRoutes');
 const contactRoutes = require('./website/contactRoutes');
 
@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.use('/auth', webAuthRoutes);
 router.use('/services', servicesRoutes);
-router.use('/cart', cartRoutes);
+router.use('/quotations', quotationRoutes);
 router.use('/orders', ordersRoutes);
 router.use('/', contactRoutes);
 
