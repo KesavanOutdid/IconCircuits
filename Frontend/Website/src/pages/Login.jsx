@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useLogin } from '../hooks/useLogin';
-import { useCart } from '../context/CartContext';
+// import { useCart } from '../context/CartContext';
 import '../assets/css/Auth.css';
 
 const Login = () => {
     const navigate = useNavigate();
-    const { fetchCart } = useCart();
+    // const { fetchCart } = useCart();
     const {
         formData,
         showPassword,
@@ -21,10 +21,10 @@ const Login = () => {
     const handleSubmit = async (e) => {
         const result = await onSubmit(e);
         if (result.success) {
-            const token = localStorage.getItem('token');
-            if (token) {
-                fetchCart(token);
-            }
+            // const token = localStorage.getItem('token');
+            // if (token) {
+            //     fetchCart(token);
+            // }
             Swal.fire({
                 icon: 'success',
                 title: 'Welcome Back!',

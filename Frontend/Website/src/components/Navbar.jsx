@@ -3,17 +3,17 @@ import '../assets/css/Navbar.css';
 import { NavLink, useLocation } from 'react-router-dom';
 import "../assets/css/Hero.css";
 import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+// import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
     const location = useLocation();
-    const isAccountPage = ["/profile", "/orders", "/cart"].includes(location.pathname);
+    const isAccountPage = ["/profile","quotations", "/orders"].includes(location.pathname);
 
     const { user, logout } = useAuth();
-    const { cartSummary, clearCartLocal } = useCart();
+    // const { cartSummary, clearCartLocal } = useCart();
 
     const handleLogout = () => {
-        clearCartLocal();
+        // clearCartLocal();
         logout();
     };
 
@@ -116,7 +116,7 @@ const Navbar = () => {
                                         data-bs-toggle="dropdown"
                                         style={{ border: 'none', background: 'none', padding: '0.5rem 0', cursor: 'pointer' }}
                                     >
-                                        <i className="fa fa-user-circle"></i>
+                                        <i className="fa fa-user-circle" style={{paddingLeft:'10px'}}></i>
                                         {user.name && <span className="ms-2">{user.name}</span>}
                                         {/* {user.name && <span className="ms-2">{user.name.split(' ')[0]}</span>} */}
                                     </button>
@@ -127,6 +127,13 @@ const Navbar = () => {
                                         >
                                             <i className="fa fa-user me-2"></i>My Profile
                                         </NavLink>
+                                        
+                                        <NavLink
+                                            to="/quotations"
+                                            className={({ isActive }) => `dropdown-item ${isActive ? "active-account-link" : ""}`}
+                                        >
+                                            <i className="fa fa-shopping-bag me-2"></i>My Quotations
+                                        </NavLink>
 
                                         <NavLink
                                             to="/orders"
@@ -135,12 +142,12 @@ const Navbar = () => {
                                             <i className="fa fa-shopping-bag me-2"></i>My Orders
                                         </NavLink>
 
-                                        <NavLink
+                                        {/* <NavLink
                                             to="/cart"
                                             className={({ isActive }) => `dropdown-item ${isActive ? "active-account-link" : ""}`}
                                         >
                                             <i className="fa fa-shopping-cart me-2"></i>Cart
-                                        </NavLink>
+                                        </NavLink> */}
 
                                         <hr className="dropdown-divider" />
                                         <button 
@@ -165,12 +172,12 @@ const Navbar = () => {
                             )}
 
                             {/* Cart Icon */}
-                            <NavLink to="/cart" className="nav-link-cart">
+                            {/* <NavLink to="/cart" className="nav-link-cart">
                                 <i className="fa fa-shopping-cart"></i>
                                 {cartSummary.totalItems > 0 && (
                                     <span className="cart-badge">{cartSummary.totalItems}</span>
                                 )}
-                            </NavLink>
+                            </NavLink> */}
 
                             {/* Search Button */}
                             <button

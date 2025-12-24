@@ -7,16 +7,28 @@ const API_URL = process.env.REACT_APP_API_URL;
 export const useOrders = () => {
     const { user, token } = useAuth();
     const [orders, setOrders] = useState([]);
+    const [pagination, setPagination] = useState({
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0
+    });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchOrders = useCallback(async () => {
+    const fetchOrders = useCallback(async (page = 1, limit = 10, status = '') => {
         if (!user?.userId || !token) return;
         setIsLoading(true);
         setError(null);
         try {
+            const params = new URLSearchParams({
+                page: page.toString(),
+                limit: limit.toString(),
+                ...(status && { status })
+            });
+
             const response = await fetch(
-                `${API_URL}/orders/list`,
+                `${API_URL}/orders/list?${params}`,
                 {
                     method: 'GET',
                     headers: {
@@ -33,6 +45,12 @@ export const useOrders = () => {
             const data = await response.json();
             if (data.success) {
                 setOrders(data.data.orders || []);
+                setPagination({
+                    total: data.data.pagination?.total || 0,
+                    page: data.data.pagination?.page || 1,
+                    limit: data.data.pagination?.limit || 10,
+                    totalPages: data.data.pagination?.totalPages || 0
+                });
             } else {
                 throw new Error(data.message || 'Failed to fetch orders');
             }
@@ -136,6 +154,7 @@ export const useOrders = () => {
 
     return {
         orders,
+        pagination,
         isLoading,
         error,
         fetchOrders,

@@ -155,7 +155,7 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
         return (
             <div className="shipment-address-container card">
                 <h5 className="info-title">
-                    <i className="fa fa-map-marker-alt"></i> Shipment Address
+                    <i className="fa fa-map-marker-alt"></i> Quotation Address
                 </h5>
                 <div className="text-center py-3">
                     <div className="spinner-border spinner-border-sm" role="status">
@@ -189,7 +189,7 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
 
             <div className="shipment-address-header">
                 <h5 className="info-title">
-                    <i className="fa fa-map-marker-alt"></i> Shipment Address
+                    <i className="fa fa-map-marker-alt"></i> Quotation Address
                 </h5>
                 {!showAddForm && (
                     <button
@@ -206,7 +206,7 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
 
             {showAddForm && (
                 <div className="address-form-card-cart">
-                    <h6>Add New Shipping Address</h6>
+                    <h6>Add New Quotation Address</h6>
 
                     <div className="form-group-row">
                         <label className="checkbox-label">
@@ -371,7 +371,7 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
                             className={`address-item-cart ${selectedAddress?._id === address._id ? 'selected' : ''}`}
                             onClick={() => onAddressSelect(address)}
                         >
-                            <div className="address-radio">
+                            {/* <div className="address-radio">
                                 <input
                                     type="radio"
                                     id={`address-${address._id}`}
@@ -380,13 +380,9 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
                                     onChange={() => onAddressSelect(address)}
                                 />
                                 <label htmlFor={`address-${address._id}`}></label>
-                            </div>
+                            </div> */}
                             <div className="address-content-cart">
                                 <div className="address-header-cart">
-                                    <div className="address-title-section">
-                                        <h6 className="address-company">{address.companyName || 'Address'}</h6>
-                                        <span className="address-number">{idx + 1}</span>
-                                    </div>
                                     <div className="address-types-cart">
                                         {Array.isArray(address.type) ? (
                                             address.type.map((t) => (
@@ -404,6 +400,7 @@ const CartShipmentAddress = ({ selectedAddress, onAddressSelect, onAddressAdded,
                                     </div>
                                 </div>
                                 <div className="address-details-cart">
+                                    <h6 className="address-company">{address.companyName || 'Address'}</h6>
                                     <p><i className="fa fa-map-marker-alt"></i> <span className="detail-text">{address.street}</span></p>
                                     <p><i className="fa fa-building"></i> <span className="detail-text">{address.city}, {address.district}</span></p>
                                     <p><i className="fa fa-map"></i> <span className="detail-text">{address.state} - {address.pincode}</span></p>

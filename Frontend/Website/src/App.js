@@ -5,7 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import LoadingFallback from "./components/LoadingFallback";
 import { AuthProvider } from "./context/AuthContext";
-import { CartProvider } from "./context/CartContext";
+// import { CartProvider } from "./context/CartContext";
 
 const Hero = lazy(() => import("./pages/Hero"));
 const About = lazy(() => import("./pages/About"));
@@ -20,11 +20,13 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Orders = lazy(() => import("./pages/Orders"));
+const QuotationList = lazy(() => import("./pages/QuotationList"));
+const QuotationDetails = lazy(() => import("./pages/QuotationDetails"));
 
 function App() {
     return (
         <AuthProvider>
-            <CartProvider>
+            {/* <CartProvider> */}
                 <ScrollToTop /> 
                 <Suspense fallback={<LoadingFallback />}>
                     <Routes>
@@ -41,9 +43,11 @@ function App() {
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                         <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+                        <Route path="/quotations" element={<ProtectedRoute><QuotationList /></ProtectedRoute>} />
+                        <Route path="/quotations/:quotationId" element={<ProtectedRoute><QuotationDetails /></ProtectedRoute>} />
                     </Routes>
                 </Suspense>
-            </CartProvider>
+            {/* </CartProvider> */}
         </AuthProvider>
     );
 }

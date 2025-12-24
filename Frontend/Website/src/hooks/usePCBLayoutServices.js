@@ -20,6 +20,7 @@ export const usePCBLayoutServices = () => {
                 const data = await response.json();
                 if (data.success && data.data) {
                     const pcbLayoutService = data.data.find(service => 
+                        service.code === 'PCB_LAYOU' || 
                         service.code === 'PCB_LAY' || 
                         service.code?.includes('PCB LAYOUT') || 
                         service.name?.toLowerCase().includes('pcb layout')

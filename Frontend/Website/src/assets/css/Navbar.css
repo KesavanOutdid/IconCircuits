@@ -17,7 +17,7 @@
     height: 2px;
     background-color: #fcb535;
     transition: width 0.3s ease;
-} 
+}
 
 /* On hover or when active, show line */
 .navbar .nav-link:hover::after,
@@ -164,10 +164,12 @@
         transform: translateX(0) rotate(0deg);
         opacity: 1;
     }
+
     50% {
         transform: translateX(20px) rotate(-15deg);
         opacity: 0.8;
     }
+
     100% {
         transform: translateX(25px) rotate(0deg);
         opacity: 1;
@@ -175,12 +177,16 @@
 }
 
 @keyframes logoutIconWobble {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateX(0) rotate(0deg);
     }
+
     25% {
         transform: translateX(-3px) rotate(-5deg);
     }
+
     75% {
         transform: translateX(3px) rotate(5deg);
     }
@@ -189,8 +195,9 @@
 /* Responsive */
 @media (max-width: 992px) {
     .navbar-auth-section {
-        margin-left: 10px;
+        margin-left: 0px;
         gap: 10px;
+        background: #ececec;
     }
 
     .nav-link-auth {
@@ -205,8 +212,9 @@
 
 @media (max-width: 576px) {
     .navbar-auth-section {
-        margin-left: 5px;
+        margin-left: 0px;
         gap: 8px;
+        background: #ececec;
     }
 
     .nav-link-auth {
