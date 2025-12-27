@@ -32,7 +32,7 @@ export function Sidebar() {
           return false;
         }
         return item.items.some((subItem) => {
-          if (subItem.url === pathname) {
+          if (subItem.url === pathname || pathname.startsWith(subItem.url + "/")) {
             if (!expandedItems.includes(item.title)) {
               toggleExpanded(item.title);
             }
@@ -112,7 +112,7 @@ export function Sidebar() {
                           <div>
                             <MenuItem
                               isActive={item.items.some(
-                                ({ url }) => url === pathname,
+                                ({ url }) => pathname === url || pathname.startsWith(url + "/"),
                               )}
                               onClick={() => toggleExpanded(item.title)}
                             >
@@ -143,7 +143,7 @@ export function Sidebar() {
                                     <MenuItem
                                       as="link"
                                       href={subItem.url}
-                                      isActive={pathname === subItem.url}
+                                      isActive={pathname === subItem.url || pathname.startsWith(subItem.url + "/")}
                                     >
                                       <span>{subItem.title}</span>
                                     </MenuItem>

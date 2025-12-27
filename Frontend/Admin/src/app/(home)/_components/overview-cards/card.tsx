@@ -22,42 +22,47 @@ export function OverviewCard({ label, data, Icon }: PropsType) {
 
   if (isArray) {
     return (
-      <div className="rounded-[10px] bg-white p-5 shadow-1 dark:bg-gray-dark min-h-fit">
+      <div className="rounded-[10px] bg-white p-4 shadow-1 dark:bg-gray-dark min-h-fit">
         <dd className="text-sm font-medium text-dark-6 mb-4">{label}</dd>
         {data.map((item) => {
           const isDecreasing = item.growthRate < 0;
           return (
-            <div key={item.label} className="flex items-center justify-between gap-6 mb-3">
-              <div className="flex items-center gap-3 flex-1">
+            <div
+              key={item.label}
+              className="mb-3 flex items-center justify-between gap-4 last:mb-0"
+            >
+              <div className="flex flex-1 items-center gap-3">
                 <div className="flex-shrink-0">
-                  <Icon />
+                  <Icon className="size-11" />
                 </div>
-                
+
                 <dl>
-                  <dt className="text-heading-6 font-bold text-dark dark:text-white">
+                  <dt className="text-base font-bold text-dark dark:text-white">
                     {item.value}
                   </dt>
-                  <dd className="text-sm font-medium text-dark-6">
+                  <dd className="text-xs font-medium text-dark-6">
                     {item.label}
                   </dd>
                 </dl>
               </div>
 
-              <dl
-                className={cn(
-                  "text-sm font-medium flex-shrink-0",
-                  isDecreasing ? "text-red" : "text-green",
-                )}
-              >
-                <dt className="flex items-center gap-1">
-                  {item.growthRate}%
-                  {isDecreasing ? (
-                    <ArrowDownIcon aria-hidden />
-                  ) : (
-                    <ArrowUpIcon aria-hidden />
+              {item.growthRate !== 0 && (
+                <dl
+                  className={cn(
+                    "flex-shrink-0 text-xs font-medium",
+                    isDecreasing ? "text-red" : "text-green",
                   )}
-                </dt>
-              </dl>
+                >
+                  <dt className="flex items-center gap-1">
+                    {item.growthRate}%
+                    {isDecreasing ? (
+                      <ArrowDownIcon aria-hidden />
+                    ) : (
+                      <ArrowUpIcon aria-hidden />
+                    )}
+                  </dt>
+                </dl>
+              )}
             </div>
           );
         })}
@@ -68,24 +73,38 @@ export function OverviewCard({ label, data, Icon }: PropsType) {
   const isDecreasing = data.growthRate < 0;
 
   return (
-    <div className="rounded-[10px] bg-white p-5 shadow-1 dark:bg-gray-dark">
-      <div className="flex items-center justify-between gap-6">
-        <div className="flex items-center gap-3 flex-1">
+    <div className="rounded-[10px] bg-white p-4 shadow-1 dark:bg-gray-dark">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 items-center gap-3">
           <div className="flex-shrink-0">
-            <Icon />
+            <Icon className="size-11" />
           </div>
 
           <dl>
-           
-
-            <dd className="text-sm font-medium text-dark-5">{label}</dd>
-             <dt className="text-lg font-semibold text-dark dark:text-white">
-              + {data.value}
+            <dd className="text-md font-medium text-dark-5">{label}</dd>
+            <dt className="text-lg font-bold text-dark dark:text-white">
+             + {data.value}
             </dt>
           </dl>
         </div>
 
-      
+        {data.growthRate !== 0 && (
+          <dl
+            className={cn(
+              "flex-shrink-0 text-xs font-medium",
+              isDecreasing ? "text-red" : "text-green",
+            )}
+          >
+            <dt className="flex items-center gap-1">
+              {data.growthRate}%
+              {isDecreasing ? (
+                <ArrowDownIcon aria-hidden className="size-2.5" />
+              ) : (
+                <ArrowUpIcon aria-hidden className="size-2.5" />
+              )}
+            </dt>
+          </dl>
+        )}
       </div>
     </div>
   );

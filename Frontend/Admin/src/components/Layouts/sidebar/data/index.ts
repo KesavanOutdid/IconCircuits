@@ -17,40 +17,72 @@ export const NAV_DATA = [
         type: "divider",
       } as any,
       {
-        title: "Manage Users",
+        title: "Adminstration Panel",
         icon: Icons.User,
-        url: "/management/users",
-        items: [],
-      },
-      {
-        title: "Manage Roles",
-        icon: Icons.User,
-        url: "/management/roles",
-        items: [],
+        items: [
+          {
+            title: "Manage Users",
+            url: "/management/users",
+          },
+          {
+            title: "Manage Roles",
+            url: "/management/roles",
+          },
+        ],
       },
       {
         title: "Manage Services",
         icon: Icons.FourCircle,
-        url: "/management/services",
-        items: [],
+        items: [
+          {
+            title: "List Services",
+            url: "/management/services",
+          }
+        ],
       },
       {
         title: "Manage Orders",
         icon: Icons.Table,
-        url: "/management/orders",
-        items: [],
+        items: [
+          {
+            title: "List Orders",
+            url: "/management/orders",
+          },
+         
+        ],
+      },
+      {
+        title: "Manage Quotation",
+        icon: Icons.Table,
+        items: [
+          {
+            title: "List Quotations",
+            url: "/management/quotations",
+          },
+         
+        ],
       },
       {
         title: "Manage Contact",
         icon: Icons.Calendar,
-        url: "/management/contacts",
-        items: [],
+        items: [
+          {
+            title: "List Contacts",
+            url: "/management/contacts",
+          },
+          
+        ],
       },
       {
-        title: "Newsletter Subscriber",
+        title: "Manage Subscriber",
         icon: Icons.Alphabet,
-        url: "/management/newsletter",
-        items: [],
+        items: [
+          {
+            title: "Subscribers",
+            url: "/management/newsletter",
+          },
+         
+        ],
       },
       {
         type: "divider",

@@ -26,6 +26,29 @@ interface ConfigOption {
   };
 }
 
+interface FlexConfig {
+  material?: ConfigOption;
+  surface_finish?: ConfigOption;
+  fpc_thickness?: ConfigOption;
+}
+
+interface CustomConfig {
+  custom_thickness_options?: ConfigOption;
+}
+
+interface PcbTypeConfig extends ConfigOption {
+  flex_config?: FlexConfig;
+}
+
+interface ThicknessTypeConfig extends ConfigOption {
+  custom_config?: CustomConfig;
+}
+
+interface ColorSilkscreenMapping {
+  type: string;
+  mapping?: Record<string, string[]>;
+}
+
 interface ServiceDetail {
   _id: string;
   service_id: number;
@@ -41,12 +64,31 @@ interface ServiceDetail {
   config: {
     layers?: ConfigOption;
     components?: ConfigOption;
-    pcb_type?: ConfigOption;
+    pcb_type?: PcbTypeConfig;
     dimension?: ConfigOption;
     component_placement?: ConfigOption;
     controlled_impedance?: ConfigOption;
     lead_time_days?: ConfigOption;
     delivery_format?: ConfigOption;
+    base_material?: ConfigOption;
+    pcb_quality?: ConfigOption;
+    product_type?: ConfigOption;
+    different_design?: ConfigOption;
+    pcb_thickness?: ConfigOption;
+    outer_copper_weight?: ConfigOption;
+    via_covering?: ConfigOption;
+    min_via_hole_size?: ConfigOption;
+    thickness_type?: ThicknessTypeConfig;
+    stencil_side?: ConfigOption;
+    stencil_process_type?: ConfigOption;
+    fiducials?: ConfigOption;
+    package_box?: ConfigOption;
+    stencil_qty?: ConfigOption;
+    pcb_color_silkscreen_map?: ColorSilkscreenMapping;
+    framework?: ConfigOption;
+    step_stencil?: ConfigOption;
+    nano_coating?: ConfigOption;
+    gerber?: { type: string; value: string };
   };
   createdBy: number;
   createdTime: string;
@@ -131,9 +173,12 @@ export default function ViewService() {
 
       <div className="grid grid-cols-1 gap-6">
         <div className="rounded-[10px] bg-white px-7.5 pb-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
-          <h2 className="mb-6 text-body-lg font-bold text-dark dark:text-white">
-            Basic Information
-          </h2>
+          <div className="mb-8 flex items-center gap-3 border-b border-gray-200 pb-6 dark:border-gray-700">
+            <div className="h-10 w-1 rounded-full bg-gradient-to-b from-primary to-primary/50"></div>
+            <h2 className="text-body-lg font-bold text-dark dark:text-white">
+              Basic Information
+            </h2>
+          </div>
           <div className="grid grid-cols-4 gap-6">
             <div>
               <label className="text-base font-semibold text-dark dark:text-white">
@@ -187,10 +232,13 @@ export default function ViewService() {
 
         {service.config && Object.keys(service.config).length > 0 && (
           <div className="rounded-[10px] bg-white px-7.5 pb-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
-            <h2 className="mb-6 text-body-lg font-bold text-dark dark:text-white">
-              Service Configuration
-            </h2>
-            <div className="space-y-6">
+            <div className="mb-8 flex items-center gap-3 border-b border-gray-200 pb-6 dark:border-gray-700">
+              <div className="h-10 w-1 rounded-full bg-gradient-to-b from-primary to-primary/50"></div>
+              <h2 className="text-body-lg font-bold text-dark dark:text-white">
+                Service Configuration
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-6">
               {Object.entries(service.config).map(([fieldName, fieldConfig]: [string, any]) => {
                 if (!fieldConfig) return null;
                 
@@ -200,55 +248,43 @@ export default function ViewService() {
 
                 if (fieldName === "dimension") {
                   return (
-                    <div key={fieldName} className="border-b border-[#eee] pb-6 last:border-b-0 dark:border-dark-3">
-                      <h3 className="mb-3 text-base font-semibold text-dark dark:text-white">{fieldLabel}</h3>
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-5 text-base font-bold text-dark dark:text-white">{fieldLabel}</h3>
                       <div className="space-y-4">
                         {fieldConfig.unit && (
-                          <div className="rounded bg-gray-100 p-3 dark:bg-gray-700">
-                            <p className="text-xs text-gray-600 dark:text-gray-400">Unit</p>
-                            <p className="mt-1 text-dark dark:text-white">{fieldConfig.unit}</p>
+                          <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+                            <p className="text-xs font-semibold text-gray-600 dark:text-gray-300">Unit</p>
+                            <p className="text-sm font-bold text-dark dark:text-white">{fieldConfig.unit}</p>
                           </div>
                         )}
                         {fieldConfig.min && (
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="rounded bg-gray-100 p-3 dark:bg-gray-700">
-                              <p className="text-xs text-gray-600 dark:text-gray-400">Min X</p>
-                              <p className="mt-1 text-dark dark:text-white">{fieldConfig.min.x}</p>
-                            </div>
-                            <div className="rounded bg-gray-100 p-3 dark:bg-gray-700">
-                              <p className="text-xs text-gray-600 dark:text-gray-400">Min Y</p>
-                              <p className="mt-1 text-dark dark:text-white">{fieldConfig.min.y}</p>
+                          <div>
+                            <p className="mb-2 text-xs font-semibold text-gray-600 dark:text-gray-400">Minimum</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="rounded-md bg-gray-50 p-3 dark:bg-gray-700">
+                                <p className="text-xs text-gray-600 dark:text-gray-400">X</p>
+                                <p className="mt-1 text-sm font-bold text-dark dark:text-white">{fieldConfig.min.x}</p>
+                              </div>
+                              <div className="rounded-md bg-gray-50 p-3 dark:bg-gray-700">
+                                <p className="text-xs text-gray-600 dark:text-gray-400">Y</p>
+                                <p className="mt-1 text-sm font-bold text-dark dark:text-white">{fieldConfig.min.y}</p>
+                              </div>
                             </div>
                           </div>
                         )}
                         {fieldConfig.max && (
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="rounded bg-gray-100 p-3 dark:bg-gray-700">
-                              <p className="text-xs text-gray-600 dark:text-gray-400">Max X</p>
-                              <p className="mt-1 text-dark dark:text-white">{fieldConfig.max.x}</p>
-                            </div>
-                            <div className="rounded bg-gray-100 p-3 dark:bg-gray-700">
-                              <p className="text-xs text-gray-600 dark:text-gray-400">Max Y</p>
-                              <p className="mt-1 text-dark dark:text-white">{fieldConfig.max.y}</p>
-                            </div>
-                          </div>
-                        )}
-                        {fieldConfig.area_pricing && (
-                          <div className="space-y-3">
-                            {fieldConfig.area_pricing.slabs && fieldConfig.area_pricing.slabs.length > 0 && (
-                              <div>
-                                <p className="mb-2 text-sm font-semibold text-dark dark:text-white">Pricing Slabs:</p>
-                                <div className="space-y-2">
-                                  {fieldConfig.area_pricing.slabs.map((slab: any, idx: number) => (
-                                    <div key={idx} className="rounded bg-gray-100 p-3 dark:bg-gray-700">
-                                      <p className="text-sm text-dark dark:text-white">
-                                        {slab.min} - {slab.max} sq mm: <span className="font-semibold">{slab.multiplier}x</span>
-                                      </p>
-                                    </div>
-                                  ))}
-                                </div>
+                          <div>
+                            <p className="mb-2 text-xs font-semibold text-gray-600 dark:text-gray-400">Maximum</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="rounded-md bg-gray-50 p-3 dark:bg-gray-700">
+                                <p className="text-xs text-gray-600 dark:text-gray-400">X</p>
+                                <p className="mt-1 text-sm font-bold text-dark dark:text-white">{fieldConfig.max.x}</p>
                               </div>
-                            )}
+                              <div className="rounded-md bg-gray-50 p-3 dark:bg-gray-700">
+                                <p className="text-xs text-gray-600 dark:text-gray-400">Y</p>
+                                <p className="mt-1 text-sm font-bold text-dark dark:text-white">{fieldConfig.max.y}</p>
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -256,17 +292,159 @@ export default function ViewService() {
                   );
                 }
 
+                if (fieldName === "gerber") {
+                  return (
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-4 text-base font-bold text-dark dark:text-white">{fieldLabel}</h3>
+                      <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-700">
+                        <p className="text-sm font-semibold text-dark dark:text-white">{fieldConfig.value || "N/A"}</p>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (fieldName === "pcb_color_silkscreen_map") {
+                  return (
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-4 text-base font-bold text-dark dark:text-white">{fieldLabel}</h3>
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                        {fieldConfig.mapping && Object.entries(fieldConfig.mapping).map(([color, silkscreens]: [string, any]) => (
+                          <div key={color} className="rounded-lg border border-[#eee] p-4 dark:border-dark-3">
+                            <div className="mb-3 flex items-center gap-2">
+                              <div className="h-6 w-6 rounded border border-gray-300 dark:border-gray-600" style={{ backgroundColor: color.toLowerCase() }}></div>
+                              <p className="text-sm font-semibold capitalize text-dark dark:text-white">{color}</p>
+                            </div>
+                            <div className="space-y-2">
+                              {Array.isArray(silkscreens) && silkscreens.map((silkscreen: string, idx: number) => (
+                                <div key={idx} className="flex items-center rounded-md bg-gray-100 px-3 py-2 dark:bg-gray-700">
+                                  <span className="text-xs font-medium text-dark dark:text-white">{silkscreen}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (fieldName === "pcb_type" && fieldConfig.flex_config) {
+                  return (
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-5 text-base font-bold text-dark dark:text-white">{fieldLabel}</h3>
+                      
+                      {fieldConfig.options && Array.isArray(fieldConfig.options) && fieldConfig.options.length > 0 && (
+                        <div className="mb-6 rounded-lg border-2 border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+                          <p className="mb-3 text-xs font-bold uppercase text-gray-600 dark:text-gray-300">PCB Type Options</p>
+                          <div className="flex flex-wrap gap-3">
+                            {fieldConfig.options.map((option: string | number, index: number) => (
+                              <div key={`pcb_type-${option}-${index}`} className="rounded-lg bg-white px-4 py-2.5 font-semibold text-dark shadow-sm dark:bg-gray-700 dark:text-white">
+                                {option}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {(fieldConfig.flex_config.material?.options || fieldConfig.flex_config.surface_finish?.options || fieldConfig.flex_config.fpc_thickness?.options) && (
+                        <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4 dark:border-blue-900/40 dark:bg-blue-900/15">
+                          <p className="mb-4 text-sm font-bold text-blue-900 dark:text-blue-200">Flex Configuration Options</p>
+                          <div className="space-y-4">
+                            {fieldConfig.flex_config.material?.options && fieldConfig.flex_config.material.options.length > 0 && (
+                              <div className="rounded-lg bg-white p-3 dark:bg-blue-900/20">
+                                <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-blue-700 dark:text-blue-300">Material</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {fieldConfig.flex_config.material.options.map((option: string | number, index: number) => (
+                                    <span key={`material-${option}-${index}`} className="rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-900 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100">{option}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {fieldConfig.flex_config.surface_finish?.options && fieldConfig.flex_config.surface_finish.options.length > 0 && (
+                              <div className="rounded-lg bg-white p-3 dark:bg-blue-900/20">
+                                <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-blue-700 dark:text-blue-300">Surface Finish</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {fieldConfig.flex_config.surface_finish.options.map((option: string | number, index: number) => (
+                                    <span key={`surface_finish-${option}-${index}`} className="rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-900 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100">{option}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {fieldConfig.flex_config.fpc_thickness?.options && fieldConfig.flex_config.fpc_thickness.options.length > 0 && (
+                              <div className="rounded-lg bg-white p-3 dark:bg-blue-900/20">
+                                <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-blue-700 dark:text-blue-300">FPC Thickness</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {fieldConfig.flex_config.fpc_thickness.options.map((option: string | number, index: number) => (
+                                    <span key={`fpc_thickness-${option}-${index}`} className="rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-900 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100">{option}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                if (fieldName === "thickness_type" && fieldConfig.custom_config) {
+                  return (
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-5 text-base font-bold text-dark dark:text-white">{fieldLabel}</h3>
+                      
+                      {fieldConfig.options && Array.isArray(fieldConfig.options) && fieldConfig.options.length > 0 && (
+                        <div className="mb-6 rounded-lg border-2 border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+                          <p className="mb-3 text-xs font-bold uppercase text-gray-600 dark:text-gray-300">Thickness Type Options</p>
+                          <div className="flex flex-wrap gap-3">
+                            {fieldConfig.options.map((option: string | number, index: number) => (
+                              <div key={`thickness_type-${option}-${index}`} className="rounded-lg bg-white px-4 py-2.5 text-md text-dark shadow-sm dark:bg-gray-700 dark:text-white">
+                                {option}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {fieldConfig.custom_config.custom_thickness_options?.options && fieldConfig.custom_config.custom_thickness_options.options.length > 0 && (
+                        <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4 dark:border-blue-900/40 dark:bg-blue-900/15">
+                          <p className="mb-4 text-sm font-bold text-blue-900 dark:text-blue-200">Custom Thickness Options</p>
+                          <div className="rounded-lg bg-white p-3 dark:bg-blue-900/20">
+                            <div className="flex flex-wrap gap-2">
+                              {fieldConfig.custom_config.custom_thickness_options.options.map((option: string | number, index: number) => (
+                                <span key={`custom_thickness-${option}-${index}`} className="rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-900 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100">{option}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
                 if (fieldConfig.options && Array.isArray(fieldConfig.options) && fieldConfig.options.length > 0) {
                   return (
-                    <div key={fieldName} className="border-b border-[#eee] pb-6 last:border-b-0 dark:border-dark-3">
-                      <h3 className="mb-3 text-base font-semibold text-dark dark:text-white">{fieldLabel}</h3>
-                      <div className="space-y-2">
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-4 text-sm font-semibold text-dark dark:text-white">{fieldLabel}</h3>
+                      <div className="flex flex-wrap gap-3">
                         {fieldConfig.options.map((option: string | number, index: number) => (
-                          <div key={`${fieldName}-${option}-${index}`} className="flex items-center justify-between rounded bg-gray-100 p-2 dark:bg-gray-700">
-                            <span className="text-dark dark:text-white">{option}</span>
-                            <span className="text-sm text-gray-600 dark:text-gray-400">
-                              Multiplier: {fieldConfig.multiplier?.[String(option)] || 1.0}x
-                            </span>
+                          <div key={`${fieldName}-${option}-${index}`} className="flex items-center justify-center rounded-lg border border-gray-200 bg-gradient-to-r from-white to-gray-50 px-4 py-2.5 dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
+                            <span className="text-sm font-medium text-dark dark:text-white">{option}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (fieldConfig.multiplier && Object.keys(fieldConfig.multiplier).length > 0) {
+                  return (
+                    <div key={fieldName} className="rounded-lg border border-[#eee] p-5 dark:border-dark-3">
+                      <h3 className="mb-4 text-sm font-semibold text-dark dark:text-white">{fieldLabel}</h3>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                        {Object.entries(fieldConfig.multiplier).map(([key, value]: [string, any]) => (
+                          <div key={key} className="rounded-lg border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-3 dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
+                            <p className="text-xs font-medium text-gray-600 dark:text-gray-400">{key}</p>
+                            <p className="mt-2 text-lg font-semibold text-primary">{value}x</p>
                           </div>
                         ))}
                       </div>
@@ -282,9 +460,12 @@ export default function ViewService() {
 
         {service.lead_times && service.lead_times.length > 0 && (
           <div className="rounded-[10px] bg-white px-7.5 pb-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
-            <h2 className="mb-6 text-body-lg font-bold text-dark dark:text-white">
-              Lead Times
-            </h2>
+            <div className="mb-8 flex items-center gap-3 border-b border-gray-200 pb-6 dark:border-gray-700">
+              <div className="h-10 w-1 rounded-full bg-gradient-to-b from-primary to-primary/50"></div>
+              <h2 className="text-body-lg font-bold text-dark dark:text-white">
+                Lead Times
+              </h2>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -338,9 +519,12 @@ export default function ViewService() {
         )}
 
         <div className="rounded-[10px] bg-white px-7.5 pb-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
-          <h2 className="mb-6 text-body-lg font-extrabold text-dark dark:text-white">
-            Metadata
-          </h2>
+          <div className="mb-8 flex items-center gap-3 border-b border-gray-200 pb-6 dark:border-gray-700">
+            <div className="h-10 w-1 rounded-full bg-gradient-to-b from-primary to-primary/50"></div>
+            <h2 className="text-body-lg font-bold text-dark dark:text-white">
+              Metadata
+            </h2>
+          </div>
           <div className="grid grid-cols-4 gap-6">
             <div>
               <label className="text-base font-semibold text-dark dark:text-white">

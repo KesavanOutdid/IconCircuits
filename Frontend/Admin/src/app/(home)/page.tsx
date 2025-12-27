@@ -3,6 +3,7 @@ import { UsedDevices } from "@/components/Charts/used-devices";
 import { UsersStatus } from "@/components/Charts/users-status";
 import { WeeksProfit } from "@/components/Charts/weeks-profit";
 import { PaymentsChart } from "@/components/Charts/payments-chart";
+import { QuotationsChart } from "@/components/Charts/quotations-chart";
 import { TopChannels } from "@/components/Tables/top-channels";
 import { TopChannelsSkeleton } from "@/components/Tables/top-channels/skeleton";
 import { Suspense } from "react";
@@ -37,8 +38,12 @@ export default function Home() {
         />
 
         <UsedDevices
-          className="col-span-12 xl:col-span-5"
+          className="col-span-12 xl:col-span-6"
           timeFrame={undefined}
+        />
+
+        <QuotationsChart
+          className="col-span-12 xl:col-span-6"
         />
 
       

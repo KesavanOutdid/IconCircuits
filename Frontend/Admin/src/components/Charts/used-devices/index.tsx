@@ -25,7 +25,7 @@ export function UsedDevices({
         )}
       >
         <div className="h-8 w-48 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-        <div className="h-64 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+        <div className="h-[340px] animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
       </div>
     );
   }

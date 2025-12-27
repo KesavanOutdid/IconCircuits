@@ -14,56 +14,57 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export function WeeksProfitChart({ data, color = "#5750F1", height = 370, period = "weekly" }: PropsType) {
-  const columnWidth = period === "weekly" ? "25%" : "12%";
-  const colorPalette = color === "#5750F1" 
-    ? ["#5750F1", "#5750F1", "#5750F1", "#5750F1", "#5750F1", "#5750F1", "#5750F1"]
-    : ["#5750F1", "#5750F1", "#5750F1", "#5750F1", "#5750F1", "#5750F1", "#5750F1"];
-
-  const seriesData = data.map((item, index) => ({
-    x: item.x,
-    y: item.y,
-    fillColor: colorPalette[index % colorPalette.length],
-  }));
-
+export function WeeksProfitChart({ data, color = "#5750F1", height = 350, period = "weekly" }: PropsType) {
   const options: ApexOptions = {
     colors: [color],
     chart: {
-      type: "bar",
-      stacked: false,
+      type: "area",
       toolbar: {
         show: false,
       },
       zoom: {
         enabled: false,
       },
-    },
-    responsive: [
-      {
-        breakpoint: 1536,
-        options: {
-          plotOptions: {
-            bar: {
-              borderRadius: 2,
-              columnWidth,
-            },
-          },
-        },
+      dropShadow: {
+        enabled: true,
+        top: 3,
+        left: 14,
+        blur: 4,
+        opacity: 0.12,
+        color: color,
       },
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        borderRadius: 2,
-        columnWidth,
-        borderRadiusApplication: "end",
+    },
+    stroke: {
+      curve: "smooth",
+      width: 3,
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        inverseColors: false,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [20, 100, 100, 100],
+      },
+    },
+    markers: {
+      size: 0,
+      colors: [color],
+      strokeColors: "#fff",
+      strokeWidth: 2,
+      hover: {
+        size: 7,
       },
     },
     dataLabels: {
       enabled: false,
     },
     grid: {
+      show: true,
+      borderColor: "#E8E8E8",
       strokeDashArray: 5,
+      position: "back",
       xaxis: {
         lines: {
           show: false,
@@ -76,33 +77,39 @@ export function WeeksProfitChart({ data, color = "#5750F1", height = 370, period
       },
     },
     xaxis: {
+      type: "category",
       axisBorder: {
         show: false,
       },
       axisTicks: {
         show: false,
       },
-    },
-    legend: {
-      position: "top",
-      horizontalAlign: "left",
-      fontFamily: "inherit",
-      fontWeight: 500,
-      fontSize: "14px",
-      markers: {
-        size: 9,
-        shape: "circle",
+      labels: {
+        style: {
+          colors: "#64748B",
+          fontSize: "12px",
+        },
       },
     },
-    fill: {
-      opacity: 1,
+    yaxis: {
+      labels: {
+        style: {
+          colors: "#64748B",
+          fontSize: "12px",
+        },
+      },
+    },
+    tooltip: {
+      x: {
+        show: true,
+      },
     },
   };
 
   const series = [
     {
-      name: "Value",
-      data: seriesData as any,
+      name: "Orders",
+      data: data.map(d => ({ x: d.x, y: d.y })),
     },
   ];
 
@@ -111,7 +118,7 @@ export function WeeksProfitChart({ data, color = "#5750F1", height = 370, period
       <Chart
         options={options}
         series={series}
-        type="bar"
+        type="area"
         height={height}
       />
     </div>

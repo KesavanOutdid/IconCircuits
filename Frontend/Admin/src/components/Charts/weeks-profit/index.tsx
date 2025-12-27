@@ -81,7 +81,7 @@ export function WeeksProfit({ className }: PropsType) {
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-body-2xlg font-bold text-dark dark:text-white">
-          {periodLabels[period]}
+          Orders Overview
         </h2>
 
         <div className="flex items-center gap-3">
@@ -95,26 +95,26 @@ export function WeeksProfit({ className }: PropsType) {
             <option value="monthly">Monthly</option>
             <option value="yearly">Yearly</option>
           </select>
-
-          {period === "monthly" && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setMonthOffset(Math.max(0, monthOffset - itemsPerPage))}
-                disabled={!hasPrevMonth}
-                className="rounded border border-[#E8E8E8] bg-white px-3 py-2 text-sm font-medium text-dark disabled:opacity-50 dark:border-form-strokedark dark:bg-form-input dark:text-white"
-              >
-                &lt;
-              </button>
-              <button
-                onClick={() => setMonthOffset(monthOffset + itemsPerPage)}
-                disabled={!hasNextMonth}
-                className="rounded border border-[#E8E8E8] bg-white px-3 py-2 text-sm font-medium text-dark disabled:opacity-50 dark:border-form-strokedark dark:bg-form-input dark:text-white"
-              >
-                &gt;
-              </button>
-            </div>
-          )}
         </div>
+
+        {period === "monthly" && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setMonthOffset(Math.max(0, monthOffset - itemsPerPage))}
+              disabled={!hasPrevMonth}
+              className="rounded border border-[#E8E8E8] bg-white px-3 py-2 text-sm font-medium text-dark disabled:opacity-50 dark:border-form-strokedark dark:bg-form-input dark:text-white"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => setMonthOffset(monthOffset + itemsPerPage)}
+              disabled={!hasNextMonth}
+              className="rounded border border-[#E8E8E8] bg-white px-3 py-2 text-sm font-medium text-dark disabled:opacity-50 dark:border-form-strokedark dark:bg-form-input dark:text-white"
+            >
+              &gt;
+            </button>
+          </div>
+        )}
       </div>
 
       {loading ? (

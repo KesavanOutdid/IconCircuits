@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiCall } from "@/lib/api-client";
 import Swal from "sweetalert2";
-import { EyeIcon, PencilSquareIcon } from "@/assets/icons";
+import { EyeIcon } from "@/assets/icons";
 import {
   Table,
   TableBody,
@@ -18,18 +18,17 @@ interface Order {
   _id: string;
   orderId: string;
   userEmail: string;
-  userProfile?: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  cartSummary: {
-    totalItems: number;
-    totalValue: number;
-  };
+  amount: number;
+  serviceName: string;
+  serviceCode: string;
   paymentStatus: string;
   orderStatus: string;
   createdAt: string;
+  userDetails?: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
 }
 
 interface OrdersApiResponse {
@@ -115,80 +114,7 @@ export default function ManageOrders() {
     return `₹${value.toLocaleString("en-IN")}`;
   };
 
-  const handleCompleteOrder = async (orderId: string) => {
-    const order = orders.find(o => o.orderId === orderId);
-    
-    if (!order) {
-      await Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Order not found",
-      });
-      return;
-    }
 
-    if (order.orderStatus.toLowerCase() === "cancelled") {
-      await Swal.fire({
-        icon: "error",
-        title: "Cannot Complete Order",
-        text: "Cannot mark a cancelled order as completed.",
-      });
-      return;
-    }
-
-    if (order.paymentStatus.toLowerCase() === "pending") {
-      await Swal.fire({
-        icon: "error",
-        title: "Cannot Complete Order",
-        text: "Payment is still pending. Complete the payment before marking the order as completed.",
-      });
-      return;
-    }
-
-    if (order.orderStatus.toLowerCase() === "completed") {
-      await Swal.fire({
-        icon: "error",
-        title: "Cannot Complete Order",
-        text: "This order is already completed.",
-      });
-      return;
-    }
-
-    const result = await Swal.fire({
-      title: "Complete Order?",
-      text: "Are you sure you want to mark this order as completed?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Complete it!",
-      cancelButtonText: "Cancel",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await apiCall(`/api/admin/orders/${orderId}/complete`, {
-          method: "Put",
-        });
-
-        await Swal.fire({
-          icon: "success",
-          title: "Order Completed!",
-          text: "Order has been marked as completed successfully.",
-          confirmButtonText: "OK",
-        });
-
-        fetchOrders();
-      } catch (error) {
-        console.error("Failed to complete order:", error);
-        await Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: error instanceof Error ? error.message : "Failed to complete order",
-        });
-      }
-    }
-  };
 
   return (
     <>
@@ -211,8 +137,8 @@ export default function ManageOrders() {
                 SI.NO
               </TableHead>
               <TableHead className="min-w-[160px]">Customer Name</TableHead>
-              <TableHead className="min-w-[180px]">Email</TableHead>
-              <TableHead className="min-w-[100px]">Total</TableHead>
+              <TableHead className="min-w-[150px]">Service</TableHead>
+              <TableHead className="min-w-[120px]">Amount</TableHead>
               <TableHead className="min-w-[120px]">Order Status</TableHead>
               <TableHead className="min-w-[120px]">Payment Status</TableHead>
               <TableHead className="min-w-[100px]">Date</TableHead>
@@ -223,13 +149,13 @@ export default function ManageOrders() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={8} className="py-8 text-center text-dark dark:text-white">
+                <TableCell colSpan={9} className="py-8 text-center text-dark dark:text-white">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : orders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="py-8 text-center text-dark dark:text-white">
+                <TableCell colSpan={9} className="py-8 text-center text-dark dark:text-white">
                   No orders found
                 </TableCell>
               </TableRow>
@@ -244,22 +170,22 @@ export default function ManageOrders() {
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </p>
                   </TableCell>
+               
                   <TableCell className="min-w-[160px]">
                     <p className="text-base font-normal text-dark dark:text-white">
-                      {order.userProfile?.name || "N/A"}
+                      {order.userDetails?.name || "N/A"}
                     </p>
                   </TableCell>
-                  <TableCell className="min-w-[180px]">
+                  <TableCell className="min-w-[150px]">
                     <p className="text-base font-normal text-dark dark:text-white">
-                      {order.userEmail}
+                      {order.serviceName}
                     </p>
                   </TableCell>
-                  <TableCell className="min-w-[100px]">
+                  <TableCell className="min-w-[120px]">
                     <p className="text-base font-normal text-dark dark:text-white">
-                      {formatCurrency(order.cartSummary.totalValue)}
+                      {formatCurrency(order.amount)}
                     </p>
                   </TableCell>
-                 
                   <TableCell className="min-w-[120px]">
                     <span
                       className={`inline-flex rounded-full px-3.5 py-1 text-base font-normal ${getStatusBadgeColor(
@@ -295,32 +221,6 @@ export default function ManageOrders() {
                         title="View order"
                       >
                         <EyeIcon />
-                      </button>
-                      <button
-                        onClick={() => handleCompleteOrder(order.orderId)}
-                        disabled={
-                          order.orderStatus.toLowerCase() === "cancelled" ||
-                          order.paymentStatus.toLowerCase() === "pending" ||
-                          order.orderStatus.toLowerCase() === "completed"
-                        }
-                        className={`inline-flex items-center justify-center ${
-                          order.orderStatus.toLowerCase() === "cancelled" ||
-                          order.paymentStatus.toLowerCase() === "pending" ||
-                          order.orderStatus.toLowerCase() === "completed"
-                            ? "text-gray-300 cursor-not-allowed"
-                            : "text-primary hover:text-opacity-80"
-                        }`}
-                        title={
-                          order.orderStatus.toLowerCase() === "cancelled"
-                            ? "Cannot complete a cancelled order"
-                            : order.paymentStatus.toLowerCase() === "pending"
-                            ? "Cannot complete order with pending payment"
-                            : order.orderStatus.toLowerCase() === "completed"
-                            ? "Order is already completed"
-                            : "Complete order"
-                        }
-                      >
-                        <PencilSquareIcon />
                       </button>
                     </div>
                   </TableCell>

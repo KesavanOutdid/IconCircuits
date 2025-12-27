@@ -24,12 +24,12 @@ export default function EditServiceRouter() {
     const config = data.config || {};
     const configKeys = Object.keys(config);
     
-    if (configKeys.includes("dimension") || configKeys.includes("controlled_impedance") || configKeys.includes("pcb_type") || configKeys.includes("delivery_format")) {
-      return "pcb_layout";
+    if (configKeys.includes("outer_copper_weight") || configKeys.includes("pcb_color_silkscreen_map") || configKeys.includes("via_covering")) {
+      return "pcb_fabrication";
     }
     
-    if (configKeys.includes("board_thickness") || configKeys.includes("copper_weight")) {
-      return "pcb_fabrication";
+    if (configKeys.includes("dimension") || configKeys.includes("controlled_impedance") || configKeys.includes("delivery_format")) {
+      return "pcb_layout";
     }
     
     if (configKeys.includes("assembly_type") || configKeys.includes("rework_allowed") || configKeys.includes("testing_type")) {

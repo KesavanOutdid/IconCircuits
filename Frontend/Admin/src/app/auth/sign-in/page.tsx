@@ -50,14 +50,14 @@ export default function SignIn() {
     <div className="min-h-screen flex items-center justify-center bg-gray-2 dark:bg-[#020d1a] px-4">
       <div className="w-full rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card max-w-lg">
         <div className="w-full p-6 sm:p-10 xl:p-12">
-          <Link className="mb-8 flex justify-center" href="/">
+          {/* <Link className="mb-8 flex justify-center" href="/">
             <Image
-              src={"/images/logo/logo.png"}
+              src={"/images/logo/fulllogo.jpg"}
               alt="Logo"
-              width={200}
-              height={64}
+              width={100}
+              height={24}
             />
-          </Link>
+          </Link> */}
 
           <form onSubmit={handleSubmit}>
             <InputGroup
@@ -68,7 +68,7 @@ export default function SignIn() {
               name="email"
               handleChange={handleChange}
               value={data.email}
-              icon={<EmailIcon />}
+              icon={<EmailIcon width={24} height={24} />}
             />
 
             <div className="mb-5">
@@ -82,14 +82,18 @@ export default function SignIn() {
                   placeholder="Enter your password"
                   onChange={handleChange}
                   value={data.password}
-                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5.5 py-3 pr-12 text-dark placeholder:text-dark-6 outline-none transition focus:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5.5 py-[15px] pr-12 text-dark placeholder:text-dark-6 outline-none transition focus:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4.5 top-1/2 -translate-y-1/2 text-dark-6 hover:text-dark dark:text-dark-6 dark:hover:text-white transition"
                 >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  {showPassword ? (
+                    <EyeOffIcon width={24} height={24} />
+                  ) : (
+                    <EyeIcon width={24} height={24} />
+                  )}
                 </button>
               </div>
             </div>

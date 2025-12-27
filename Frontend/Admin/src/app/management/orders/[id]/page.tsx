@@ -9,36 +9,25 @@ interface OrderDetail {
   orderId: string;
   userId: string;
   userEmail: string;
-  userProfile?: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  cartItems: Array<{
-    _id: string;
-    cart_id: string;
-    pcb_name: string;
-    config: Record<string, any>;
-    order_value: number;
-    tax: number;
-    total_price: number;
-  }>;
-  shippingAddress?: {
+  amount: number;
+  config: Record<string, any>;
+  pcbName: string;
+  serviceCode: string;
+  serviceName: string;
+  serviceId: string;
+  quotationAddress?: {
     _id: string;
     street: string;
     city: string;
+    location?: string;
     district: string;
     state: string;
     country: string;
     pincode: string;
     companyName: string;
     gstNo: string;
-    location?: string;
+    phone: string;
     type: string[];
-  };
-  cartSummary: {
-    totalItems: number;
-    totalValue: number;
   };
   paymentType: string;
   paymentStatus: string;
@@ -48,7 +37,19 @@ interface OrderDetail {
   razorpaySignature?: string;
   createdAt: string;
   updatedAt: string;
-  userDetails?: any;
+  userDetails?: {
+    name: string;
+    email: string;
+    phone?: string;
+    address?: {
+      street: string;
+      city: string;
+      district: string;
+      state: string;
+      country: string;
+      pincode: string;
+    };
+  };
 }
 
 export default function ViewOrder() {
@@ -254,7 +255,7 @@ export default function ViewOrder() {
         </div>
 
         {/* Shipping Address */}
-        {order.shippingAddress && (
+        {order.quotationAddress && (
           <div className="rounded-[10px] bg-white px-7.5 pb-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
             <h2 className="mb-6 text-body-lg font-bold text-dark dark:text-white">
               Shipping Address
@@ -265,7 +266,7 @@ export default function ViewOrder() {
                   Company Name
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.companyName}
+                  {order.quotationAddress.companyName}
                 </p>
               </div>
               <div>
@@ -273,7 +274,7 @@ export default function ViewOrder() {
                   Street
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.street}
+                  {order.quotationAddress.street}
                 </p>
               </div>
               <div>
@@ -281,7 +282,7 @@ export default function ViewOrder() {
                   City
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.city}
+                  {order.quotationAddress.city}
                 </p>
               </div>
               <div>
@@ -289,7 +290,7 @@ export default function ViewOrder() {
                   District
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.district}
+                  {order.quotationAddress.district}
                 </p>
               </div>
               <div>
@@ -297,7 +298,7 @@ export default function ViewOrder() {
                   State
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.state}
+                  {order.quotationAddress.state}
                 </p>
               </div>
               <div>
@@ -305,7 +306,7 @@ export default function ViewOrder() {
                   Country
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.country}
+                  {order.quotationAddress.country}
                 </p>
               </div>
               <div>
@@ -313,7 +314,7 @@ export default function ViewOrder() {
                   Pincode
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.pincode}
+                  {order.quotationAddress.pincode}
                 </p>
               </div>
               <div>
@@ -321,86 +322,73 @@ export default function ViewOrder() {
                   GST No
                 </label>
                 <p className="mt-2 text-dark dark:text-white">
-                  {order.shippingAddress.gstNo}
+                  {order.quotationAddress.gstNo}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Cart Items */}
+        {/* Order Details */}
         <div className="rounded-[10px] bg-white px-7.5 pb-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
           <h2 className="mb-6 text-body-lg font-bold text-dark dark:text-white">
-            Cart Items ({order.cartSummary.totalItems})
+            Order Details
           </h2>
-          <div className="space-y-4">
-            {order.cartItems.map((item, idx) => (
-              <div
-                key={item._id}
-                className="rounded border border-[#E8E8E8] p-4 dark:border-dark-3"
-              >
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-dark dark:text-white">
-                    {idx + 1}. {item.pcb_name}
-                  </h3>
-                </div>
-                <div className="mb-3 grid grid-cols-4 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Total Items
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-dark dark:text-white">
-                      {order.cartSummary.totalItems}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Order Value
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-dark dark:text-white">
-                      {formatCurrency(item.order_value)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Tax
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-dark dark:text-white">
-                      {formatCurrency(item.tax)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Total Price
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-dark dark:text-white">
-                      {formatCurrency(item.total_price)}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <p className="mb-2 text-sm font-semibold text-dark dark:text-white">
-                    Configuration:
-                  </p>
-                  <div className="grid grid-cols-4 gap-2">
-                    {Object.entries(item.config).map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="rounded bg-gray-100 p-2 dark:bg-gray-700"
-                      >
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          {key.replace(/_/g, " ")}
-                        </p>
-                        <p className="mt-1 text-sm text-dark dark:text-white">
-                          {String(value)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-4 gap-6 mb-6">
+            <div>
+              <label className="text-base font-semibold text-dark dark:text-white">
+                PCB Name
+              </label>
+              <p className="mt-2 text-dark dark:text-white">
+                {order.pcbName}
+              </p>
+            </div>
+            <div>
+              <label className="text-base font-semibold text-dark dark:text-white">
+                Service
+              </label>
+              <p className="mt-2 text-dark dark:text-white">
+                {order.serviceName}
+              </p>
+            </div>
+            <div>
+              <label className="text-base font-semibold text-dark dark:text-white">
+                Amount
+              </label>
+              <p className="mt-2 text-dark dark:text-white">
+                {formatCurrency(order.amount)}
+              </p>
+            </div>
+            <div>
+              <label className="text-base font-semibold text-dark dark:text-white">
+                Order Date
+              </label>
+              <p className="mt-2 text-dark dark:text-white">
+                {formatDate(order.createdAt)}
+              </p>
+            </div>
           </div>
+          
+          {/* Configuration */}
+          {order.config && Object.keys(order.config).length > 0 && (
+            <div>
+              <h3 className="mb-4 text-base font-semibold text-dark dark:text-white">
+                Configuration
+              </h3>
+              <div className="grid grid-cols-4 gap-3">
+                {Object.entries(order.config).map(([key, value]) => (
+                  <div key={key} className="rounded bg-gray-100 px-3 py-2 dark:bg-gray-700">
+                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                      {key.replace(/_/g, " ")}
+                    </p>
+                    <p className="mt-1 text-sm text-dark dark:text-white">
+                      {Array.isArray(value) ? value.join(", ") : String(value)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Order Summary */}

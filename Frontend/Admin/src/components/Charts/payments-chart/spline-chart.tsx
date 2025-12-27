@@ -13,43 +13,57 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export function PaymentsSplineChart({ data, color = "#5750F1", height = 370 }: PropsType) {
+export function PaymentsSplineChart({ data, color = "#5750F1", height = 350 }: PropsType) {
   const options: ApexOptions = {
     colors: [color],
     chart: {
-      type: "line",
-      stacked: false,
+      type: "area",
       toolbar: {
         show: false,
       },
       zoom: {
         enabled: false,
       },
-    },
-    dataLabels: {
-      enabled: false,
+      dropShadow: {
+        enabled: true,
+        top: 3,
+        left: 14,
+        blur: 4,
+        opacity: 0.12,
+        color: color,
+      },
     },
     stroke: {
       curve: "smooth",
-      width: 4,
-      colors: [color],
+      width: 3,
     },
     fill: {
-      type: "solid",
-      opacity: 0.8,
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        inverseColors: false,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [20, 100, 100, 100],
+      },
     },
     markers: {
-      size: 7,
+      size: 0,
       colors: [color],
       strokeColors: "#fff",
       strokeWidth: 2,
       hover: {
-        size: 9,
+        size: 7,
       },
     },
+    dataLabels: {
+      enabled: false,
+    },
     grid: {
-      strokeDashArray: 0,
+      show: true,
       borderColor: "#E8E8E8",
+      strokeDashArray: 5,
+      position: "back",
       xaxis: {
         lines: {
           show: false,
@@ -58,35 +72,43 @@ export function PaymentsSplineChart({ data, color = "#5750F1", height = 370 }: P
       yaxis: {
         lines: {
           show: true,
-          opacity: 0.3,
         },
       },
     },
     xaxis: {
+      type: "category",
       axisBorder: {
         show: false,
       },
       axisTicks: {
         show: false,
       },
+      labels: {
+        style: {
+          colors: "#64748B",
+          fontSize: "12px",
+        },
+      },
     },
-    legend: {
-      position: "top",
-      horizontalAlign: "left",
-      fontFamily: "inherit",
-      fontWeight: 500,
-      fontSize: "14px",
-      markers: {
-        size: 9,
-        shape: "circle",
+    yaxis: {
+      labels: {
+        style: {
+          colors: "#64748B",
+          fontSize: "12px",
+        },
+      },
+    },
+    tooltip: {
+      x: {
+        show: true,
       },
     },
   };
 
   const series = [
     {
-      name: "Payment",
-      data: data,
+      name: "Payments",
+      data: data.map(d => ({ x: d.x, y: d.y })),
     },
   ];
 
@@ -95,7 +117,7 @@ export function PaymentsSplineChart({ data, color = "#5750F1", height = 370 }: P
       <Chart
         options={options}
         series={series}
-        type="line"
+        type="area"
         height={height}
       />
     </div>

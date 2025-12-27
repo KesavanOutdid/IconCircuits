@@ -92,14 +92,14 @@ export default function ManageContacts() {
         <Table>
           <TableHeader>
             <TableRow className="border-none bg-[#F7F9FC] dark:bg-dark-2 uppercase [&>th]:py-4 [&>th]:text-base [&>th]:text-dark [&>th]:dark:text-white [&>th]:text-center [&>th]:flex-1">
-              <TableHead className="!text-left">
+              <TableHead className="!text-center">
                 SI.NO
               </TableHead>
-              <TableHead className="!text-left">
+              <TableHead className="!text-center">
                 Name
               </TableHead>
-              <TableHead className="!text-left">Email</TableHead>
-              <TableHead className="!text-left">Subject</TableHead>
+              <TableHead className="!text-center">Email</TableHead>
+              <TableHead className="!text-center">Subject</TableHead>
               <TableHead className="!text-center">Date</TableHead>
             </TableRow>
           </TableHeader>
@@ -123,22 +123,22 @@ export default function ManageContacts() {
                   key={contact._id}
                   className="border-[#eee] text-center text-base font-normal text-dark dark:border-dark-3 dark:text-white [&>td]:py-5 [&>td]:flex-1"
                 >
-                  <TableCell className="!text-left xl:pl-7.5">
+                  <TableCell className="!text-center xl:pl-7.5">
                     <p className="text-base font-normal text-dark dark:text-white">
                       {(currentPage - 1) * 10 + index + 1}
                     </p>
                   </TableCell>
-                  <TableCell className="!text-left">
+                  <TableCell className="!text-center">
                     <p className="text-base font-normal text-dark dark:text-white">
                       {contact.name}
                     </p>
                   </TableCell>
-                  <TableCell className="!text-left">
+                  <TableCell className="!text-center">
                     <p className="text-base font-normal text-dark dark:text-white">
                       {contact.email}
                     </p>
                   </TableCell>
-                  <TableCell className="!text-left">
+                  <TableCell className="!text-center">
                     <p className="truncate text-base font-normal text-dark dark:text-white" title={contact.subject}>
                       {contact.subject}
                     </p>

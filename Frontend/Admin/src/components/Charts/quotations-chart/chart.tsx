@@ -12,13 +12,13 @@ const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export function UsersStatusChart({ data }: PropsType) {
+export function QuotationsDonutChart({ data }: PropsType) {
   const chartOptions: ApexOptions = {
     chart: {
       type: "donut",
       fontFamily: "inherit",
     },
-    colors: ["#10B981", "#DC3545"],
+    colors: ["#FFB800", "#3C50E0", "#10B981", "#F23D4E", "#64748B", "#FF9C55"],
     labels: data.map((item) => item.name),
     legend: {
       show: true,
@@ -42,7 +42,7 @@ export function UsersStatusChart({ data }: PropsType) {
             total: {
               show: true,
               showAlways: true,
-              label: "Users",
+              label: "Total",
               fontSize: "16px",
               fontWeight: "400",
             },

@@ -2,21 +2,27 @@
 
 import { cn } from "@/lib/utils";
 import { useAnalytics } from "@/app/(home)/_hooks/useAnalytics";
-import { UsersStatusChart } from "./chart";
+import { QuotationsDonutChart } from "./chart";
 
 type PropsType = {
   className?: string;
 };
 
-export function UsersStatus({ className }: PropsType) {
+export function QuotationsChart({
+  className,
+}: PropsType) {
   const { data: analyticsData, loading } = useAnalytics();
-
-  const userData = analyticsData?.users
-    ? [
-        { name: "Active", amount: analyticsData.users.active },
-        { name: "Inactive", amount: analyticsData.users.inactive },
-      ]
-    : [];
+  
+  const summary = analyticsData?.quotationsSummary;
+  
+  const data = summary ? [
+    { name: "Pending", amount: summary.pending },
+    { name: "Quoted", amount: summary.quoted },
+    { name: "Accepted", amount: summary.accepted },
+    { name: "Rejected", amount: summary.rejected },
+    { name: "Cancelled", amount: summary.cancelled },
+    { name: "Re-quote Req", amount: summary.requoteRequested },
+  ] : [];
 
   if (loading) {
     return (
@@ -41,12 +47,12 @@ export function UsersStatus({ className }: PropsType) {
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-body-2xlg font-bold text-dark dark:text-white">
-          Users Status
+          Quotations Statistics
         </h2>
       </div>
 
       <div className="grid place-items-center">
-        <UsersStatusChart data={userData} />
+        <QuotationsDonutChart data={data} />
       </div>
     </div>
   );

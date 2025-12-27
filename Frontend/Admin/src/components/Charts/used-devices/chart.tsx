@@ -42,7 +42,7 @@ export function DonutChart({ data }: PropsType) {
             total: {
               show: true,
               showAlways: true,
-              label: "Visitors",
+              label: "Orders",
               fontSize: "16px",
               fontWeight: "400",
             },
@@ -92,6 +92,7 @@ export function DonutChart({ data }: PropsType) {
       options={chartOptions}
       series={data.map((item) => item.amount)}
       type="donut"
+      height={365}
     />
   );
 }

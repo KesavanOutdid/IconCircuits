@@ -4,32 +4,17 @@ import { compactFormat } from "@/lib/format-number";
 import { useAnalytics } from "../../_hooks/useAnalytics";
 import { OverviewCard } from "./card";
 import * as icons from "./icons";
+import { OverviewCardsSkeleton } from "./skeleton";
 
 export function OverviewCardsGroup() {
   const { data, loading } = useAnalytics();
 
-  if (loading) {
-    return (
-      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
-        ))}
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
-        ))}
-      </div>
-    );
+  if (loading || !data) {
+    return <OverviewCardsSkeleton />;
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-5 2xl:gap-7.5">
       <OverviewCard
         label="Active Users"
         data={{
@@ -54,7 +39,7 @@ export function OverviewCardsGroup() {
           ...data.totalContacts,
           value: compactFormat(data.totalContacts.value),
         }}
-        Icon={icons.Views}
+        Icon={icons.Contacts}
       />
 
       <OverviewCard
@@ -63,7 +48,16 @@ export function OverviewCardsGroup() {
           ...data.totalNewsletter,
           value: compactFormat(data.totalNewsletter.value),
         }}
-        Icon={icons.Profit}
+        Icon={icons.Newsletter}
+      />
+
+      <OverviewCard
+        label="Total Quotations"
+        data={{
+          ...data.totalQuotations,
+          value: compactFormat(data.totalQuotations.value),
+        }}
+        Icon={icons.Quotations}
       />
     </div>
   );

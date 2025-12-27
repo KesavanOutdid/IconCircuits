@@ -16,7 +16,7 @@ import {
 
 interface Service {
   _id: string;
-  service_id: number;
+  service_id: string;
   name: string;
   base_price_inr: number;
   status: boolean;

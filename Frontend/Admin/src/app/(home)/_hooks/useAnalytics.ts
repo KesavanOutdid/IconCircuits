@@ -8,6 +8,16 @@ export interface AnalyticsData {
   totalOrders: { value: number; growthRate: number };
   totalContacts: { value: number; growthRate: number };
   totalNewsletter: { value: number; growthRate: number };
+  totalQuotations: { value: number; growthRate: number };
+  quotationsSummary?: {
+    total: number;
+    pending: number;
+    quoted: number;
+    accepted: number;
+    rejected: number;
+    requoteRequested: number;
+    cancelled: number;
+  };
   ordersChart: { name: string; amount: number }[];
   ordersData?: { completed: number; pending: number };
   ordersByPeriod?: {
@@ -26,6 +36,7 @@ export interface AnalyticsData {
     total: number;
     active: number;
     inactive: number;
+    byRole?: Array<{ roleName: string; total: number }>;
   };
 }
 
@@ -61,12 +72,24 @@ export function useAnalytics() {
           ) as any;
 
           if (response?.data) {
-            const { users, orders, contacts, newsletter, payments } = response.data;
+            const { users, orders, contacts, newsletter, payments, quotations } = response.data;
             const analyticsData: AnalyticsData = {
               activeUsers: { value: users?.active || 0, growthRate: 0 },
               totalOrders: { value: orders?.summary?.total || 0, growthRate: 0 },
               totalContacts: { value: contacts?.total || 0, growthRate: 0 },
               totalNewsletter: { value: newsletter?.total || 0, growthRate: 0 },
+              totalQuotations: { value: quotations?.summary?.total || 0, growthRate: 0 },
+              quotationsSummary: quotations?.summary
+                ? {
+                    total: quotations.summary.total || 0,
+                    pending: quotations.summary.pending || 0,
+                    quoted: quotations.summary.quoted || 0,
+                    accepted: quotations.summary.accepted || 0,
+                    rejected: quotations.summary.rejected || 0,
+                    requoteRequested: quotations.summary.requoteRequested || 0,
+                    cancelled: quotations.summary.cancelled || 0,
+                  }
+                : undefined,
               ordersChart: [
                 { name: "Completed", amount: orders?.summary?.completed || 0 },
                 { name: "Confirmed", amount: orders?.summary?.confirmed || 0 },

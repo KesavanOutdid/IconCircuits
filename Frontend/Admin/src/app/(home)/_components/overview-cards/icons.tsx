@@ -71,3 +71,63 @@ export function Users(props: SVGPropsType) {
     </svg>
   );
 }
+
+export function Newsletter(props: SVGPropsType) {
+  return (
+    <svg width={58} height={58} viewBox="0 0 58 58" fill="none" {...props}>
+      <circle cx={29} cy={29} r={29} fill="#FF9C55" />
+      <path
+        d="M17 19c0-1.1.9-2 2-2h20c1.1 0 2 .9 2 2v20c0 1.1-.9 2-2 2H19c-1.1 0-2-.9-2-2V19z"
+        fill="#fff"
+        opacity="0.2"
+      />
+      <path
+        d="M18 22l11 8 11-8"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18 20h22c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2H18c-1.1 0-2-.9-2-2V22c0-1.1.9-2 2-2z"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function Contacts(props: SVGPropsType) {
+  return (
+    <svg width={58} height={58} viewBox="0 0 58 58" fill="none" {...props}>
+      <circle cx={29} cy={29} r={29} fill="#3FD97F" />
+      <path
+        d="M29 34c5 0 9-2 9-6s-4-6-9-6-9 2-9 6 4 6 9 6z"
+        fill="#fff"
+      />
+      <circle cx={29} cy={22} r={4} fill="#fff" />
+      <path
+        d="M18 38h22"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function Quotations(props: SVGPropsType) {
+  return (
+    <svg width={58} height={58} viewBox="0 0 58 58" fill="none" {...props}>
+      <circle cx={29} cy={29} r={29} fill="#F23D4E" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M21 21C21 19.8954 21.8954 19 23 19H31.5L37 24.5V37C37 38.1046 36.1046 39 35 39H23C21.8954 39 21 38.1046 21 37V21ZM25 25H29V23H25V25ZM25 29H33V27H25V29ZM25 33H33V31H25V33ZM31 20V25H36L31 20Z"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
