@@ -123,9 +123,13 @@ const createQuotation = async (req, res) => {
 const getUserQuotations = async (req, res) => {
     try {
         const { userId: authUserId } = req;
-        const { userId: queryUserId, status } = req.query;
+        const { userId: queryUserId, status, page = 1, limit = 10 } = req.query;
 
         let targetUserId = queryUserId || authUserId;
+
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
 
         const filter = { userId: targetUserId };
         if (status) {
@@ -133,15 +137,28 @@ const getUserQuotations = async (req, res) => {
         }
 
         const quotationsCollection = await getQuotationsCollection();
+        
+        const totalQuotations = await quotationsCollection.countDocuments(filter);
+        
         const quotations = await quotationsCollection
             .find(filter)
             .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limitNum)
             .toArray();
 
         return res.status(200).json({
             success: true,
             message: 'Quotations retrieved successfully',
-            data: quotations,
+            data: {
+                quotations: quotations,
+                pagination: {
+                    total: totalQuotations,
+                    page: pageNum,
+                    limit: limitNum,
+                    totalPages: Math.ceil(totalQuotations / limitNum)
+                }
+            }
         });
     } catch (error) {
         console.error('Get quotations failed:', error);

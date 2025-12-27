@@ -13,48 +13,49 @@ const getCartsCollection = async () => {
     return db.collection('carts');
 };
 
+const getQuotationsCollection = async () => {
+    const db = await database.connectToDatabase();
+    return db.collection('quotations');
+};
+
 const createOrder = async (req, res) => {
     try {
         const { userId, userEmail } = req;
         const { 
-            cartItems, 
-            shippingAddress, 
-            cartSummary, 
-            userProfile,
-            paymentType 
+            quotation_id,
+            amount,
+            config, 
+            paymentType,
+            pcb_name,
+            service_code,
+            service_id,
+            service_name,
+            quotationAddress
         } = req.body;
 
-        if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+        if (!quotation_id || !amount || !config) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Cart items are required' 
-            });
-        }
-
-        if (!shippingAddress) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Shipping address is required' 
+                message: 'Quotation ID, amount, and config are required' 
             });
         }
 
         const ordersCollection = await getOrdersCollection();
-        const orderId = uuidv4();
+        const orderId = `ORD-${uuidv4()}`;
         const timestamp = new Date();
 
         const orderDocument = {
             orderId: orderId,
             userId: userId,
             userEmail: userEmail,
-            userProfile: {
-                name: userProfile?.name,
-                email: userProfile?.email,
-                phone: userProfile?.phone,
-                userId: userProfile?.userId,
-            },
-            cartItems: cartItems,
-            shippingAddress: shippingAddress,
-            cartSummary: cartSummary,
+            quotationId: quotation_id,
+            amount: amount,
+            config: config,
+            pcbName: pcb_name,
+            serviceCode: service_code,
+            serviceId: service_id,
+            serviceName: service_name,
+            quotationAddress: quotationAddress || null,
             paymentType: paymentType || 'cod',
             paymentStatus: paymentType === 'razorpay' ? 'pending' : 'completed',
             orderStatus: 'created',
@@ -94,10 +95,10 @@ const createOrder = async (req, res) => {
             });
 
             try {
-                console.log('Creating Razorpay order with amount:', Math.round(cartSummary.totalValue * 100));
+                console.log('Creating Razorpay order with amount:', Math.round(amount * 100));
                 
                 const razorpayOrder = await razorpay.orders.create({
-                    amount: Math.round(cartSummary.totalValue * 100),
+                    amount: Math.round(amount * 100),
                     currency: 'INR',
                     receipt: orderId,
                     payment_capture: 1,
@@ -148,6 +149,18 @@ const createOrder = async (req, res) => {
                 });
             }
         } else {
+            const quotationsCollection = await getQuotationsCollection();
+            await quotationsCollection.updateOne(
+                { quotation_id: quotation_id },
+                { 
+                    $set: { 
+                        ispayment: true,
+                        updatedAt: new Date(),
+                        orderId: orderId
+                    } 
+                }
+            );
+
             return res.status(201).json({
                 success: true,
                 status: 'success',
@@ -208,6 +221,19 @@ const verifyPayment = async (req, res) => {
                     }
                 }
             );
+
+            if (order.quotationId) {
+                const quotationsCollection = await getQuotationsCollection();
+                await quotationsCollection.updateOne(
+                    { quotation_id: order.quotationId },
+                    { 
+                        $set: { 
+                            ispayment: true,
+                            updatedAt: new Date()
+                        } 
+                    }
+                );
+            }
 
             return res.status(200).json({
                 success: true,
@@ -283,11 +309,21 @@ const cancelOrder = async (req, res) => {
 const getOrders = async (req, res) => {
     try {
         const { userId } = req;
+        const { page = 1, limit = 10 } = req.query;
+
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
 
         const ordersCollection = await getOrdersCollection();
+        
+        const totalOrders = await ordersCollection.countDocuments({ userId: userId });
+        
         const orders = await ordersCollection
             .find({ userId: userId })
             .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limitNum)
             .toArray();
 
         return res.status(200).json({
@@ -295,7 +331,12 @@ const getOrders = async (req, res) => {
             message: 'Orders fetched successfully',
             data: {
                 orders: orders,
-                count: orders.length,
+                pagination: {
+                    total: totalOrders,
+                    page: pageNum,
+                    limit: limitNum,
+                    totalPages: Math.ceil(totalOrders / limitNum)
+                }
             }
         });
     } catch (err) {

@@ -17,6 +17,11 @@ const getOrdersCollection = async () => {
     return db.collection('orders');
 };
 
+const getQuotationsCollection = async () => {
+    const db = await database.connectToDatabase();
+    return db.collection('quotations');
+};
+
 const getContactsCollection = async () => {
     const db = await database.connectToDatabase();
     return db.collection('contacts');
@@ -509,6 +514,7 @@ const getDashboardAnalytics = async (req, res) => {
         const usersCollection = await getUsersCollection();
         const rolesCollection = await getRolesCollection();
         const ordersCollection = await getOrdersCollection();
+        const quotationsCollection = await getQuotationsCollection();
         const contactsCollection = await getContactsCollection();
         const newsletterCollection = await getNewsletterCollection();
 
@@ -533,8 +539,19 @@ const getDashboardAnalytics = async (req, res) => {
             })
         );
 
+        const totalQuotations = await quotationsCollection.countDocuments({});
+        const pendingQuotations = await quotationsCollection.countDocuments({ status: 'pending' });
+        const quotedQuotations = await quotationsCollection.countDocuments({ status: 'quoted' });
+        const acceptedQuotations = await quotationsCollection.countDocuments({ status: 'accepted' });
+        const rejectedQuotations = await quotationsCollection.countDocuments({ status: 'rejected' });
+        const requoteRequestedQuotations = await quotationsCollection.countDocuments({ status: 'requote_requested' });
+        const cancelledQuotations = await quotationsCollection.countDocuments({ status: 'cancelled' });
+
         const totalOrders = await ordersCollection.countDocuments({});
-        const completedOrders = await ordersCollection.countDocuments({ orderStatus: 'completed' });
+        const createdOrders = await ordersCollection.countDocuments({ orderStatus: 'created' });
+        const confirmedOrders = await ordersCollection.countDocuments({ orderStatus: 'confirmed' });
+        const completedOrders = await ordersCollection.countDocuments({ orderStatus: 'confirmed' });
+        const cancelledOrders = await ordersCollection.countDocuments({ orderStatus: 'cancelled' });
 
         const totalContacts = await contactsCollection.countDocuments({});
 
@@ -558,7 +575,7 @@ const getDashboardAnalytics = async (req, res) => {
             {
                 $group: {
                     _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-                    total: { $sum: '$cartSummary.totalValue' },
+                    total: { $sum: '$amount' },
                     count: { $sum: 1 }
                 }
             }
@@ -567,7 +584,7 @@ const getDashboardAnalytics = async (req, res) => {
         const dailyOrders = await ordersCollection.aggregate([
             {
                 $match: {
-                    orderStatus: 'completed',
+                    orderStatus: 'confirmed',
                     createdAt: { $gte: today, $lt: tomorrow }
                 }
             },
@@ -597,7 +614,7 @@ const getDashboardAnalytics = async (req, res) => {
             {
                 $group: {
                     _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-                    total: { $sum: '$cartSummary.totalValue' },
+                    total: { $sum: '$amount' },
                     count: { $sum: 1 }
                 }
             },
@@ -607,7 +624,7 @@ const getDashboardAnalytics = async (req, res) => {
         const weeklyOrders = await ordersCollection.aggregate([
             {
                 $match: {
-                    orderStatus: 'completed',
+                    orderStatus: 'confirmed',
                     createdAt: { $gte: sundayOfCurrentWeek, $lt: nextMonday }
                 }
             },
@@ -644,7 +661,7 @@ const getDashboardAnalytics = async (req, res) => {
                         year: { $year: '$createdAt' },
                         month: { $month: '$createdAt' }
                     },
-                    total: { $sum: '$cartSummary.totalValue' },
+                    total: { $sum: '$amount' },
                     count: { $sum: 1 }
                 }
             },
@@ -655,7 +672,7 @@ const getDashboardAnalytics = async (req, res) => {
 
         const monthlyOrders = await ordersCollection.aggregate([
             {
-                $match: { orderStatus: 'completed' }
+                $match: { orderStatus: 'confirmed' }
             },
             {
                 $group: {
@@ -699,7 +716,7 @@ const getDashboardAnalytics = async (req, res) => {
             {
                 $group: {
                     _id: { $year: '$createdAt' },
-                    total: { $sum: '$cartSummary.totalValue' },
+                    total: { $sum: '$amount' },
                     count: { $sum: 1 }
                 }
             },
@@ -710,7 +727,7 @@ const getDashboardAnalytics = async (req, res) => {
 
         const yearlyOrders = await ordersCollection.aggregate([
             {
-                $match: { orderStatus: 'completed' }
+                $match: { orderStatus: 'confirmed' }
             },
             {
                 $group: {
@@ -745,11 +762,24 @@ const getDashboardAnalytics = async (req, res) => {
                     inactive: inactiveUsers,
                     byRole: userCountByRole,
                 },
+                quotations: {
+                    summary: {
+                        total: totalQuotations,
+                        pending: pendingQuotations,
+                        quoted: quotedQuotations,
+                        accepted: acceptedQuotations,
+                        rejected: rejectedQuotations,
+                        requoteRequested: requoteRequestedQuotations,
+                        cancelled: cancelledQuotations,
+                    },
+                },
                 orders: {
                     summary: {
                         total: totalOrders,
+                        created: createdOrders,
+                        confirmed: confirmedOrders,
                         completed: completedOrders,
-                        pending: totalOrders - completedOrders,
+                        cancelled: cancelledOrders,
                     },
                     daily: dailyOrdersFormatted,
                     weekly: weeklyOrdersFormatted,
